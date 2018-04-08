@@ -1,0 +1,159 @@
+\documentclass{amsart}
+\usepackage{natbib}
+\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathpartir}
+\usepackage{stmaryrd}
+\usepackage{xifthen}
+\usepackage{tikz-cd}
+
+% Theorems
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{cor}[thm]{Corollary}
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{remark}[thm]{Remark}
+\newtheorem{defn}[thm]{Definition}
+
+% Math stuffs
+\newcommand{\pow}[1]{\ensuremath{\mathcal{P}(#1)}}
+\newcommand{\card}[1]{\ensuremath{\left\vert #1 \right\vert}}
+\newcommand{\real}{\ensuremath{\mathbb{R}}}
+\newcommand{\nat}{\ensuremath{\mathbb{N}}}
+\newcommand{\cbult}{\ensuremath{\mathrm{CBUlt}}}
+\newcommand{\cle}{\ensuremath{\lesssim}}
+\newcommand{\ceq}{\ensuremath{\cong}}
+\newcommand{\relR}{\ensuremath{\mathrel{R}}}
+\newcommand{\relS}{\ensuremath{\mathrel{S}}}
+\newcommand{\AND}{\ensuremath{\mathrel{\wedge}}}
+\newcommand{\OR}{\ensuremath{\mathrel{\vee}}}
+\newcommand{\op}{\ensuremath{\mathsf{op}}}
+\newcommand{\den}[1]{\ensuremath{\llbracket #1 \rrbracket}}
+\newcommand{\defs}{\ensuremath{\mathrel{\triangleq}}}
+\newcommand{\bifix}{\ensuremath{\mathsf{bifix}}}
+
+% Sets
+\newcommand{\term}{\ensuremath{\mathit{Term}}}
+\newcommand{\urel}{\ensuremath{\mathit{URel}}}
+
+% judgments
+\newcommand{\guardJ}[2]{\ensuremath{\text{$#1.\,#2$\ \textsf{guarded}}}}
+\newcommand{\hasE}[2]{\ensuremath{#1 \mathrel{:} #2}}
+\newcommand{\hasKJ}[2]{\ensuremath{#1 \vdash \hasE{#2}{\mathrm{\kind}}}}
+\newcommand{\hasTJ}[5]{\ifthenelse{\isempty{#1}}%
+  {\ensuremath{#3 \vdash \hasE{#4}{#5}}}%
+  {\ensuremath{#1;#3 \vdash \hasE{#4}{#5}}}}
+\newcommand{\hasEJ}[6]{\ifthenelse{\isempty{#1}}%
+  {\ensuremath{#3; #4 \vdash \hasE{#5}{#6}}}%
+  {\ensuremath{#1; #3; #4 \vdash \hasE{#5}{#6}}}}
+\newcommand{\hasCEJ}[9]{\ensuremath{#6; #7; #8 \vdash #1 : #2; #3; #4%
+    \vdash #5 \rightsquigarrow #9}}
+\newcommand{\hasCJ}[7]{\ensuremath{\vdash #1 : \cdot; #2; #3 \vdash #4%
+    \rightsquigarrow \cdot; #5; #6 \vdash #7}}
+\newcommand{\equivJ}[6]{\ensuremath{#2; #3 \vdash #4 \sim #5 : #6}}
+\newcommand{\equivSubst}[4]{\ensuremath{#4 \vdash #1 \sim #2 : #3}}
+\newcommand{\step}[2]{\ensuremath{#1 \mapsto #2}}
+\newcommand{\steps}[2]{\ensuremath{#1 \mapsto^* #2}}
+\newcommand{\dec}[4][i]{\ensuremath{#2 \rhd^{#1} #3 : #4}}
+\newcommand{\valueJ}[1]{\ensuremath{#1\ \mathsf{value}}}
+\newcommand{\subKJ}[3]{\ifthenelse{\isempty{#1}}%
+{\ensuremath{{#2} \leq {#3}}}%
+{\ensuremath{{#1} \vdash {#2} \leq {#3}}}}
+
+% language
+\newcommand{\kind}{\ensuremath{\mathsf{kind}}}
+\newcommand{\later}{\ensuremath{{\blacktriangleright}}}
+\newcommand{\rec}[2]{\ensuremath{\mu #1.\, #2}}
+\newcommand{\fn}[2]{\ensuremath{#1 \to #2}}
+\newcommand{\tp}{\ensuremath{\mathsf{T}}}
+
+\newcommand{\ap}[2]{\ensuremath{#1\ #2}}
+\newcommand{\lam}[3]{\ensuremath{\lambda #1 {:} #2.\, #3}}
+\newcommand{\into}[1]{\ifthenelse{\isempty{#1}}%
+  {\ensuremath{\mathsf{in}}}%
+  {\ensuremath{\mathsf{in}\,#1}}}
+\newcommand{\out}[1]{\ifthenelse{\isempty{#1}}%
+  {\ensuremath{\mathsf{out}}}%
+  {\ensuremath{\mathsf{out}\,#1}}}
+\newcommand{\delay}[1]{\ifthenelse{\isempty{#1}}%
+  {\ensuremath{\mathsf{next}}}%
+  {\ensuremath{\mathsf{next}\,#1}}}
+\newcommand{\letdelay}[3]{\ensuremath{\mathsf{let\ next\ } #1 = #2 \mathsf{\ in\ } #3}}
+\newcommand{\all}[3]{\ensuremath{\forall #1 {:} #2.\, #3}}
+
+\newcommand{\Ap}[2]{\ensuremath{#1[#2]}}
+\newcommand{\Lam}[3]{\ensuremath{\Lambda #1 {:} #2.\, #3}}
+
+\newcommand{\zap}{\ensuremath{\circledast}}
+
+
+\title{The Next 700 Failed Step-Index-Free Logical Relations}
+\author{Daniel Gratzer}
+\date{\today}
+
+\begin{document}
+\begin{abstract}
+  An important question in programming languages is the study of
+  program equivalence. This is done typically with the construction of
+  a relation denotational model or a syntactic analogue, called a
+  logical relation. Logical relations have been shown to be an
+  effective tool for analyzing properties and lending formal weight to
+  ideas like data abstraction and information hiding. A central
+  difficulty with logical relations is their fragility; it has proven
+  to be a difficult challenge to scale logical relations to more
+  realistic languages. In this thesis, we discuss a number of methods
+  for the construction of a logical relation for a language with
+  general references. None of these methods are sufficient to
+  construct a logical relation without resorting to step-indexing,
+  demonstrating the difficulty of expressing the recursive structure
+  of higher-order references.
+\end{abstract}
+\maketitle
+
+In the study of programming languages a great number of important
+questions can be reduced to questions about the equality of
+programs. The verification of a compiler pass is nothing but a
+question of equality of the naive program and its optimized version,
+an optimized data structure may be shown to be correct relative to a
+much simpler reference solution, a type theory hinges on the
+construction of definitional equality and so on. Given the role that
+equality plays in programming languages, a great variety of
+mathematical tools have been developed to analyze the various notions
+of equality possible in a programming language.
+
+Broadly speaking, there are two classes of these tools. One may
+consider denotational approaches, where in the equality of programs is
+reduced to the question of the equality of normal mathematical
+objects. This line of study begins with Dana Scott's investigations of
+the lambda calculus~\citep{TODO-CITE-SCOTT}. These tools have been
+immensely effective when they may be applied but they are difficult to
+use. Complex programming languages often make use of extremely
+sophisticated mathematical objects and using the model requires
+understanding them. This has meant that denotational semantics is
+traditionally out of reach for the verification of programs by an
+average programmer or anyone besides a domain expert.
+
+On the other hand, there are syntactic approaches to equality. Some of
+these date back to the original study of the lambda calculus and its
+reduction properties. Syntactic tools tend to be simpler to use,
+relying only one elementary mathematics and an understanding of the
+syntax itself. For equality, the tool of choice when working
+syntactically is a logical relation~\citep{TODO-TAIT-AMAL}. Dating
+back to~\citet{TODO-TAIT} logical relations crucially define a
+type-indexed notion of equality. Logical relations have proven
+important for validating certain obviously desirable properties such
+as function extensionality. They have also given rise to a powerful
+theory of data abstraction called
+parametricity~\citep{TODO-REYNOLDS}.
+
+\input{secs/introduction}
+\input{secs/language}
+\input{secs/step-indexing}
+\input{secs/domains}
+\input{secs/handedness}
+\input{secs/guarded-recursion}
+\input{secs/conclusion}
+
+\bibliographystyle{plainnat}
+\bibliography{citations}
+\end{document}
