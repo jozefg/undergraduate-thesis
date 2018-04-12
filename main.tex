@@ -8,6 +8,9 @@
 \usepackage{xifthen}
 \usepackage{tikz-cd}
 
+% Formatting tools
+\newcommand{\declareJudgement}[1]{\framebox{$\displaystyle{}{#1}$}}
+
 % Theorems
 \newtheorem{thm}{Theorem}[section]
 \newtheorem{cor}[thm]{Corollary}
@@ -39,19 +42,17 @@
 % judgments
 \newcommand{\guardJ}[2]{\ensuremath{\text{$#1.\,#2$\ \textsf{guarded}}}}
 \newcommand{\hasE}[2]{\ensuremath{#1 \mathrel{:} #2}}
+\newcommand{\hasM}[2]{\ensuremath{#1 \mathrel{\div} #2}}
 \newcommand{\hasKJ}[2]{\ensuremath{#1 \vdash \hasE{#2}{\mathrm{\kind}}}}
-\newcommand{\hasTJ}[5]{\ifthenelse{\isempty{#1}}%
-  {\ensuremath{#3 \vdash \hasE{#4}{#5}}}%
-  {\ensuremath{#1;#3 \vdash \hasE{#4}{#5}}}}
-\newcommand{\hasEJ}[6]{\ifthenelse{\isempty{#1}}%
-  {\ensuremath{#3; #4 \vdash \hasE{#5}{#6}}}%
-  {\ensuremath{#1; #3; #4 \vdash \hasE{#5}{#6}}}}
-\newcommand{\hasCEJ}[9]{\ensuremath{#6; #7; #8 \vdash #1 : #2; #3; #4%
-    \vdash #5 \rightsquigarrow #9}}
-\newcommand{\hasCJ}[7]{\ensuremath{\vdash #1 : \cdot; #2; #3 \vdash #4%
-    \rightsquigarrow \cdot; #5; #6 \vdash #7}}
-\newcommand{\equivJ}[6]{\ensuremath{#2; #3 \vdash #4 \sim #5 : #6}}
-\newcommand{\equivSubst}[4]{\ensuremath{#4 \vdash #1 \sim #2 : #3}}
+\newcommand{\hasTJ}[4]{\ifthenelse{\isempty{#1}}%
+  {\ensuremath{#2 \vdash \hasE{#3}{#4}}}%
+  {\ensuremath{#1;#2 \vdash \hasE{#3}{#4}}}}
+\newcommand{\hasEJ}[5]{\ifthenelse{\isempty{#1}}%
+  {\ensuremath{#2; #3 \vdash \hasE{#4}{#5}}}%
+  {\ensuremath{#1; #2; #3 \vdash \hasE{#4}{#5}}}}
+\newcommand{\hasMJ}[4]{\ensuremath{#1; #2 \vdash \hasM{#3}{#4}}}
+\newcommand{\hasCEJ}[6]{\ensuremath{#3; #4 \vdash #1 : #2%
+    \vdash #5 \rightsquigarrow #6}}
 \newcommand{\step}[2]{\ensuremath{#1 \mapsto #2}}
 \newcommand{\steps}[2]{\ensuremath{#1 \mapsto^* #2}}
 \newcommand{\dec}[4][i]{\ensuremath{#2 \rhd^{#1} #3 : #4}}
@@ -67,6 +68,7 @@
 \newcommand{\fn}[2]{\ensuremath{#1 \to #2}}
 \newcommand{\tp}{\ensuremath{\mathsf{T}}}
 \newcommand{\unit}{\ensuremath{\mathsf{unit}}}
+\newcommand{\cmd}[1]{\ensuremath{\mathsf{cmd}(#1)}}
 
 \newcommand{\ap}[2]{\ensuremath{#1\ #2}}
 \newcommand{\lam}[3]{\ensuremath{\lambda #1 {:} #2.\, #3}}
@@ -85,6 +87,13 @@
 
 \newcommand{\Ap}[2]{\ensuremath{#1[#2]}}
 \newcommand{\Lam}[3]{\ensuremath{\Lambda #1 {:} #2.\, #3}}
+
+\newcommand{\LamNoKind}[2]{\ensuremath{\Lambda #1.\, #2}}
+\newcommand{\ret}[1]{\ensuremath{\mathsf{ret}(#1)}}
+\newcommand{\get}[1]{\ensuremath{\mathsf{get}[#1]}}
+\newcommand{\set}[2]{\ensuremath{\mathsf{set}[#1](#2)}}
+\newcommand{\dcl}[3]{\ensuremath{\mathsf{dcl}\ #1 := #2\ \mathsf{in}\ #3}}
+\newcommand{\bnd}[3]{\ensuremath{\mathsf{bnd}\ #1 \gets #2;\ #3}}
 
 \newcommand{\zap}{\ensuremath{\circledast}}
 

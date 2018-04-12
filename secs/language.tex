@@ -1,4 +1,124 @@
-\section{An ML-like Language with General References}
+\section{An ML-like Language with General References}\label{sec:language}
+
+In order to make the discussion of logical relations more concrete, a
+particular language is necessary. In this section we develop a core
+calculus suitable for studying the effects of general references on
+reasoning.
+
+The language under consideration here is heavily influenced by the
+Modernized Algol discussed by Harper~\citep{TODO:PFPL}. It features a
+syntactic separation between commands and expressions. Expressions are
+characterized by being unable to depend on in any way on the
+heap. Commands may modify the heap using assignables, a mutable
+``variable'' that makes clear the binding structure (nominal rather
+than substitutive). A crucial component of the system is a modality
+for internalizing and suspending commands to treat them as
+expressions. Arguably this language is heavier-weight than the ML-like
+languages usually discussed which just allow references in any
+location. It does confer that advantage that handling state is now a
+question of defining the logical action of the command modality and
+its complexity is not littered throughout the full logical
+relation. Indeed, the definitions of the logical relation at $\to$ or
+$\forall$ are almost completely unchanged.
+
+The syntax of our language has three sorts: commands, expressions, and
+types defined by the following grammar.
+\[
+  \begin{array}{lcl}
+    \tau & ::= & \alpha \mid \fn{\tau}{\tau} \mid \allNoKind{\alpha}{\tau}
+    \mid \cmd{\tau}\\
+    c & ::= & \ret{e} \mid \get{\alpha} \mid \set{\alpha}{e} \\
+      & \mid & \dcl{\alpha}{e}{c} \mid \bnd{x}{e}{c}\\
+    e & ::= & x \mid \ap{e}{e} \mid \lam{x}{\tau}{e} \mid
+              \LamNoKind{\alpha}{e} \mid \cmd{e}
+  \end{array}
+\]
+Only one point of this syntax must be clarified, which is the
+unfortunate coincidence of $\alpha$s. In an attempt to maintain
+consistency with the standard literature on System F and
+Harper~\citep{TODO:PFPL} $\alpha$ here refers either to an assignable
+(a symbol) or a type variable. Crucially, assignables are \emph{not}
+variables. Assignables are bound by the operators of our language and
+they do $\alpha$-vary as a variable might but they may not be
+substituted for. This justifies comparing bound symbols for equality;
+they are placeholders and contain an intrinsic notion of identity in
+the form of a binding site. It is nonsensical to talk about a rule
+like the following.
+\[
+  \inferrule{ }{\step{\dcl{\alpha}{v}{c}}{[v/\alpha]c}}
+\]
+In some sense, this is similar to the confusion that many programmers
+have when discussing languages with variables: C-like languages do not
+permit substitution because they do not possess variables but rather
+assignables. In C a rule like the above is clearly false and leads to
+statements such as \verb+1 = 2+. One can understand the difference
+between $\bnd{x}{e}{c}$ and $\dcl{x}{e}{c}$ as the difference between
+\emph{variables}, defined through substitution, and \emph{assignables}
+which are defined through binding identity. The former is like a
+let-binding while the latter is closer to a declaration in C. In our
+language this separation exists which is why the operators for reading
+and writing a mutable cell are indexed by symbol rather than taking an
+arbitrary term. There is much to be said on the subject of symbols
+and, more generally, nominal binding but it is sadly out-of-scope for
+this discussion. The interested reader is referred
+to~\citep{TODO-NOMINAL-STUFF}.
+
+The static semantics of the language are divided into three judgments,
+the first of which is the judgment ensuring a type is a
+well-formed. Informally, a type is well formed in a context $\Delta$
+if $\Delta$ contains all the free variables of the type.
+\begin{mathpar}
+  \declareJudgement{\hasTJ{}{\Delta}{\tau}{\tp}}\\
+  \inferrule{
+    \alpha \in \Delta
+  }{\hasTJ{}{\Delta}{\alpha}{\tp}}\and
+  \inferrule{
+    \hasTJ{}{\Delta}{\tau_1}{\tp}\\
+    \hasTJ{}{\Delta}{\tau_2}{\tp}
+  }{\hasTJ{}{\Delta}{\fn{\tau_1}{\tau_2}}{\tp}}\and
+  \inferrule{
+    \hasTJ{}{\Delta, \alpha}{\tau}{\tp}
+  }{\hasTJ{}{\Delta}{\allNoKind{\alpha}{\tau}}{\tp}}\and
+  \inferrule{
+    \hasTJ{}{\Delta}{\tau}{\tp}
+  }{\hasTJ{}{\Delta}{\cmd{\tau}}{\tp}}
+\end{mathpar}
+In order to explain the statics of expressions and commands two
+judgments are necessary and they must depend on each other. This
+mutual dependence is a result of the $\cmd{-}$ modality which
+internalizes the command judgment. First the expression judgment is
+given, it is completely standard except that it must also be fibered
+over a specification of the available assignables. This extra context
+is necessary in order to make sense of the binding done in
+$\mathsf{dcl}$.
+\begin{mathpar}
+  \declareJudgement{\hasEJ{}{\Delta}{\Gamma}{e}{\tau}}\\
+  \inferrule{
+    x : \tau \in \Gamma
+  }{\hasEJ{}{\Delta}{\Gamma}{x}{\tau}}\and
+  \inferrule{
+    \hasEJ{}{\Delta}{\Gamma, x : \tau_1}{e}{\tau_2}
+  }{\hasEJ{}{\Delta}{\Gamma}{\lam{x}{\tau_1}{e}}{\fn{\tau_1}{\tau_2}}}\and
+  \inferrule{
+    \hasEJ{}{\Delta}{\Gamma}{e_1}{\fn{\tau_1}{\tau_2}}\\
+    \hasEJ{}{\Delta}{\Gamma}{e_2}{\tau_1}\\
+  }{\hasEJ{}{\Delta}{\Gamma}{\ap{e_1}{e_2}}{\tau_2}}\and
+  \inferrule{
+    \hasEJ{}{\Delta, \alpha}{\Gamma}{e}{\tau}
+  }{\hasEJ{}{\Delta}{\Gamma}{\LamNoKind{\alpha}{e}}{\allNoKind{\alpha}{\tau}}}\and
+  \inferrule{
+    \hasEJ{}{\Delta}{\Gamma}{e}{\allNoKind{\alpha}{\tau_1}}\\
+    \hasTJ{}{\Delta}{\tau_2}{\tp}
+  }{\hasEJ{}{\Delta}{\Gamma}{\Ap{e}{\tau_2}}{[\tau_2/\alpha]\tau_1}}\and
+  \inferrule{
+    \hasMJ{\Delta}{\Gamma}{m}{\tau}
+  }{\hasEJ{}{\Delta}{\Gamma}{e}{\tau}}
+\end{mathpar}
+These are the rules of System F with the exception of the final
+one. This makes use of the judgment for commands, where
+$\hasM{m}{\tau}$ signifies that $m$ is a command which (when executed
+on the appropriate heap) will run to a $\ret{v}$ for some
+$\hasE{v}{\tau}$.
 
 %%% Local Variables:
 %%% mode: latex
