@@ -92,33 +92,57 @@ over a specification of the available assignables. This extra context
 is necessary in order to make sense of the binding done in
 $\mathsf{dcl}$.
 \begin{mathpar}
-  \declareJudgement{\hasEJ{}{\Delta}{\Gamma}{e}{\tau}}\\
+  \declareJudgement{\hasESigJ{\Delta}{\Gamma}{\Sigma}{e}{\tau}}\\
   \inferrule{
     x : \tau \in \Gamma
-  }{\hasEJ{}{\Delta}{\Gamma}{x}{\tau}}\and
+  }{\hasESigJ{\Delta}{\Gamma}{\Sigma}{x}{\tau}}\and
   \inferrule{
-    \hasEJ{}{\Delta}{\Gamma, x : \tau_1}{e}{\tau_2}
-  }{\hasEJ{}{\Delta}{\Gamma}{\lam{x}{\tau_1}{e}}{\fn{\tau_1}{\tau_2}}}\and
+    \hasESigJ{\Delta}{\Gamma, x : \tau_1}{\Sigma}{e}{\tau_2}
+  }{\hasESigJ{\Delta}{\Gamma}{\Sigma}{\lam{x}{\tau_1}{e}}{\fn{\tau_1}{\tau_2}}}\and
   \inferrule{
-    \hasEJ{}{\Delta}{\Gamma}{e_1}{\fn{\tau_1}{\tau_2}}\\
-    \hasEJ{}{\Delta}{\Gamma}{e_2}{\tau_1}\\
-  }{\hasEJ{}{\Delta}{\Gamma}{\ap{e_1}{e_2}}{\tau_2}}\and
+    \hasESigJ{\Delta}{\Gamma}{\Sigma}{e_1}{\fn{\tau_1}{\tau_2}}\\
+    \hasESigJ{\Delta}{\Gamma}{\Sigma}{e_2}{\tau_1}\\
+  }{\hasESigJ{\Delta}{\Gamma}{\Sigma}{\ap{e_1}{e_2}}{\tau_2}}\and
   \inferrule{
-    \hasEJ{}{\Delta, \alpha}{\Gamma}{e}{\tau}
-  }{\hasEJ{}{\Delta}{\Gamma}{\LamNoKind{\alpha}{e}}{\allNoKind{\alpha}{\tau}}}\and
+    \hasESigJ{\Delta, \alpha}{\Gamma}{\Sigma}{e}{\tau}
+  }{\hasESigJ{\Delta}{\Gamma}{\Sigma}{\LamNoKind{\alpha}{e}}{\allNoKind{\alpha}{\tau}}}\and
   \inferrule{
-    \hasEJ{}{\Delta}{\Gamma}{e}{\allNoKind{\alpha}{\tau_1}}\\
+    \hasESigJ{\Delta}{\Gamma}{\Sigma}{e}{\allNoKind{\alpha}{\tau_1}}\\
     \hasTJ{}{\Delta}{\tau_2}{\tp}
-  }{\hasEJ{}{\Delta}{\Gamma}{\Ap{e}{\tau_2}}{[\tau_2/\alpha]\tau_1}}\and
+  }{\hasESigJ{\Delta}{\Gamma}{\Sigma}{\Ap{e}{\tau_2}}{[\tau_2/\alpha]\tau_1}}\and
   \inferrule{
-    \hasMJ{\Delta}{\Gamma}{m}{\tau}
-  }{\hasEJ{}{\Delta}{\Gamma}{e}{\tau}}
+    \hasMJ{\Delta}{\Gamma}{\Sigma}{m}{\tau}
+  }{\hasESigJ{\Delta}{\Gamma}{\Sigma}{e}{\tau}}
 \end{mathpar}
 These are the rules of System F with the exception of the final
 one. This makes use of the judgment for commands, where
 $\hasM{m}{\tau}$ signifies that $m$ is a command which (when executed
 on the appropriate heap) will run to a $\ret{v}$ for some
-$\hasE{v}{\tau}$.
+$\hasE{v}{\tau}$. It is worth noting that $\Sigma$ in this judgment is
+unimportant except in this rule as well. It is only necessary to track
+the available assignables because without this information it is not
+possible to determine if a command is well-typed. The rules for
+commands are as follows.
+\begin{mathpar}
+  \inferrule{
+    \hasESigJ{\Delta}{\Gamma}{\Sigma}{e}{\tau}
+  }{\hasMJ{\Delta}{\Gamma}{\Sigma}{\ret{e}}{\tau}}\and
+  \inferrule{
+    \alpha \div \tau \in \Sigma
+  }{\hasMJ{\Delta}{\Gamma}{\Sigma}{\get{\alpha}}{\tau}}\and
+  \inferrule{
+    \alpha \div \tau \in \Sigma\\
+    \hasESigJ{\Delta}{\Gamma}{\Sigma}{e}{\tau}
+  }{\hasMJ{\Delta}{\Gamma}{\Sigma}{\set{\alpha}{e}}{\tau}}\and
+  \inferrule{
+    \hasESigJ{\Delta}{\Gamma}{\Sigma}{e}{\tau_2}\\
+    \hasMJ{\Delta}{\Gamma}{\Sigma, \alpha : \tau_2}{m}{\tau_1}
+  }{\hasMJ{\Delta}{\Gamma}{\Sigma}{\dcl{\alpha}{e}{m}}{\tau_1}}\and
+  \inferrule{
+    \hasESigJ{\Delta}{\Gamma}{\Sigma}{e}{\cmd{\tau_1}}\\
+    \hasMJ{\Delta}{\Gamma, x : \tau_1}{\Sigma}{m}{\tau_2}
+  }{\hasMJ{\Delta}{\Gamma}{\Sigma}{\bnd{x}{e}{m}}{\tau_2}}\and
+\end{mathpar}
 
 %%% Local Variables:
 %%% mode: latex
