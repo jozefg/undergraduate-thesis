@@ -1,5 +1,65 @@
 \section{A Step-Indexed Logical Relation}
 
+Before diving into the various approaches for constructing a logical
+relation without step-indexing, it is well worth the time to see how
+a logical relation can be done with it. The purpose of this section is
+to sketch the complication intrinsic to any logical relation and show
+how step-indexing obliterates them, though at a high cost.
+
+Our logical to begin with a mapping from types to semantic types
+(merely sets of terms). In order to handle impredicative polymorphism
+Girard's method~\citep{Girard:71,Girard:72}, see \citet{TODO-PFPL} for
+a comprehensive explanation of the technique. This means that our
+logical relation is of the form
+\[
+  \den{-}_{-} : \types \to \typesEnv \to \pow{\term \times \term}
+\]
+
+The central challenge is of course the meaning of $\den{\cmd{\tau}}$:
+the action of the logical relation at commands. At an intuitive level,
+for two commands are rather like (partial) functions: they map heaps to heaps
+and a return value. Drawing inspiration from how logical relations for
+functions are defined, we might write the following for the definition
+the logical relation.
+\begin{align*}
+  \den{\cmd{\tau}}_\eta& \triangleq \{(e_1, e_2) \mid\\
+  &\exists m_1, m_2.\ \steps{e_i}{\cmd{m_i}} \land{}\\
+  &\forall h_1 \sim h_2.
+  \ (m_1, h_1) \Downarrow \iff (m_2, h_2) \Downarrow \land{}\\
+  &\quad \forall v_1, h_1', v_2, h_2'.
+  \ (\stepsM{m_1}{h_1}{\ret{v_1}}{h_1'} \land \stepsM{m_2}{h_2}{\ret{v_2}}{h_2'})\\
+  &\qquad \implies (h_1' \sim h_2' \land (v_1, v_2) \in \den{\tau}_\eta)
+\end{align*}
+Here left undefined is the definition of $\sim$ between two
+heaps. This is in fact a major issue because there appears to be no
+good way to identify when two heaps ought to be equal. The first issue
+here is that semantic equality of terms (be it contextual or logical)
+is type-indexed. This means that in order to compare heaps pointwise
+for equality (a reasonable though still wrong idea) requires that we
+at least know the types of the entries. Furthermore, we shouldn't
+compare these heaps for equality at all locations necessarily, two
+heaps should only need to agree on the cells that the programs are
+going to use. This is a significant concept if we want to prove
+programs to be equivalent which do not use the heap identically. For
+instance, consider the two programs:
+\[
+  \dcl{\alpha}{1}{\ret{\cmd{\get{\alpha}}}} \qquad\qquad
+  \ret{\cmd{\ret{1}}}
+\]
+These are contextually equivalent (the assignable of the first program
+is hidden from external manipulation) and yet they allocate in
+different ways. So $\sim$ must not be \emph{merely} pointwise equality
+in the most general case. Additionally, proving that these two
+programs are equal requires showing that $h_1 ~ h_2$ if and only if
+$h_1(\alpha) = 1$. That is, this program doesn't merely require that
+heap cells contain values of some syntactic type, but they may need to
+belong to an arbitrary semantic type. In order to reconcile these
+constraints, one thing is clear: the logical relation must somehow
+vary depending on the state that the heap is supposed to be in. It is
+simply not the case that programs that are equivalent in a heap where
+no cells are required to exist if and only if they're equivalent in a
+heap where one cell is required to exist.
+
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "../main"
