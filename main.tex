@@ -26,14 +26,16 @@
 \newcommand{\cbult}{\ensuremath{\mathrm{CBUlt}}}
 \newcommand{\cle}{\ensuremath{\lesssim}}
 \newcommand{\ceq}{\ensuremath{\cong}}
-\newcommand{\relR}{\ensuremath{\mathrel{R}}}
-\newcommand{\relS}{\ensuremath{\mathrel{S}}}
+\newcommand{\relR}{\ensuremath{\mathrel{\mathcal{R}}}}
+\newcommand{\relS}{\ensuremath{\mathrel{\mathcal{S}}}}
 \newcommand{\AND}{\ensuremath{\mathrel{\wedge}}}
 \newcommand{\OR}{\ensuremath{\mathrel{\vee}}}
 \newcommand{\op}{\ensuremath{\mathsf{op}}}
 \newcommand{\den}[1]{\ensuremath{\llbracket #1 \rrbracket}}
 \newcommand{\defs}{\ensuremath{\mathrel{\triangleq}}}
 \newcommand{\bifix}{\ensuremath{\mathsf{bifix}}}
+\newcommand{\disjoint}{\ensuremath{\mathop{\#}}}
+\newcommand{\hole}{\ensuremath{\square}}
 
 % Sets
 \newcommand{\term}{\ensuremath{\mathit{Term}}}
@@ -52,15 +54,23 @@
   {\ensuremath{#1; #2; #3 \vdash \hasE{#4}{#5}}}}
 \newcommand{\hasESigJ}[5]{\ensuremath{#1; #2 \vdash_{#3} \hasE{#4}{#5}}}
 \newcommand{\hasMJ}[5]{\ensuremath{#1; #2 \vdash_{#3} \hasM{#4}{#5}}}
-\newcommand{\hasCEJ}[6]{\ensuremath{#3; #4 \vdash #1 : #2%
-    \vdash #5 \rightsquigarrow #6}}
-\newcommand{\step}[2]{\ensuremath{#1 \mapsto #2}}
-\newcommand{\steps}[2]{\ensuremath{#1 \mapsto^* #2}}
-\newcommand{\dec}[4][i]{\ensuremath{#2 \rhd^{#1} #3 : #4}}
-\newcommand{\valueJ}[1]{\ensuremath{#1\ \mathsf{value}}}
+\newcommand{\hasCEJ}[9]{\ensuremath{#5 : (#1; #2 \vdash_{#3} #4) \rightsquigarrow (#6; #7 \vdash_{#8} #9)}}
+
 \newcommand{\subKJ}[3]{\ifthenelse{\isempty{#1}}%
 {\ensuremath{{#2} \leq {#3}}}%
 {\ensuremath{{#1} \vdash {#2} \leq {#3}}}}
+
+\newcommand{\equivESigJ}[6]{\ensuremath{#1; #2 \vdash_{#3} \hasE{#4 \cong #5}{#6}}}
+\newcommand{\equivMJ}[6]{\ensuremath{#1; #2 \vdash_{#3} \hasM{#4 \cong #5}{#6}}}
+
+\newcommand{\step}[2]{\ensuremath{#1 \mapsto #2}}
+\newcommand{\steps}[2]{\ensuremath{#1 \mapsto^* #2}}
+\newcommand{\stepM}[4]{\ensuremath{(#1, #2) \mapsto (#3, #4)}}
+\newcommand{\stepsM}[4]{\ensuremath{(#1, #2) \mapsto^* (#3, #4)}}
+
+\newcommand{\dec}[4][i]{\ensuremath{#2 \rhd^{#1} #3 : #4}}
+\newcommand{\valueJ}[1]{\ensuremath{#1\ \mathsf{value}}}
+\newcommand{\finalJ}[2]{\ensuremath{(#1, #2)\ \mathsf{final}}}
 
 % language
 \newcommand{\kind}{\ensuremath{\mathsf{kind}}}
