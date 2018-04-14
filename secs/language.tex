@@ -150,19 +150,25 @@ using traditional small step
 semantics~\citep{TODO-SMALL-STEP}. Commands in this framework are
 represented as a pair $(m, h)$, a command and the heap it is running
 on, and there is another stepping relation defined between these
-configurations. In \citet{TODO-PFPL} the binding structure of symbols is
-preserved in the operational semantics so that a running command is
+configurations. In \citet{TODO-PFPL} the binding structure of symbols
+is preserved in the operational semantics so that a running command is
 represented as a configuration $\nu \Sigma.\ (m, h)$ where $\nu$ is a
 collection of symbols bound in both $m$ and $h$. The advantage of this
 presentation is that it eliminates the choice of how to pick a fresh
 symbol during allocation. In the more traditional set up the stepping
 relation nondeterministic, allowing for any fresh location to be
 chosen. This nondeterminism complicates many metatheoretic properties
-and obscures what is really happening. For the problems discussed in
-this thesis, however, this advantage is not significant and it proves
-to be (while not impossible) onerous to convert from semantic objects
-to $\Sigma$ when running programs. This means for expository purposes
-the traditional operational semantics are chosen.
+and obscures what is really happening since the language is
+fundamentally not nondeterministic! The formal presentation has just
+obscured the precise meaning of a construct and approximated it with
+nondeterminism. For the problems discussed in this thesis, however,
+this advantage is not significant and it proves to be (while not
+impossible) onerous to convert from semantic objects to $\Sigma$ when
+running programs. Indeed a slightly different presentation from Harper
+would be required in any case since programs will be run on heaps
+containing locations varying over not syntactic but semantic
+types. This means for expository purposes the traditional operational
+semantics are chosen.
 \begin{mathpar}
   \declareJudgement{\valueJ{v}}\\
   \inferrule{ }{\valueJ{\lam{x}{\tau}{e}}}\and

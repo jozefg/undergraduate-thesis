@@ -19,6 +19,7 @@
 \newtheorem{defn}[thm]{Definition}
 
 % Math stuffs
+\newcommand{\pto}[1]{\ensuremath{\rightharpoonup}}
 \newcommand{\pow}[1]{\ensuremath{\mathcal{P}(#1)}}
 \newcommand{\card}[1]{\ensuremath{\left\vert #1 \right\vert}}
 \newcommand{\real}{\ensuremath{\mathbb{R}}}
@@ -38,8 +39,10 @@
 \newcommand{\hole}{\ensuremath{\square}}
 
 % Sets
-\newcommand{\term}{\ensuremath{\mathit{Term}}}
-\newcommand{\urel}{\ensuremath{\mathit{URel}}}
+\newcommand{\types}{\ensuremath{\mathrm{Type}}}
+\newcommand{\typesEnv}{\ensuremath{\mathrm{TypeEnv}}}
+\newcommand{\term}{\ensuremath{\mathrm{Term}}}
+\newcommand{\urel}{\ensuremath{\mathrm{URel}}}
 
 % judgments
 \newcommand{\guardJ}[2]{\ensuremath{\text{$#1.\,#2$\ \textsf{guarded}}}}
