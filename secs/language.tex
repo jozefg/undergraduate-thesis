@@ -272,8 +272,9 @@ our language.
 \begin{defn}\label{def:language:kleene}
   To programs are said to be Kleene equal at $\Sigma$, written
   $e_1 \simeq_\Sigma e_2$ if for all $h : \Sigma$ and $m_1, m_2$ so
-  that $\steps{e_i}{m_i}$ then $(m_1, h) \Downarrow$ if and only if
-  $(m_2, h) \Downarrow$.
+  that $\steps{e_i}{m_i}$ then $(m_1, h) \Downarrow$ and
+  $(m_2, h) \Downarrow$ or $(m_1, h) \Uparrow$ and
+  $(m_2, h) \Uparrow$.
 \end{defn}
 This definition of Kleene equality is slightly non-standard in that it
 requires that the expressions are commands and that it only checks if
@@ -281,10 +282,11 @@ the coterminate, not that they terminate at the same value. This
 deviation is due to the fact that there is no base observable type in
 this language and so there is no observation to by made besides
 termination. Furthermore, it is not hard to prove that expressions
-always terminate (they behave as System F with a new base
-type) so \emph{no} interesting observations may be made of just
-expressions. Finally, we can lift Kleene equality to a definition of
-contextual equivalence.
+always terminate (they behave as System F with a new base type) so
+\emph{no} interesting observations may be made of just expressions. We
+will also make use of the notation $(m_1, h_1) \simeq (m_2, h_2)$ to
+signify just the final part of this definition. Finally, we can lift
+Kleene equality to a definition of contextual equivalence.
 \begin{defn}\label{def:language:cxt}
   To programs are contextually equivalent,
   $\equivESigJ{\Delta}{\Gamma}{\Sigma}{e_1}{e_2}{\tau}$ if for all
