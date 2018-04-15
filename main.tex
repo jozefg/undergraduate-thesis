@@ -7,10 +7,11 @@
 \usepackage{stmaryrd}
 \usepackage{xifthen}
 \usepackage{tikz-cd}
+\usepackage{xcolor}
 
 % Formatting tools
 \newcommand{\declareJudgement}[1]{\framebox{$\displaystyle{}{#1}$}}
-
+\newcommand{\different}[1]{{\color{red} #1}}
 % Theorems
 \newtheorem{thm}{Theorem}[section]
 \newtheorem{cor}[thm]{Corollary}
@@ -19,8 +20,11 @@
 \newtheorem{defn}[thm]{Definition}
 
 % Math stuffs
+\newcommand{\reach}{\ensuremath{\mathrel{\sqsubseteq}}}
+\newcommand{\breach}{\ensuremath{\mathrel{\sqsupseteq}}}
 \newcommand{\pto}[1]{\ensuremath{\rightharpoonup}}
 \newcommand{\pow}[1]{\ensuremath{\mathcal{P}(#1)}}
+\newcommand{\powfin}[1]{\ensuremath{\mathcal{P_{\mathrm{fin}}}(#1)}}
 \newcommand{\card}[1]{\ensuremath{\left\vert #1 \right\vert}}
 \newcommand{\real}{\ensuremath{\mathbb{R}}}
 \newcommand{\nat}{\ensuremath{\mathbb{N}}}
@@ -38,7 +42,11 @@
 \newcommand{\disjoint}{\ensuremath{\mathop{\#}}}
 \newcommand{\hole}{\ensuremath{\square}}
 
+\DeclareMathOperator{\dom}{Dom}
+
 % Sets
+\newcommand{\worlds}{\ensuremath{\mathrm{World}}}
+\newcommand{\assignables}{\ensuremath{\mathrm{Assignable}}}
 \newcommand{\types}{\ensuremath{\mathrm{Type}}}
 \newcommand{\typesEnv}{\ensuremath{\mathrm{TypeEnv}}}
 \newcommand{\term}{\ensuremath{\mathrm{Term}}}
