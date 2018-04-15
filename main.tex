@@ -17,12 +17,21 @@
 \newtheorem{cor}[thm]{Corollary}
 \newtheorem{lem}[thm]{Lemma}
 \newtheorem{remark}[thm]{Remark}
+\newtheorem{example}[thm]{Example}
 \newtheorem{defn}[thm]{Definition}
+
+% Categories stuff
+\newcommand{\Ccat}{\ensuremath{\mathbb{C}}}
+\newcommand{\Dcat}{\ensuremath{\mathbb{D}}}
+\newcommand{\op}[1]{\ensuremath{#1^{\mathsf{op}}}}
+\newcommand{\SET}{\ensuremath{\mathbf{Set}}}
+\newcommand{\presheaves}[1]{\ensuremath{\widehat{#1}}}
 
 % Math stuffs
 \newcommand{\reach}{\ensuremath{\mathrel{\sqsubseteq}}}
 \newcommand{\breach}{\ensuremath{\mathrel{\sqsupseteq}}}
-\newcommand{\pto}[1]{\ensuremath{\rightharpoonup}}
+\newcommand{\mto}{\ensuremath{\overset{\mathsf{mon}}{\to}}}
+\newcommand{\pto}{\ensuremath{\rightharpoonup}}
 \newcommand{\pow}[1]{\ensuremath{\mathcal{P}(#1)}}
 \newcommand{\powfin}[1]{\ensuremath{\mathcal{P_{\mathrm{fin}}}(#1)}}
 \newcommand{\card}[1]{\ensuremath{\left\vert #1 \right\vert}}
@@ -35,7 +44,6 @@
 \newcommand{\relS}{\ensuremath{\mathrel{\mathcal{S}}}}
 \newcommand{\AND}{\ensuremath{\mathrel{\wedge}}}
 \newcommand{\OR}{\ensuremath{\mathrel{\vee}}}
-\newcommand{\op}{\ensuremath{\mathsf{op}}}
 \newcommand{\den}[1]{\ensuremath{\llbracket #1 \rrbracket}}
 \newcommand{\defs}{\ensuremath{\mathrel{\triangleq}}}
 \newcommand{\bifix}{\ensuremath{\mathsf{bifix}}}
@@ -47,6 +55,8 @@
 % Sets
 \newcommand{\worlds}{\ensuremath{\mathrm{World}}}
 \newcommand{\assignables}{\ensuremath{\mathrm{Assignable}}}
+\newcommand{\nrel}[1]{\ensuremath{\mathbb{R}_{#1}}}
+\newcommand{\semtypes}{\ensuremath{\mathbb{T}}}
 \newcommand{\types}{\ensuremath{\mathrm{Type}}}
 \newcommand{\typesEnv}{\ensuremath{\mathrm{TypeEnv}}}
 \newcommand{\term}{\ensuremath{\mathrm{Term}}}
@@ -100,9 +110,8 @@
 \newcommand{\out}[1]{\ifthenelse{\isempty{#1}}%
   {\ensuremath{\mathsf{out}}}%
   {\ensuremath{\mathsf{out}\,#1}}}
-\newcommand{\delay}[1]{\ifthenelse{\isempty{#1}}%
-  {\ensuremath{\mathsf{next}}}%
-  {\ensuremath{\mathsf{next}\,#1}}}
+\newcommand{\delay}{\mathsf{next}}
+\newcommand{\fix}{\mathsf{fix}}
 \newcommand{\letdelay}[3]{\ensuremath{\mathsf{let\ next\ } #1 = #2 \mathsf{\ in\ } #3}}
 \newcommand{\all}[3]{\ensuremath{\forall #1 {:} #2.\, #3}}
 \newcommand{\allNoKind}[2]{\ensuremath{\forall #1.\, #2}}

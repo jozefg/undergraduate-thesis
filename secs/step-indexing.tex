@@ -190,6 +190,126 @@ This is where step-indexing enters the picture. Step-indexing after
 all was introduced to break precisely these sort of circularities and
 ``solve'' recursive equations up to an approximation.
 
+With step-indexing, the space of semantic types becomes indexed by
+natural numbers and we will likewise index the world by these same
+natural numbers. The idea is that a world at stage $n$ maps to
+assignables to semantic types which only vary at the previous $n - 1$
+stages, past $n - 1$ they are simply constant. The issue is that this
+approach requires a number of complex definitions which obscure the
+underlying intent: to solve this recursive equation.
+
+Instead of slogging through the classical step-indexed definitions, we
+will make use of a more modern categorical approach. Instead of
+working with sets, from the beginning we will work with sets varying
+over natural numbers: presheaves over $\omega$.
+\begin{defn}
+  A presheaf over a category $\Ccat$ is a functor from $\op{\Ccat}$ to
+  $\SET$. Presheaves form a category with morphisms being natural
+  transformations. This category is written $\presheaves{\Ccat}$.
+\end{defn}
+\begin{example}
+  A presheaf over $\omega$ is a family of sets $(X_i)_{i \in \nat}$
+  with a map $r_n : X_{n + 1} \to X_n$. A map between presheaves is
+  then a family of maps $f_n : X_n \to Y_n$ so that the following
+  commutes for all $n$.
+  \[
+    \begin{tikzcd}
+      X_{n + 1} \ar[r, "f_{n + 1}"] \ar[d, swap, "r_n"] & Y_{n + 1} \ar[d, "r_n"]\\
+      X_n \ar[r, swap, "f_n"] & Y_n
+    \end{tikzcd}
+  \]
+\end{example}
+Rather than working directly with sets then, we can instead work with
+presheaves synthetically. For instance, we can define the exponential
+of two presheaves rather than mucking about to create an implication
+which interacts properly with the step.
+\begin{lem}
+  The (co)limit (a generalized version of products and sums) of
+  presheaves is determined pointwise.
+\end{lem}
+The above theorem tells us, for instance, that if we want to form the
+product of two presheaves, $X$ and $Y$, over $\omega$, at time $n$ it's just the
+product of the $X(n)$ and $Y(n)$. More generally, this lemma gives a
+wide-variety of ways to construct complex presheaves from simple ones
+without ever having to deal with the step manually. The main missing
+element is the ability to form exponentials, the categorical analog of
+functions. For presheaves these are slightly more complicated since
+the function must respect the indexing structure.
+\begin{lem}
+  Given two presheaves $X, Y : \presheaves{\Ccat}$, the exponential
+  between them is
+  \[
+    (Y^X)(c) \triangleq \hom(X \times y(c), Y)
+  \]
+  where $y$ is the Yoneda embedding, defined by the following.
+  \[
+    y(c) = hom_\Ccat(-, c)
+  \]
+\end{lem}
+This definition may seem abstract but it is, importantly,
+monotone and so determines a valid presheaf. The real power of this
+approach is that \emph{it does not matter} that this definition is
+complex. The point is that this definition determines a function of
+presheaves in that it contains elements we can apply and only elements
+we can apply and beyond that its construction is entirely
+irrelevant. The categorical methodology of only caring about how an
+object relates through morphisms to the rest of the category is
+designed to let us avoid having to think too hard about any precise
+construction of an object. % TASTE IT.
+
+The constructions so far have given us a wide variety of constructible
+presheaves but nothing thus far has increased our expressive power of
+what we had in $\SET$. For that we need the ability to solve certain
+recursive equations. In fact, it will turn out that we can solve
+\emph{guarded} domain equations in $\presheaves{\omega}$. In order to
+see this, first let us define a functor on $\presheaves{\omega}$.
+\begin{defn}
+  The later functor,
+  $\later : \presheaves{\omega} \to \presheaves{\omega}$, is defined
+  on objects as follows.
+  \begin{align*}
+    (\later X)(n + 1) &= X(n)\\
+    (\later X)(0) &= \{\star\}
+  \end{align*}
+  This family of sets is a presheaf in the obvious way:
+  $r_0 = \lambda x.\ \star$ and $r_{n + 1}$ is the $r_n$ of $X$. The
+  action on morphisms is as follows.
+  \begin{align*}
+    (\later f)(n + 1) &= f_n\\
+    (\later f)(0) &= \lambda x.\ \star
+  \end{align*}
+
+  The later functor comes equipped with a natural transformation
+  $\delay : 1 \to \later$. Explicitly, this means $\delay$ is a family
+  of maps $\delay_X : X \to \later X$ so that
+  $\delay_Y \circ f = f \circ \delay_X$ for any $f : X \to Y$.
+\end{defn}
+The later modality is the logical essence of step-indexing. The key
+idea of step-indexing, after all, is not merely that it suffices to
+ensure that two programs are related for all steps in order to
+conclude that they're related. The second, subtler, key idea is that
+in order for two programs to be related for $n$ steps, a subcomponent
+of these programs needs to be related for only $n - 1$ steps. If this
+was not the case, then it would never be possible to decrement the
+step-index and the exercise would have been largely moot. The later
+modality internalizes the idea of ``$n - 1$ steps'' and so it lets us
+talk about (uniformly) constructing an element at stage $n$ from an
+element at stage $n - 1$. The $\delay$ operation even crystallizes the
+monotonicity of the logical relation: if we have an element at stage
+$n$ we can always construct one at stage $n - 1$.
+
+A crucial point about using natural numbers for step-indexing is that
+natural numbers are well-founded. There's no way to pick a natural
+number that we can decrement forever. This justifies reasoning by
+induction on the natural numbers. In particular, it justifies
+constructing an object at any stage provided we can take a
+construction of it at stage $n - 1$ and construct it at stage
+$n$. This principle may be expressed with the later modality: it's
+precisely the existence of a family of morphisms:
+\[
+  \fix_A : A^{\later A} \to A
+\]
+
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "../main"
