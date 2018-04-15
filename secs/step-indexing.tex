@@ -295,7 +295,7 @@ step-index and the exercise would have been largely moot. The later
 modality internalizes the idea of ``$n - 1$ steps'' and so it lets us
 talk about (uniformly) constructing an element at stage $n$ from an
 element at stage $n - 1$. The $\delay$ operation even crystallizes the
-monotonicity of the logical relation: if we have an element at stage
+monotonously of the logical relation: if we have an element at stage
 $n$ we can always construct one at stage $n - 1$.
 
 A crucial point about using natural numbers for step-indexing is that
@@ -309,6 +309,69 @@ precisely the existence of a family of morphisms:
 \[
   \fix_A : A^{\later A} \to A
 \]
+These morphisms allow us to take a particular sort of fixed-point at
+any level of maps $\later A \to A$. These morphisms belong to the
+class of contractive morphisms: morphisms $X \to Y$ that can be
+factored as $X \to \later X \to Y$. In particular, suppose we have
+some $f : B \times \later A \to A$. Then the following equality holds:
+\[
+  \fix_A \circ \transpose{f} = f \circ \pair{1}{\delay_A \circ \fix_A \circ \transpose{f}}
+\]
+Written out using more type-theoretic notation this is easier to
+process.
+\[
+  \forall a, b.\ \fix_A(f(b, -))(a) = f (b, \delay_A(\fix_A(f(b))(a)))
+\]
+This fixed-point construction allows us to build many interesting
+structures inside this category. Through the inclusion of
+universes~\citep{TODO-UNIVERSES}, one can even construct solutions to
+certain (small) domain equations entirely internally to the
+category~\citep{TODO-QUACK-FIXED-POINTS}. The basic idea is that
+$\presheaves{\omega}$ can be easily made to support an object,
+$\mathcal{U}$, for which global sections classify other smaller
+objects. This is the categorical analog of a Grothendieck
+universe~\citep{TODO-GROTHENDIECK} and proves to be an important
+concept in the semantics of dependent type theory. Then, by using
+$\fix_\univ$ it is possible to construct the recursively defined
+presheaves necessary to build logical relations. This approach, while
+not explicit, is latent in the work done in constructing logical
+relations in guarded type theory and guarded
+logics~\citep{TODO-LR-IN-GUARDED}.
+
+We will consider the more traditional approach of using proper domain
+equations rather than just small ones. In this case, the traditional
+domain theoretic approach is to use functors and to construct fixed
+points of them. This approach in domain theory originates from
+\citet{TODO-PLOTKIN-SMYTH} and subsumed prior work by Scott
+constructing recursive domain equations by
+hand~\citep{TODO-SCOTT}. One potential issue is that we would like to
+solve domain equations which are not strictly speaking functorial. In
+particular, we want to handle the case where the equation contains
+both positive and negative occurences. We handle these by viewing them
+as functors
+$F : \op{\presheaves{\omega}} \times \presheaves{\omega} \to
+\presheaves{\omega}$
+in the style of \citet{TODO-MIXED-VARIANCE}. The question then
+becomes, for what functors can we construct an object, $I$, so that
+$F(I, I) \cong I$, an invariant object. This construction is a
+generalization of the theorem of America and
+Rutten~\citep{TODO-AMERICA}. The precise accounting a the theorem can
+be found in \citet{Birkedal:11} allowing for any enriched functor
+between categories enriched in sheaves over a complete Heyting algebra
+with a well-founded basis. For our purposes though a much less general
+theorem suffices.
+\begin{thm}
+  A functor, $F$, is said to be locally contractive if there is a
+  family of contractive morphisms
+  \[
+    f_{X_1, X_2, Y_1, Y_2} :
+    X_1^{X_2} \times Y_2^{Y_1} \to F(X_2, Y_2)^{F(X_1, Y_1)}
+\]
+For any locally contractive functor $F$ there exists an object $I$,
+unique up to isomorphism, so that $F(I, I) \cong I$.
+\end{thm}
+This theorem allows us to solve a wide variety of domain equations,
+including a small modification of the crucial one for Kripke worlds.
 
 %%% Local Variables:
 %%% mode: latex
