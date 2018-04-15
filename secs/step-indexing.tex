@@ -151,9 +151,9 @@ false. To concretely see this, consider the program:
 \begin{align*}
   \cmd{
     &\dcl{\alpha}{\lam{x}{\nat}{\cmd{\ret{1}}}}{\\
-      &\quad \set{\alpha}{\lam{x}{\nat}{
+      &\quad \ret{\cmd{\set{\alpha}{\lam{x}{\nat}{
           \bnd{x}{\cmd{\get{\alpha}}}{\\ & \qquad\qquad\qquad\qquad\ret{x + 1}}
-        }}
+        }}}}
     }
   }
 \end{align*}
@@ -177,7 +177,7 @@ semantic types but the semantics types (as determined by the logical
 relation) vary of the Kripke worlds. This leads us to the final form
 of the definition of Kripke worlds.
 \[
-  \worlds = \assignables \pto (\worlds \to \pow{\term \times term})
+  \worlds = \assignables \pto (\worlds \to \pow{\term \times \term})
 \]
 Herein lies the rub, this definition of the set of worlds is precisely
 what is required for this logical relation. It is not a set
