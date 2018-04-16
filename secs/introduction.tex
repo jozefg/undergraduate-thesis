@@ -2,8 +2,12 @@ In the study of programming languages a great number of important
 questions can be reduced to questions about the equality of
 programs. The verification of a compiler pass is nothing but a
 question of equality of the naive program and its optimized version,
+% na\"ive
+% comma splice: please just rephrase this entire sentence
 an optimized data structure may be shown to be correct relative to a
-much simpler reference solution, a type theory hinges on the
+much simpler reference solution,
+% comma splice
+a type theory hinges on the
 construction of definitional equality and so on. Given the role that
 equality plays in programming languages, a great variety of
 mathematical tools have been developed to analyze the various notions
@@ -17,12 +21,18 @@ that $e_1$ and $e_2$ are internally indistinguishable. This means that
 there is no program containing $e_1$ so that if $e_1$ is replaced with
 $e_2$ then the program returns a different result. This notion of
 equivalence is appealing because there is no aspect of a program we
-care about other than how it computes. Contextual equivalence allow to
+care about other than how it computes.
+% Better to say "what" it computes, since how it computes can change, and we don't want to care about that.
+Contextual equivalence allow to
+% "allow to" ==> "allows one/us to"
 ignore unimportant differences in the precise way that the answer of a
 program is computed and focus instead on the answer itself. This means
+% delete "well-behaved" :
 that two well-behaved implementations of a data structure, for
+% replace "are" with "can be"; "if" with "when"
 instance, are contextually equivalent even if one is far more complex
 and efficient than the other.
+
 
 For all the appeal of contextual equivalence, it is very difficult to
 establish that two programs are contextually equivalent. In order to
@@ -32,10 +42,17 @@ includes programs which do not really make use of $e_1$ or $e_2$ such
 as $\ap{(\lam{x}{\fn{\unit}{\tau}}{1})}{\lam{x}{\unit}{e_1}}$. This
 lack of constraints on how $e_1$ or $e_2$ is used is precisely what
 makes contextual equivalence so useful but it makes even the most
-basic proofs involved affairs. In order to compensate for this, a
+basic proofs involved affairs.
+% What follows is highly a-historical. The craze over contextual equivalence
+% blah-blah is relatively recent in comparison to techniques like denotational
+% semantics for characterizing the equivalence of programs, and even logical
+% relations (which were not invented to deal with contextual equivalence, but
+% came from general mathematical considerations).
+In order to compensate for this, a
 variety of tools have been developed to simply the process of
 establishing when $e_1 \cong e_2$.
 
+% replace "these" with "such"
 Broadly speaking, there are two classes of these tools. One may
 consider denotational approaches, where in the equality of programs is
 reduced to the question of the equality of normal mathematical
@@ -57,13 +74,24 @@ syntactically is a logical relation~\citep{TODO-TAIT-AMAL}. Dating
 back to~\citet{TODO-TAIT} logical relations crucially define a
 type-indexed notion of equality. Logical relations have proven
 important for validating certain obviously desirable properties such
-as function extensionality. They have also given rise to a powerful
+as function extensionality.
+% isn't it much the other way around? Parametric reasoning is surely
+% not inspired by logical relations? Also, I feel there is no need
+% to drop the reference to the "purely abstract" (not sure what this means)
+% denotational stuff. Anyway, the first attempts to model parametricity
+% were denotational anyway, were they not? Further, it is not the importance
+% of parametricity that encouraged fresh attempts at a denotational story, but
+% rather the unsatisfactory nature of the existing models of parametricity.
+They have also given rise to a powerful
 theory of data abstraction called
 parametricity~\citep{TODO-REYNOLDS}. Parametric reasoning as inspired
 by logical relations has been so important that there have even been
 attempts to reconstruct it in a purely abstract denotational
 sense~\citep{TODO-FIBRATIONAL}.
 
+% "in for us"
+% I don't understand what is meant by the double subscript here.
+% I assume it is a typo?
 To be precise, a logical relation in for us is a family of sets
 indexed by the types of the language, $(R_\tau)_\tau$. It is
 constructed by induction over the types indexing it so that
@@ -75,6 +103,7 @@ hold:
   \hasE{\cdot}{e_1, e_2}{\tau} \land e_1 \cong e_2
 \]
 This property expresses the soundness of the logical relation with
+% regards to => respect to
 regards to contextual equivalence: logical equivalence implies
 contextual equivalence. The reverse property, completeness, is
 desirable but often unachievable\footnote{Instead a variety of
@@ -97,6 +126,9 @@ following.
   \forall (a_1, a_2) \in R_{\tau_1}.
   \ (\ap{e_1}{a_1}, \ap{e_2}{a_2}) \in R_{\tau_2}
 \]
+% having a logical relation ==> having a notion of logical equivalence;
+% and the two halves of this sentence feel kind of mutually redundant,
+% so maybe there is a way to rephrase it.
 Given the obvious appeal of having a logical relation defined for a
 language, it would seem that the construction of a logical relation
 characterizing equality is a natural first step in the study of a new
@@ -104,10 +136,13 @@ programming language. The central stumbling block to this goal is that
 logical relations are difficult to extend to new programming languages
 and especially to new types and computational effects.
 
+% "For an instance of where" ==> "To see where"
 For an instance of where trouble might arise, consider a language with
 polymorphic types: $\allNoKind{\alpha}{\tau}$. What should the
+% ==> Phrased differently
 definition of $R_{\allNoKind{\alpha}{\tau}}$ be? Phrased different,
 the question is when are two polymorphic functions
+% put a colon after "following"
 indistinguishable. One might expect a definition like the following.
 \[
   (e_1, e_2) \in R_{\allNoKind{\alpha}{\tau}} \defs
@@ -116,28 +151,37 @@ indistinguishable. One might expect a definition like the following.
 This does correctly characterize contextual equivalence but it is
 ill-suited as a definition in a logical relation because it will not
 be well-founded. A logical relation is constructed by induction on the
+% might be clearer to say "...on the syntactic types"; add comma after "types"
 types and with impredicative polymorphism there is absolutely no
 reason why $\tau'$ should be smaller than
+% comma splice, please fix ! good l0rd
 $\allNoKind{\alpha}{\tau}$. This is not a minor issue, defining a
 correct logical relation for a language with impredicative
 polymorphism requires the novel method of
-candidates~\citep{TODO-GIRARD}. This problem has been a recurring
+candidates~\citep{TODO-GIRARD-TAIT-REYNOLDS-TAIT-TAIT}. This problem has been a recurring
 issue: features in programming languages tend to have some recursive
 structure which prevents them from easily fitting into the inductive
+% You need a comma after "features" for this to make sense
 definition of a logical relation. For many features clever
 constructions have been found which circumvent well-foundedness
 issues: for parametric polymorphism~\citep{TODO-GIRARD}, for
 first-order state~\citep{TODO-PITTS-AND-STARK}, simple
 exceptions~\citep{TODO-I-DUNNO-SURELY-NOT-NUPRL}, and for recursive
+% you need a comma after "work" for this to make sense
 types~\citep{TODO-CRARY-AND-HARPER}. Despite this work logical
 relations are still a long way away from being able to cope with a
 full programming language. The state of the art for dealing with
 features like higher-order references, nontrivial control passing, or
 concurrency is to use step-indexing.
 
+% the following paragraph is way too long; just add a few paragraph breaks
+% at good moments.
 Step-indexing is a technique first proposed by \citet{TODO-APPEL}. It
+% "if you the" :
 is based on a simple but ingenious idea: if you the logical relation
 is not well-defined by induction on the type just add a number which
+% please never use "induct" as a verb; sometimes people use this in
+% speech, but it is not allowed in scholarly writing.
 decreases and induct on that. This idea means that a logical relation
 is no longer a type-indexed relation but a relation indexed by a
 number (called a \emph{step}) and a type, $(R_\tau^i)_{i, \tau}$. The
@@ -157,10 +201,13 @@ them. Secondly, the evaluation behavior of the programs under
 consideration has begun to matter again. The goal of contextual
 equivalence was to erase it from consideration but now there are
 instances where in order to use a logical relation a program must be
+% may be clearer to say "redundant operations" rather than "NO-OP statements"
 modified with spurious NO-OP statements in order to make it take extra
 steps. These issues are even present when just using the logical
+% validate => establish
 relation to validate contextual
 equivalences~\citep{TODO-TRANSFINITE}. In practice, this has meant
+% you need a comma after "used" for this to make sense
 that while step-indexing is incredibly widely used it is almost
 universally disliked\footnote{Citation: I walked around at POPL and
   the 5 people I asked seemed like REALLY bummed about it.}.
