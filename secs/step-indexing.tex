@@ -1,4 +1,4 @@
-\section{A Step-Indexed Logical Relation}
+\section{A Step-Indexed Logical Relation}\label{sec:steps}
 
 Before diving into the various approaches for constructing a logical
 relation without step-indexing, it is well worth the time to see how
@@ -209,9 +209,9 @@ over natural numbers: presheaves over $\omega$.
 \end{defn}
 \begin{example}
   A presheaf over $\omega$ is a family of sets $(X_i)_{i \in \nat}$
-  with a map $r_n : X_{n + 1} \to X_n$. A map between presheaves is
-  then a family of maps $f_n : X_n \to Y_n$ so that the following
-  commutes for all $n$.
+  with a map $r_n : X_{n + 1} \to X_n$ for all $n$ called restriction
+  maps. A map between presheaves is then a family of maps
+  $f_n : X_n \to Y_n$ so that the following commutes for all $n$.
   \[
     \begin{tikzcd}
       X_{n + 1} \ar[r, "f_{n + 1}"] \ar[d, swap, "r_n"] & Y_{n + 1} \ar[d, "r_n"]\\
@@ -355,23 +355,106 @@ in the style of \citet{TODO-MIXED-VARIANCE}. The question then
 becomes, for what functors can we construct an object, $I$, so that
 $F(I, I) \cong I$, an invariant object. This construction is a
 generalization of the theorem of America and
-Rutten~\citep{TODO-AMERICA}. The precise accounting a the theorem can
+Rutten~\citep{TODO-AMERICA}. The precise accounting the theorem can
 be found in \citet{Birkedal:11} allowing for any enriched functor
 between categories enriched in sheaves over a complete Heyting algebra
 with a well-founded basis. For our purposes though a much less general
 theorem suffices.
-\begin{thm}
+\begin{defn}
   A functor, $F$, is said to be locally contractive if there is a
   family of contractive morphisms
   \[
     f_{X_1, X_2, Y_1, Y_2} :
     X_1^{X_2} \times Y_2^{Y_1} \to F(X_2, Y_2)^{F(X_1, Y_1)}
-\]
-For any locally contractive functor $F$ there exists an object $I$,
-unique up to isomorphism, so that $F(I, I) \cong I$.
+  \]
+  So that this family is family respects composition and identity and
+  so that for each $\pair{g}{h} : 1 \to X_1^{X_2} \times Y_2^{Y_1}$
+  then the following equation holds.
+  \[
+    \transpose{f_{X_1, X_2, Y_1, Y_2} \circ \pair{g}{h}} =
+    F(\transpose{g}, \transpose{h})
+  \]
+  If just the latter condition holds $F$ is said to have a strength
+  $f$ and if the family of morphisms is not contractive we shall call
+  the functor locally nonexpansive.
+\end{defn}
+This definition is subtly different than some presentations of this
+theorem, which require only that $F$ have a strength comprised of
+contractive morphisms. The central theorem,
+Theorem~\ref{thm:steps:fixedpoints} is true even in this weakened
+version but I am unable to find a proof of this fact and I cannot list
+a theorem that I cannot prove myself. The relative strengthening that
+this generality provides seems vacuous as well, none of the examples
+of the fixed point theorem used either in this section or
+Section~\ref{sec:guarded} require it.
+\begin{example}
+  The functors $\times$, $\to$, and $+$ are all locally
+  nonexpansive. The functor $\later$ is locally
+  contractive. Additionally, any locally contractive functor is locally
+  nonexpansive.
+\end{example}
+\begin{lem}
+  The composition of locally nonexpansive functors is locally
+  nonexpansive. The composition of a locally contractive functor with
+  a locally nonexpansive functor is locally contractive.
+\end{lem}
+We may now state the theorem which makes working a
+$\presheaves{\omega}$ so appealing.
+\begin{thm}\label{thm:steps:fixedpoints}
+  For any locally contractive functor $F$ there exists an object $I$,
+  unique up to isomorphism, so that $F(I, I) \cong I$.
 \end{thm}
 This theorem allows us to solve a wide variety of domain equations,
-including a small modification of the crucial one for Kripke worlds.
+including a small modification of the crucial one for Kripke
+worlds. First, let us define $\upred{S}$ as a ``time varying
+predicate'' on a set $S$. This will be the analog of the sets of terms
+used in step-indexed models.
+\[
+  \upred{X}(n) \triangleq \{(m, x) \mid x \in X \land m < n\}
+\]
+There is an evident restriction mapping sending a uniform predicate at
+stage $n + 1$ to the uniform predicate containing the entries indexed
+by numbers smaller than $n$. Next, the presheaf of partial maps from
+assignables to presheaves can be defined as follows:
+\[
+  (\assignables \pto X)(n) \triangleq
+  \{f \in X(n)^{F} \mid F \subseteq \assignables \land F\ \mathsf{finite}\}
+\]
+Importantly, it is not hard to see that $\assignables \pto -$ defines
+a functor which is locally nonexpansive. The final piece necessary is
+a subobject of the exponential $Y^{\assignables \pto X}$ which
+isolates those functions which are monotone. In order to define this,
+we must assume that $Y$ comes equipped with a partial order. Viewed
+from the external perspective this is a family of relations indexed by
+natural numbers which respects reindexing. If one views the partial
+order internally, however, it is just a normal partial order. The
+subobject desired can be defined internally in a way which is
+obviously correct using the internal logic of $\presheaves{\omega}$ as
+follows.
+\begin{align*}
+  (\assignables \pto X) \mto Y &\triangleq \\
+  \{f : Y^{\assignables \pto X} \mid{}&
+   \forall w_1 w_2 : \assignables \pto X.\ w_1 \reach w_2 \implies f(w_1) \le f(w_2)\}
+\end{align*}
+Constructed externally this presheaf is somewhat more difficult to
+construct, but still quite possible. It's
+\begin{align*}
+  ((\assignables \pto X) \mto Y)(n) &= \\
+  \{f : (Y^{\assignables \pto X})(n) \mid{}&
+   \forall m \le n.\ \forall w_1 w_2 : (\assignables \pto X)(n).\\
+  &\qquad w_1 \reach_n w_2 \implies f(m)(\star, w_1) \le_n f(m)(\star, w_2)\}
+\end{align*}
+This external definition is neither more precise nor more intuitive,
+so it is more helpful to read the internal version and understand that
+all the quantifiers in the predicate implicitly handle the steps
+correctly.
+
+At the end of these constructions, we may define the following
+contractive functor.
+\[
+  X \mapsto (\assignables \pto \later X) \mto \upred{\term \times \term}
+\]
+Solving this for a fixed point gives the desired presheaf of Kripke worlds.
 
 %%% Local Variables:
 %%% mode: latex
