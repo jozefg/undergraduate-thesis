@@ -53,6 +53,7 @@
 \newcommand{\bifix}{\ensuremath{\mathsf{bifix}}}
 \newcommand{\disjoint}{\ensuremath{\mathop{\#}}}
 \newcommand{\hole}{\ensuremath{\square}}
+\newcommand{\sincl}[1]{\ensuremath{\mathsf{succ}(#1)}}
 
 \DeclareMathOperator{\dom}{Dom}
 
@@ -91,7 +92,7 @@
 \newcommand{\step}[2]{\ensuremath{#1 \mapsto #2}}
 \newcommand{\steps}[2]{\ensuremath{#1 \mapsto^* #2}}
 \newcommand{\stepM}[4]{\ensuremath{(#1, #2) \mapsto (#3, #4)}}
-\newcommand{\stepsM}[4]{\ensuremath{(#1, #2) \mapsto^* (#3, #4)}}
+\newcommand{\stepsM}[5][*]{\ensuremath{(#2, #3) \mapsto^{#1} (#4, #5)}}
 
 \newcommand{\dec}[4][i]{\ensuremath{#2 \rhd^{#1} #3 : #4}}
 \newcommand{\valueJ}[1]{\ensuremath{#1\ \mathsf{value}}}
@@ -100,6 +101,7 @@
 % language
 \newcommand{\kind}{\ensuremath{\mathsf{kind}}}
 \newcommand{\later}{\ensuremath{{\blacktriangleright}}}
+\newcommand{\ilater}{\ensuremath{{\triangleright}}}
 \newcommand{\rec}[2]{\ensuremath{\mu #1.\, #2}}
 \newcommand{\fn}[2]{\ensuremath{#1 \to #2}}
 \newcommand{\tp}{\ensuremath{\mathsf{T}}}

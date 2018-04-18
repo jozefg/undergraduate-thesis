@@ -380,13 +380,14 @@ theorem suffices.
 \end{defn}
 This definition is subtly different than some presentations of this
 theorem, which require only that $F$ have a strength comprised of
-contractive morphisms. The central theorem,
-Theorem~\ref{thm:steps:fixedpoints} is true even in this weakened
-version but I am unable to find a proof of this fact and I cannot list
-a theorem that I cannot prove myself. The relative strengthening that
-this generality provides seems vacuous as well, none of the examples
-of the fixed point theorem used either in this section or
-Section~\ref{sec:guarded} require it.
+contractive morphisms. This version essentially states that $F$ must
+be an enriched functor for the category $\presheaves{\omega}$ enriched
+over itself.The central theorem, Theorem~\ref{thm:steps:fixedpoints}
+is true even in this weakened version but I am unable to find a proof
+of this fact and I cannot list a theorem that I cannot prove
+myself. The relative strengthening that this generality provides seems
+vacuous as well, none of the examples of the fixed point theorem used
+either in this section or Section~\ref{sec:guarded} require it.
 \begin{example}
   The functors $\times$, $\to$, and $+$ are all locally
   nonexpansive. The functor $\later$ is locally
@@ -452,9 +453,112 @@ correctly.
 At the end of these constructions, we may define the following
 contractive functor.
 \[
-  X \mapsto (\assignables \pto \later X) \mto \upred{\term \times \term}
+  X \mapsto \later (\assignables \pto X \mto \upred{\term \times \term})
 \]
-Solving this for a fixed point gives the desired presheaf of Kripke worlds.
+Solving this for a fixed point gives the desired presheaf of Kripke
+worlds. Defining the rest of the logical relation proves to be quite
+straightforward now that the right definition of Kripke worlds is in
+place. The type of our logical relation is slightly different now,
+it's defined as a monotone map:
+\[
+  \den{-}_{-} : \types \to \typesEnv \to \worlds \mto \upred{\term \times \term}
+\]
+Here $\mto$ is an subobject of the exponential in the presheaf
+category so it is indexed by natural numbers and subject to a
+naturality condition. Then the crucial clause of our logical relation
+can be defined as follows.
+\begin{align*}
+  \den{\cmd{\tau}}_\eta(n)(w_1)& \triangleq \{(k, e_1, e_2) \mid
+  k_1 \le n \land \exists m_1, m_2.\ \steps{e_i}{\cmd{m_i}} \land{}\\
+  &\forall w_2 \breach_{k_1} \different{r_{k_1}^n(w_1)}.\ \forall h_1 \different{\sim_{w_2}^{k_1}} h_2.
+  \ (m_1, h_1) \simeq (m_2, h_2) \land{}\\
+  &\quad \different{\forall d.}\ \forall v_1, h_1', v_2, h_2'.
+  \ (\stepsM[\different{d}]{m_1}{h_1}{\ret{v_1}}{h_1'} \land \stepsM{m_2}{h_2}{\ret{v_2}}{h_2'})\\
+  &\qquad \implies (\different{\exists w_3 \breach r^{k_2 - d}w_2}.
+    \ h_1' \different{\sim_{w_3}} h_2' \land (v_1, v_2) \in \den{\tau}_\eta(k_2 - d)\different{(w_3)})
+\end{align*}
+We can now also define $\sim$ making use of the following isomorphism.
+\[
+  \iota : \worlds \cong
+  \later (\assignables \pto \worlds \mto \upred{\term \times \term})
+\]
+The following definition is then quite naturally expressed
+internally. The external version merely involves a preponderance of
+indices. Let us suppose that $w$ is a world at step $n$
+\begin{align*}
+  h_1 \sim_w {} &h_2 \defs\\
+  &\begin{cases}
+    \forall \alpha \in \dom(\iota(w)).\ (n - 1, h_1(\alpha), h_2(\alpha)) \in \iota(w)(\alpha)(r^{n - 1}(w))
+    & n > 1\\
+    \text{true} & \text{otherwise}
+  \end{cases}
+\end{align*}
+The essence of the definition is the self-application. A heap is
+related to another heap at a world if all of the points are related
+relative to the same world. It was this circularity and
+self-application which drove us to step-indexing in the first place.
+
+The rest of the logical relation is entirely standard step-indexing
+and the curious reader is referred to any of the following excellent
+resources~\citet{TODO-STEP-INDEXING}.
+
+A final consideration here is that the version of step-indexing
+presented in this paper is ``half-baked''. We have eschewed explicit
+indexing in the entire construction of the semantic domains and made
+use of $\later$ and presheaves, but then chosen to define the logical
+relation with explicit indexing. All the same issues that applied to
+the construction of the domain of discourse for the logical relation
+apply the actual definition of the logical relations itself. Since our
+definition of the logical relation is just constructing a subpresheaf
+pointwise using standard logical formula and passing around the index,
+can we isolate the handling of the index and abstract away from it?
+
+A powerful approach to handling this comes from topos theory. Topos
+theory is a subfield of category theory concerned with studying
+categories which are similar to $\SET$. It is a standard result in
+topos theory that all presheaf categories are toposes and so all the
+tools of topos theory are applicable to $\presheaves{\omega}$. For
+instance, the explicit definition of $\upred{A}$ can be replaced with
+the topos theoretic definition of power sets. Of particular interest
+is the ``internal logic\footnote{In fact, the internal logic of a
+  topos can be generalized to a full dependent type theory with a
+  distinguished impredicative universe. This type theory provides even
+  more flexibility than the logic. In it, we could have defined the
+  entirety of our construction of Kripke worlds in a setting just like
+  programming in type theory.}'' of the topos. It turns out that
+$\presheaves{\omega}$ supports a version of intuitionistic
+higher-order logic whose interpretation is precisely the standard
+set-theoretic interpretation with a little extra work to pass around
+the index. Importantly, one can take a presheaf, $A$, and a predicate,
+$\phi$, on it and form a subpresheaf $\{ a \in A \mid \phi(a) \}$ so
+that every element of this comprehension satisfies $\phi$ as one would
+hope.
+
+The internal logic of $\presheaves{\omega}$ includes everything we
+need to define our logic including even version of L\"ob induction and
+a logical version of later, $\ilater$. Working this way sweeps the
+step-index entirely under the rug and obliterates the requirement to
+perform explicit index math anywhere. Instead, the frustrating
+mismatch of having a fact at $n - 1$ and needing it at $n$ manifests
+through the more explicit having $\later \phi$ and needing
+$\phi$. Proper index discipline is replaced by the proper handling of
+the later modality. For instance, here is the definition of world
+satisfaction working in the internal logic.
+\[
+  h_1 \sim_w h_2 \triangleq
+  \forall \alpha \in \dom(w).
+  \ \sincl{\iota(w) \zap \delay(w) \zap (h_1, h_2)}
+\]
+No explicit steps are present only a handful of logical operations to
+handle the new type-constructor later. This approach to step-indexing,
+whether explicitly topos theoretic or not is the subject of a long
+line of work~\citep{TODO-LOGICAL-STEPS}. Importantly, this logical
+approach to step-indexing enables abstraction from the natural numbers
+themselves and suggests more general notions of
+step-indexing~\citep{Svendsen:16}. The most approachable introduction to
+this approach is \citet{Dreyer:09} and \citet{Birkedal:steps:11} provides a
+thorough topos-theoretic grounding explicitly using Kripke-Joyal
+semantics.
 
 %%% Local Variables:
 %%% mode: latex
