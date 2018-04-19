@@ -1,4 +1,132 @@
-\section{Tying the Knot Using Domains}
+\section{Tying the Knot Using Domains}\label{sec:domains}
+
+This section describes the first and most obvious approach to building
+a step-index-free logical relation for state. It would seem that the
+real crux of the issue was this Kripke world. Nothing past the
+construction of the Kripke world in Section~\ref{sec:step-indexing}
+was particularly challenging, especially when a logical approach is
+taken. So a natural approach is to find a different setting in which
+to solve the following equation
+\[
+  \worlds \cong \assignables \pto (\worlds \mto \pow{\term \times \term})
+\]
+Traditionally, domains have been used for exactly this purpose. The
+impetus of domain theory as an investigation separate from order
+theory in general was the observation by Dana Scott that domains
+possessed solutions to equations that sets did not. For instance, a
+model of the lambda calculus may be constructed by solving the
+equation
+\[
+  D \cong D \to D
+\]
+This equation is not possible to solve in sets without trivializing
+$D$. In fact, Theorem~\ref{thm:steps:fixed-points} uses a construction
+derived originally from domain theory itself.
+
+\subsection{Domain Theory, Briefly}
+
+A domain is a particular sort of partial order which comes equipped
+with enough structure to accurately describe a notion of continuous
+functions upon it.
+\begin{defn}\label{def:domains:directed-set}
+  In a partial order $P$, a directed set $D \supseteq P$ is a set so
+  that $D \neq \emptyset$ and if $a, b \in D$ then there is a $c \in
+  D$ so that $a, b \le c$.
+\end{defn}
+\begin{defn}\label{def:domains:domain}
+  A domain\footnote{In this text domains are directed complete partial
+    orders as opposed to any of the myriad varierties of domains one
+    might have chosen.} is partial order possessing joins (least upper
+  bounds) of all directed subsets. Given a directed subset $D$ we
+  write this join as $\join D$.
+\end{defn}
+Intuitively, elements of a domain represent a (partial) piece of
+knowledge. Moving to a larger element means moving to a piece of
+compatible knowledge that extends what was already known. The ability
+to construct joins of directed sets fits into this intuition as the
+ability to take a great many fragments of compatible knowledge and
+glue them together. This intuition primarily comes from the example
+domain of a partial function. The function is not everywhere defined
+so it is not a complete piece of knowledge, but given a collection of
+partial functions which agree on the intersection, they can be glued
+together.
+
+The extra structure on domains gives rise to a new class of maps that
+preserve this structure. These maps are called (Scott) continuous in
+that they preserve joins.
+\begin{defn}[Scott continuity]
+  A map between domains is (Scott) continuous if it preserves the
+  joins of directed sets. That is, if $f : D \to E$ and
+  $I \subseteq D$ is directed, then
+  $f(\join I) = \join \{f(i) \mid i \in I\}$.
+\end{defn}
+Calling this definition continuity can be justified by considering the
+Scott topology on domains, in which continuous functions are precisely
+those which preserve upper bounds. For a complete account of the
+theory of domains, see for instance \citet{TODO-COMPEDIUM}.
+\begin{thm}
+  Domains form an a category where morphisms are continuous
+  functions. This category is bicartesian closed, in particular the
+  set of continuous maps between two domains is a domain.
+\end{thm}
+The interesting portion of domain theory for these purposes is the
+ability to solve domain equations. Specifically, locally continuous
+functors of domains again have solutions.
+\begin{defn}
+  A functor, $F : \DCPO \to \DCPO$ is locally continuous if its action
+  on morphisms is a continuous function. That is, there is a
+  continuous map of domains $B^A \to F(B)^{F(A)}$. This definition
+  generalizes readily to a mixed variance n-ary functor.
+\end{defn}
+\begin{thm}\label{thm:domains:fixed-points}
+  Any mixed variance locally continuous functor
+  $F : \op{\DCPO} \times \DCPO \to \DCPO$ has an invariant object $I$
+  so that $F(I, I) \cong I$.
+\end{thm}
+
+\subsection{Domains for State}
+
+The domains involved in expression the desired equation are quite
+straightforward. Power sets are always a complete lattice and
+therefore a domain. Scott continuous functions are always monotone so
+instead of considering monotone functions it's more natural to pick
+Scott continuous functions to get a domain. Finally, partial maps are
+another classic example of domains, with the small complication that
+they cannot be limited to finite partial maps.
+
+This gives us a proper functor $F : \op{\DCPO} \to \DCPO$ defined by
+\begin{align*}
+  D \mapsto& \assignables \pto (D \mto \pow{\term \times \term})\\
+  f \mapsto& \lambda x.\ \lambda \alpha.\ \lambda d.\ x(\alpha)(f(d))
+\end{align*}
+There is only one exceptional feature of all of this, the ordering on
+the partial map aspect of this domain is nonstandard. A Kripke world
+is supposed to map an assignable to a semantic type. The ordering on
+these worlds should let us add new mappings, but old mappings should
+stay the same. They must in fact, if a location is allocated so that
+it can be either $\littrue$ or $\litfalse$, it would be a real
+problem if suddenly it could also be a natural number. This ordering,
+explicitly, is then defined by the following formula.
+\[
+  w_1 \reach w_2 \iff \forall \alpha \in \dom(w_1).\ w_1(\alpha) \simeq w_2(\alpha)
+\]
+This ordering though, however natural, means that $F$ is not locally
+continuous and therefore there is no way to construct a solution to
+it.
+
+There is only one insight worth mentioning from supposing that a
+solution to $F$ did exist. There would still seemingly be a problem
+because one of these worlds could have full support, making modeling
+allocation impossible. The trick to avoiding this it to define the
+logical relation on compact elements~\citep{TODO-COMPEDIUM} of the
+world, precisely those worlds enjoying only finite support.
+
+By defining the logical relation on these worlds, it is trivial to
+extend it to an arbitrary world by taking $\den{\tau}(w)$ on such a
+world to be the join of the results of $\den{\tau}$ on all the compact
+elements below $w$. This is automatically continuous and recovers
+exactly $\den{\tau}$ on compact elements which are, after all, the
+worlds of interest.
 
 %%% Local Variables:
 %%% mode: latex
