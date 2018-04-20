@@ -1,4 +1,163 @@
-\section{Understanding State through Recursive Kinds}
+\section{Understanding State through (Syntactic) Minimal Invariance}\label{sec:smi}
+
+Now that domains are seen to be unhelpful, there is some question
+about where to turn next. There are not many well-studied
+algebraically complete categories~\citep{TODO-FREYD} which support
+interesting denotational semantics. The semantic structures for
+step-indexing that support solving recursive domain equation require
+more than continuity or approximation, they require a notion of
+closeness for two semantic types. In $\presheaves{\omega}$ for
+instance, there was a natural notion of when two points
+$p, q : 1 \to P$ were close by checking at what stage they became
+equal, eg when $p_n = q_n : \{\star\} \to P$.
+
+Crucially, in order for this to make sense for semantic types every
+equality was judged relative to a step. Two semantic types are equal
+at $n$ if they agree on equalities that hold at stage $n$ or earlier,
+eg, equalities which hold if the two sides are only allowed to run for
+$n$ steps. Without step-indexing what could this be replaced by?
+
+The answer is suggested by an idea in domain theory to resolve a
+seemingly unrelated problem. The observant reader may have noticed
+that there is a crucial strengthening that
+Theorem~\ref{thm:step-indexing:fixed-points} provides over
+Theorem~\ref{thm:domains:fixed-points}, the former provides unique
+solutions. In fact, there may be many nonisomorphic domains which
+satisfy a given equation. This state of affairs can prove troublesome
+for semantics in domains because it means that not all the properties
+of the domain are determined by the equation. There may be ``exotic''
+elements which are not required to satisfy the domain equation but are
+present none the less which impedes reasoning about recursive domain
+equations by induction or similar. \citet{TODO-PITTS} proposes a
+solution to this by imposing an additional requirement on the solution
+to a domain equation: minimal invariance.
+
+Minimal invariance, precisely, is the statement that given a $D$ so
+that $D \cong F(D, D)$ for a particular family of functions $\pi_i : D
+\to D$ the following equation holds.
+\[
+  \join_i \pi_i = 1
+\]
+The function $\pi_i$ is determined by induction on $i$.
+\begin{align*}
+  \pi_i &: D \to D\\
+  \pi_0 &\defs \bot\\
+  \pi_{i + 1} &\defs F(\pi_i, \pi_i)
+\end{align*}
+The intuition behind this definition is that if $\pi_i$ converges to
+$1$ then every element in $D$ must have arisen as the limit of
+elements computed by the inclusion $F^n(\bot, \bot) \to D$ which can
+be viewed as semantic requirement that elements of $D$ are
+finite\footnote{Or rather, determined a the limits of ``finite''
+  elements. This is not to be confused here with \emph{compact} elements and
+  algebraic domains which share a similar intuition but require
+  technically different properties since there is no reason to assume
+  that $F$ preserves algebraicness}. It is not difficult to prove that
+if $D \cong F(D)$ and $E \cong F(E)$ with $D$ and $E$ both being
+minimally invariant then $E \cong D$ and the standard $D_\infty$
+construction produces a minimally invariant domain. Therefore, domain
+equations have a unique minimally invariant solution and these satisfy
+a form of induction through minimal invariance.
+
+An interesting observation made originally by
+\citet{TODO-BIRKEDAL-AND-HARPER} and extend by
+\citet{TODO-CRARY-AND-HARPER} is that for the class of domains arising
+naturally in semantics (so called ``universal domains'') the
+projection functions, $\pi_i$, are computable
+syntactically. Additionally, since contextual equivalence can be
+generalized to contextual approximation in a natural way, minimal
+invariance can be stated as a syntactic property of the programming
+language itself. In this setting, projections are naturally
+type-indexed and this is denoted $\pi_\tau^i : \fn{\tau}{\tau}$. The
+definition of $\pi_\tau^i$ behaves almost as an $\eta$-expansion where
+after $i$ $\eta$ expansion the function simply diverges.
+
+It is well worth it to take a moment to be precise about the
+definitions involved.
+\begin{defn}\label{def:smi:contextual-approximation}
+  Two terms $\hasESigJ{\Delta}{\Gamma}{\Sigma}{e_1, e_2}{\tau}$ are
+  said to be contextually approximate at type $\tau$, written
+  $\approxESigJ{\Delta}{\Gamma}{\Sigma}{e_1}{e_2}{\tau}$ if for all
+  contexts
+  $\hasCEJ{\Delta}{\Gamma}{\Sigma}{\tau}{C}{\cdot}{\cdot}{\Sigma'}{\cmd{\tau'}}$,
+  $\steps{C[e_1]}{\cmd{m_1}}$ and $\steps{C[e_2]}{\cmd{m_2}}$ such
+  that for any heap $h : \Sigma$ then
+  $(m_1, h) \Downarrow \implies (m_2, h) \Downarrow$.
+\end{defn}
+We will adopt the traditional abuse of abandoning the context
+annotations and just writing $e_1 \cless e_2$ when the contexts and
+$\tau$ are obvious.
+\begin{defn}\label{def:smi:contextual-limits}
+  A family of terms $(e_i)_{i \in I}$ is said to have a limit $e$ if
+  for all $i \in I$ $e_i \cless e$ and $e$ is the smallest element
+  with this property.
+\end{defn}
+Since limits are only unique up to contextual equivalence, it is not
+necessarily well defined to write $\join_i e_i$ as if it were a term
+rather than an equivalence class of terms. We will instead often make
+use of the notation $\join_i e_i = e$ to signify that $e$ belongs to
+this equivalence class.
+
+The idea behind using syntactic minimal invariance is that instead of
+defining a single logical relation $\den{-}_{-}$ a pair of logical
+relations is defined instead: $\definitely{-}_{-}$ and
+$\possibly{-}_{-}$. The definition of these two logical relations are
+mutually recursive and provide a decomposition of the logical relation
+two monotone halves. The idea is that one should think of
+$\definitely{\tau}_{\eta}$ containing equalities that are certainly
+true but it does not contain all of them. On the other hand
+$\possibly{\tau}_\eta$ contains all equalities that are true as well
+as a few that might not be. This suggests a natural relationship
+between these two sets where
+$\definitely{\tau}_\eta \subseteq \possibly{\tau}_\eta$. The crucial
+move that syntactic minimal invariance provides is to show the
+following.
+\[
+  \forall i.\ (e_1, e_2) \in \definitely{\tau}_\eta \implies
+  (\ap{\pi_\tau^i}{e_1}, \ap{\pi_\tau^i}{e_2}) \in \possibly{\tau}_\eta
+\]
+Then, by showing the comparatively easy lemma that
+$\possibly{\tau}_\eta$ is always closed under limits when $\eta$ is it
+immediately follows that
+$\definitely{\tau}_\eta = \possibly{\tau}_\eta$. This maneuver is
+useful because these two definitions are naturally monotone therefore
+its easy to express a natural definition of recursive types, as is
+done in \citet{TODO-CRARY-HARPER} for instance. The only complication
+is that environments must generalize from relations to birelations, a
+map to a pair of relations rather than a map to a single
+relation. Define $\op{\eta}$ to be the environment mapping $\alpha$ to
+the relations $\eta(\alpha)$ with the components swapped. The crucial
+insight is that when the variance in the definition of the logical
+relation swaps, we switch from $\definitely{-}$ to $\possibly{-}$ and
+vice-versa, for instance:
+\begin{align*}
+  \definitely{\fn{\tau_1}{\tau_2}}_\eta &=
+  \{(e_1, e_2) \mid \forall (a_1, a_2) \in \possibly{\tau_1}_\eta.
+  \ (\ap{e_1}{a_1}, \ap{e_2}{a_2}) \in \definitely{\tau_2}_\eta\}
+\end{align*}
+This approach seems to naturally fit recursive types and one might
+wonder then if it can be scaled to support state just as step-indexing
+does\footnote{If this sentence leave the reader in suspense I
+  encourage them to glance at the title}.
+
+The key insight is that while the distinction of
+$\definitely{-}$/$\possibly{-}$ is not useful, projection functions
+give us a notion akin to step-indexing. We can say that two semantic
+types are equal at stage $i$ if they are equal upon truncating all the
+programs in the equalities by $\pi^i$. It remains then to define
+$\pi_\tau^i$ for our language. In order to do this we need a
+divergence at the level of expressions, this can be easily
+accomplished by adding fixed points or just adding a formal term
+$\bot$ so that $\step{\bot}{\bot}$.
+\begin{align*}
+  \pi_\tau^0 &= \lam{x}{\tau}{\bot}\\
+  \pi_{\fn{\tau_1}{\tau_2}}^{i + 1} &=
+  \lam{f}{\fn{\tau_1}{\tau_2}}{\lam{x}{\tau_1}{\ap{\pi_{\tau_2}^i}{(\ap{f}{(\ap{\pi_{\tau_1}^i}{x})})}}}\\
+  \pi_{\allNoKind{\alpha}{\tau}}^{i + 1} &=
+  \lam{f}{\allNoKind{\alpha}{\tau}}{\LamNoKind{\alpha}{\ap{\pi_\tau^i}{(\Ap{f}{\alpha})}}}\\
+  \pi_{\cmd{\tau}}^{i + 1} &=
+  \lam{x}{\cmd{\tau}}{\cmd{\bnd{x'}{x}{\ret{\ap{\pi_\tau^i}{x'}}}}}
+\end{align*}
 
 %%% Local Variables:
 %%% mode: latex

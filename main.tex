@@ -50,12 +50,16 @@
 \newcommand{\AND}{\ensuremath{\mathrel{\wedge}}}
 \newcommand{\OR}{\ensuremath{\mathrel{\vee}}}
 \newcommand{\den}[1]{\ensuremath{\llbracket #1 \rrbracket}}
+\newcommand{\definitely}[1]{\ensuremath{\lceil #1 \rceil}}
+\newcommand{\possibly}[1]{\ensuremath{\lfloor #1 \rfloor}}
 \newcommand{\defs}{\ensuremath{\mathrel{\triangleq}}}
 \newcommand{\bifix}{\ensuremath{\mathsf{bifix}}}
 \newcommand{\disjoint}{\ensuremath{\mathop{\#}}}
 \newcommand{\hole}{\ensuremath{\square}}
 \newcommand{\sincl}[1]{\ensuremath{\mathsf{succ}(#1)}}
 \newcommand{\join}{\ensuremath{\bigvee}}
+\newcommand{\cless}{\ensuremath{\lessapprox}}
+\newcommand{\aless}{\ensuremath{\lesssim}}
 
 \DeclareMathOperator{\dom}{Dom}
 
@@ -89,6 +93,7 @@
 {\ensuremath{{#1} \vdash {#2} \leq {#3}}}}
 
 \newcommand{\equivESigJ}[6]{\ensuremath{#1; #2 \vdash_{#3} \hasE{#4 \cong #5}{#6}}}
+\newcommand{\approxESigJ}[6]{\ensuremath{#1; #2 \vdash_{#3} \hasE{#4 \aless #5}{#6}}}
 \newcommand{\equivMJ}[6]{\ensuremath{#1; #2 \vdash_{#3} \hasM{#4 \cong #5}{#6}}}
 
 \newcommand{\step}[2]{\ensuremath{#1 \mapsto #2}}
