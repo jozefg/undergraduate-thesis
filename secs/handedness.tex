@@ -96,8 +96,12 @@ Since limits are only unique up to contextual equivalence, it is not
 necessarily well defined to write $\join_i e_i$ as if it were a term
 rather than an equivalence class of terms. We will instead often make
 use of the notation $\join_i e_i = e$ to signify that $e$ belongs to
-this equivalence class.
-
+this equivalence class. The corresponding syntactic version of minimal
+invariance can now be precisely stated.
+\begin{thm}\label{thm:smi:smi}
+  For all $\hasTJ{}{\Gamma}{\tau}{\tp}$ and $e : \tau$,
+  $\join_i \ap{\pi_\tau^i}{e} = e$
+\end{thm}
 The idea behind using syntactic minimal invariance is that instead of
 defining a single logical relation $\den{-}_{-}$ a pair of logical
 relations is defined instead: $\definitely{-}_{-}$ and
@@ -158,6 +162,109 @@ $\bot$ so that $\step{\bot}{\bot}$.
   \pi_{\cmd{\tau}}^{i + 1} &=
   \lam{x}{\cmd{\tau}}{\cmd{\bnd{x'}{x}{\ret{\ap{\pi_\tau^i}{x'}}}}}
 \end{align*}
+This approach, while effective for recursive types, is not quite what
+is needed to handle state. After all, the issue in
+Section~\ref{sec:step-indexing} was not the definition of
+$den{\cmd{\tau}}_\eta(w)$, it was the construction of the set in which
+$w$ lives. On the other hand, the projections themselves are
+interesting, they provide a way to construct an indexing of semantic
+types without actually counting steps. This approach was explored in
+\citet{Birkedal:domain:10} and successfully used to construct a
+logical relation for a similar language. This work, however, made use
+of the normal domain theoretic projections rather than their syntactic
+counterparts. The question of producing a logical relation for our
+language is then reduced to the question of producing a syntactic
+account of \citet{Birkedal:domains:10}.
+
+In this account, monadic computations are represented by
+store-passing.
+\begin{align*}
+  \states &= \assignables \pto D\\
+  D &\cong (D \to D) \oplus (D \times D) \oplus ... \oplus \states \to (\states \times D)
+\end{align*}
+Projections, $\pi^i$, work by casing on which branch of the domain
+equation the argument is in and proceed accordingly. This is analogous
+to how with syntactic minimal invariance the projection function is
+split according the type of the argument. Most of the clauses are
+standard with the interesting one being the last one for
+commands. Denote a value in of the domain in the last branch as
+$\cmd{f}$ where $f : \states \to (\states \times D)$. Then
+$\pi^{i + 1}$ on this satisfies the following formula.
+\begin{align*}
+  \pi^{i + 1}(\cmd{f}) &=
+  \cmd{\lambda s. (\trunc^i(\pi_1 f(s)), \pi^i(\pi_2 f(s)))}
+  \trunc^i(s) = \pi^i \circ s
+\end{align*}
+In words: truncation on a command runs the command a point-wise
+truncated heap and then truncates the return value as well as the
+resulting heap.
+
+In order to implement this syntactically, there's an issue. How can it
+be possible to replicate in a setting where accessing the whole heap
+is forbidden. In fact, this cannot be implemented as is. This presents
+a serious issue in scaling up syntactic minimal invariance and there
+is no clear solution.
+
+If, for instance, a new command $\trunc_i \div \mathrm{unit}$ is
+added to the language it is possible to express the projections. With
+the other definition left unchanged the new case,
+$\pi_{\cmd{\tau}}^{i + 1}$, is as follows.
+\begin{align*}
+  \lam{c}{\cmd{\tau}}
+  {\cmd{& \bnd{\_}{\cmd{\trunc_i}}{\\
+        & \bnd{x}{c}{\\
+        & \bnd{\_}{\cmd{\trunc_i}}{\\
+        & \ret{\ap{\pi_\tau^i}{x}}}}}}}
+\end{align*}
+If this is added then Theorem~\ref{thm:smi:smi} holds when we add the
+following rule for evaluating $\trunc^i$.
+\begin{mathpar}
+  \inferrule{
+  }{\stepsM{\trunc^0}{h}{\trunc^0}{h}}\and
+  \inferrule{
+    h(\alpha) = \ap{\pi_\tau^i}{\alpha}
+  }{\stepsM{\trunc^{i + 1}}{h}{\ret{()}}{h'}}
+\end{mathpar}
+It is worth noting the strangeness of the last rule which is morally
+``truncating the full heap''. This strangeness is twofold. It bakes in
+the $\pi_\tau$ functions into the very operational semantics despite
+them just being chunks of user-defined code. It also requires that the
+heap be in some way typed so that when projecting at some particular
+cell it is possible to determine the type to truncate at.
+
+Beyond the strangeness of the rule, however, it works. A logical
+relation can be defined using Kripke worlds which index semantic types
+by truncation. This is problematic, however, because it changes the
+notion of contextual equivalence. By adding new constructs to the
+language new contexts are added and this impacts contextual
+equivalence. In this extended language, programs that ought to be
+equal are no longer. For instance, the following program should be
+equivalent to $\cmd{\cmd{\ret{\lam{x}{\tau}{x}}}}$ but is not.
+\begin{align*}
+  \cmd{& \dcl{\alpha}{\lam{x}{\tau}{x}}{\\
+       & \ret{\cmd{\get{\alpha}}}}}
+\end{align*}
+The issue is that another part of the program could truncate the heap,
+replacing $\lam{x}{\tau}{x}$ with a truncation of itself. This
+truncation would diverge strictly more than the original and thus the
+second piece of code only contextually approximates the first. This
+weakening is discussed more in subsequent work to
+\citet{Birkedal:domains:10}, for instance in
+\citet{TODO-FOLLOW-UP}. In our case, however, this restriction is
+damaging. It makes it impossible to prove any information-hiding
+results using our logical relation and this makes it difficult to
+prove that certain effects are benevolent\footnote{So actually this is
+  a key motivation that I forgot about until now. TODO mention it
+  earlier.}.
+
+This puts a stop to naively extending syntactic minimal invariance to
+our language with state. An idea with briefly considering is to build
+a logical relation on a language with $\trunc_i$ and then attempt to
+excise the terms that should not have been in there in the first place
+after the fact. This approach has proven to be too complicated to
+feasibly manage. Instead, a better approach seems to be to isolate a
+more type-theoretic characterization of the difficulty of a logical
+relation for state.
 
 %%% Local Variables:
 %%% mode: latex

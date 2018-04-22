@@ -1,4 +1,50 @@
-\subsection{A Logical Relation in Ultrametric Spaces}\label{sec:guarded}
+\section{A Logical Relation in Ultrametric Spaces}\label{sec:guarded}
+
+The final proposed approach to handling logical relations for state is
+to instead study a language which allows us to merely encode
+state. This is not sufficient to solve many of the original goals of
+this work but it's a simpler problem and a natural stop along the way
+to a proper logical relation. The natural candidate for a logical
+relation is to consider (guarded) recursive kinds.
+
+Recursive kinds require us to switch to a richer language where the
+types themselves support a form of computation. For our purposes, the
+language is given by the following grammar.
+\[
+  \begin{array}{lcl}
+    e & ::= & x \mid \lam{x}{\tau}{e} \mid \ap{e}{e} \mid \Lam{\alpha}{\kappa}{e} \mid \Ap{e}{c}\\
+    c, \tau & ::= & \alpha \mid \fn{\tau}{\tau} \mid \all{\alpha}{\kappa}{\tau} \\
+      & \mid &  \lam{\alpha}{\kappa}{c} \mid \ap{c}{c} \mid \into{c}
+               \mid \out{c}\\
+    \kappa & ::= & j \mid \tp \mid \later \kappa \mid \fn{\kappa}{\kappa} \mid \rec{j}{\kappa}
+  \end{array}
+\]
+This language features a simple term language but a much richer type
+language, here called \emph{constructors}. Constructors allow for
+computation which produces types. This is formally captured by two
+judgments: $\hasTJ{\Omega}{\Delta}{c}{\kappa}$ and
+$\hasTJ{\Omega}{\Delta}{c_1 \equiv c_2}{\kappa}$. The first judgment
+specifies that a constructor $c$ has a kind $\kappa$ in a context of
+kind variables $\Omega$ and constructor variables $\Delta$. The second
+specifies when two constructors are equal. This latter judgment is
+related to the actual expressions of the language by the following
+rule.
+\[
+  \inferrule{
+    \hasEJ{\Omega}{\Delta}{\Gamma}{e}{\tau_1}\\
+    \hasTJ{\Omega}{\Delta}{\tau_1 \equiv \tau_2}{\tp}
+  }{\hasEJ{\Omega}{\Delta}{\Gamma}{e}{\tau_2}}
+\]
+The constructor language typing judgments are standard for
+F$\omega$\citep{TODO-FOMEGA} except for the following rules.
+\begin{mathpar}
+  \inferrule{
+    \hasTJ{\Omega}{\Delta}{c}{\rec{j}{\kappa}}
+  }{\hasTJ{\Omega}{\Delta}{\out{c}}{[\rec{j}{\kappa}/j]\kappa}}\and
+  \inferrule{
+    \hasTJ{\Omega}{\Delta}{c}{\rec{j}{\kappa}}
+  }{\hasTJ{\Omega}{\Delta}{\out{c}}{[\rec{j}{\kappa}/j]\kappa}}
+\end{mathpar}
 
 %%% Local Variables:
 %%% mode: latex
