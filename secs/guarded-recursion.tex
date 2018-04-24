@@ -1,4 +1,4 @@
-\section{A Logical Relation in Ultrametric Spaces}\label{sec:guarded}
+\section{A Logical Relation in $\presheaves{\omega}$ with Syntactic Minimal Invariance}\label{sec:guarded}
 
 The final proposed approach to handling logical relations for state is
 to instead study a language which allows us to merely encode
@@ -97,6 +97,158 @@ $\forall$ is the only case where the higher-typed constructors factor
 in to the expression language. This interaction is crucial for
 \citet{TODO-POTTIER} so it cannot be ignored, but it will be at the
 heart of the failure of the next attempt.
+
+Instead of considering full recursive kinds, we restrict our attention
+to a particular class of them: the class of guarded recursive
+kinds. Guarded recursion in general originates with
+\citet{TODO-NAKANO}. The idea is to isolate which recursive
+definitions are \emph{productive}. Productivity is informally the idea
+that after a finite number of steps something must be produced by a
+program. The program need not compute to a normal form but it should
+produce some observable output. The classic example of productivity is
+a stream: an infinite stream should never evaluate to a normal form
+but we would like to be able to calculate the $n$th element of the
+stream in finite time. Productive programming is an extremely natural
+paradigm for many programs which are never expected to terminate but
+still expected to produce work as they go.
+
+The question is how to ensure that a definition is productive. One
+line of work is to consider a syntactic condition on programs. This is
+used by some proof assistants~\citep{TODO-COQ} and is simple and
+sound. The idea is to check that no recursive calls occur without
+being underneath a constructor. In the stream example, for instance,
+this means that an element of the stream has to be produced before the
+function is entitled to recurse. The issue is that a syntactic check
+is too brittle. It does not, for instance, work if a productive
+definition has been factored into two different parts since one of
+these parts may not be syntactically unguarded. It is also ill-suited
+for handling higher-order functions where the productivity may rely on
+the supplied function being productive.
+
+A more robust solution is to follow the approach of
+\citet{TODO-NAKANO} and equip the type theory with a modality
+indicating that something is only available to use ``at a later point
+in time''. Then, for instance, in a language with streams the
+constructor for a stream would have the type
+$\fn{\tau}{\later \mathrm{Stream}_\tau}{\mathrm{Stream}_\tau}$
+indicating that it is sufficient to provide the tail of a list so that
+it is only available later. In order to make this modality useful,
+$\later$ comes equipped with a number of operations. Two of the basic
+ones ensure that $\later$ is an applicative functor:
+\begin{align*}
+  \delay{-} &: \fn{\tau}{\later \tau}\\
+  - \zap - &: \later (\fn{\tau_1}{\tau_2}) \to \fn{\later \tau_1}{\later \tau_2}
+\end{align*}
+Finally, $\later$ can be used to construct fixed points.
+\begin{align*}
+  \fix{} : \fn{(\fn{\later \tau}{\tau})}{\tau}
+\end{align*}
+All of this is extremely similar to the operations available in
+$\presheaves{\omega}$. The first two operations were facts about the
+functor $\later$ and the last one is L\"ob induction. Nakano's work on
+guarded recursion provides a syntactic account of this modality. In
+the original presentation the operations written above were
+presented as subtyping relations in the calculus rendering them all
+silent. In more recent presentations~\citep{TODO-GUARDED} these
+operations are all made explicit again as they are mediated by
+nontrivial isomorphisms. For our purposes, we will continue the
+subtyping presentation for consistency with \citet{TODO-POTTIER} which
+describes the encoding motivating this construction.
+
+Guarded recursive kinds are slightly different than guarded recursion
+in general because the term language contains divergent and
+nonproductive terms. The guarantees provided by guardedness apply only
+at the level of constructors where it is the case that all
+constructors are productive (have a weak head normal form). In this
+sense, the language of guarded recursive kinds can be seen as a
+particular simply-typed calculus with guarded recursion and a
+distinguished base type $\tp$. The term-formers of this type are the
+type-formers of our expression language: $\fn{-}{-}$ and
+$\all{\alpha}{\kappa}{-}$. A further distinction between this calculus
+and other type theories is that our type formers are all
+contractive. This means that they take arguments available only later
+and produce a result available now. In type theories with a universe,
+for instance, the operations on the universe are all nonexpansive:
+they preserve laters by taking arguments available later and producing
+a result later (the inverse of the $- \zap -$ operation would do this
+for instance). This extra strength provided by contractiveness is
+exactly what allows for the construction of divergent terms in our
+language. This would present a soundness issue for a type theory but
+from our perspective it is a natural convenience of a programming
+language unconcerned with serving as a logic.
+
+To make this discussion formal, the (selected) rules of our language are the
+following.
+\begin{mathpar}
+  \declareJudgement{\hasKJ{\Omega}{\kappa}}\\
+  \inferrule{
+    j \in \Omega
+  }{\hasKJ{\Omega}{j}} \and
+  \inferrule{
+    \hasKJ{\Omega}{\kappa} \\
+    \hasKJ{\Omega}{\kappa'}
+  }{\hasKJ{\Omega}{\fn{\kappa}{\kappa'}}}\and
+  \inferrule{
+    \hasKJ{\Omega}{\kappa}
+  }{\hasKJ{\Omega}{\later \kappa}} \and
+  \inferrule{ }
+  {\hasKJ{\Omega}{\tp}} \and
+  \inferrule{
+    \hasKJ{\Omega, j : \kind}{\kappa}\\
+    \guardJ{j}{\kappa}
+  }{\hasKJ{\Omega}{\rec{j}{\kappa}}}
+\end{mathpar}
+\begin{mathpar}
+  \declareJudgement{\guardJ{j}{\kappa}}\\
+  \inferrule{
+    \mbox{$j$ not free in $\kappa$}
+  }{\guardJ{j}{\kappa}}\and
+  \inferrule{
+    \guardJ{j}{\kappa_1}\\
+    \guardJ{j}{\kappa_2}
+  }{\guardJ{j}{\fn{\kappa_1}{\kappa_2}}} \and
+  \inferrule{ }{\guardJ{j}{\later \kappa}} \and
+  \inferrule{
+    \guardJ{j}{\kappa}
+  }{\guardJ{j}{(\rec{j'}{\kappa})}}
+\end{mathpar}
+\begin{mathpar}
+  \declareJudgement{\subKJ{}{\kappa}{\kappa'}}\\
+  \inferrule{
+    \subKJ{}{\kappa_1'}{\kappa_1} \\
+    \subKJ{}{\kappa_2}{\kappa_2'}
+  }{\subKJ{}{\fn{\kappa_1}{\kappa_2}}{\fn{\kappa_1'}{\kappa_2'}}} \and
+  \inferrule{
+    \subKJ{}{\kappa}{\kappa'}
+  }{\subKJ{}{\later \kappa}{\later \kappa'}} \and
+  \inferrule{
+  }{\subKJ{}{\kappa}{\later \kappa}} \and
+  \inferrule{
+  }{\subKJ{}{\later (\fn{\kappa}{\kappa'})}{\fn{\later \kappa}{\later \kappa'}}} \and
+  \inferrule{
+  }{\subKJ{}{\fn{\later \kappa}{\later \kappa'}}{\later (\fn{\kappa}{\kappa'})}}
+\end{mathpar}
+\begin{mathpar}
+  \declareJudgement{\hasTJ{}{\Delta}{c}{\kappa} \quad \hasEJ{}{\Delta}{\Gamma}{e}{\tau}}\\
+  \inferrule{
+    \hasTJ{}{\Delta}{\tau_1}{\later \tp}\\
+    \hasTJ{}{\Delta}{\tau_2}{\later \tp}
+  }{\hasTJ{}{\Delta}{\fn{\tau_1}{\tau_2}}{\tp}}\and
+  \inferrule{
+    \hasTJ{}{\Delta, \alpha : \kappa}{\tau}{\later \tp}
+  }{\hasTJ{}{\Delta}{\all{\alpha}{\kappa}{\tau}}{\tp}}
+  \and
+  \inferrule{
+    \hasTJ{}{\Delta}{\tau}{\later^n\,\tp} \\
+    \hasEJ{}{\Delta}{\Gamma, x : \tau}{e}{\tau'}
+  }{\hasEJ{}{\Delta}{\Gamma}{\lam{x}{\tau}{e}}{\fn{\tau}{\tau'}}}
+  \and
+  \inferrule{
+    \hasEJ{}{\Delta}{\Gamma}{e}{\forall \alpha : \kappa . \tau}\\
+    \hasTJ{}{\Delta}{c}{\later^n \kappa}
+  }{\hasEJ{}{\Delta}{\Gamma}{\Ap{e}{c}}{[c / \alpha] \tau}}
+\end{mathpar}
+
 
 %%% Local Variables:
 %%% mode: latex
