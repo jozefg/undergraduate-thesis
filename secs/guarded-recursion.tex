@@ -5,7 +5,13 @@ to instead study a language which allows us to merely encode
 state. This is not sufficient to solve many of the original goals of
 this work but it's a simpler problem and a natural stop along the way
 to a proper logical relation. The natural candidate for a logical
-relation is to consider (guarded) recursive kinds.
+relation is to consider (guarded) recursive kinds as described by
+\citet{TODO-FORK}. The motivation for doing this is that a language
+with guarded recursive kinds is quite complex but in a very different
+way than a language with state. It does not require Kripke worlds in
+particular, the recursion is instead present in the kind structure. By
+being present in the structure of types itself it is easier to handle
+with type-based methods.
 
 Recursive kinds require us to switch to a richer language where the
 types themselves support a form of computation. For our purposes, the
@@ -16,7 +22,7 @@ language is given by the following grammar.
     c, \tau & ::= & \alpha \mid \fn{\tau}{\tau} \mid \all{\alpha}{\kappa}{\tau} \\
       & \mid &  \lam{\alpha}{\kappa}{c} \mid \ap{c}{c} \mid \into{c}
                \mid \out{c}\\
-    \kappa & ::= & j \mid \tp \mid \later \kappa \mid \fn{\kappa}{\kappa} \mid \rec{j}{\kappa}
+    \kappa & ::= & j \mid \tp \mid \fn{\kappa}{\kappa} \mid \rec{j}{\kappa}
   \end{array}
 \]
 This language features a simple term language but a much richer type
@@ -39,12 +45,58 @@ The constructor language typing judgments are standard for
 F$\omega$\citep{TODO-FOMEGA} except for the following rules.
 \begin{mathpar}
   \inferrule{
+    \hasKJ{\Omega, j}{\kappa}
+  }{\hasKJ{\Omega}{\rec{j}{\kappa}}}\and
+  \inferrule{
     \hasTJ{\Omega}{\Delta}{c}{\rec{j}{\kappa}}
   }{\hasTJ{\Omega}{\Delta}{\out{c}}{[\rec{j}{\kappa}/j]\kappa}}\and
   \inferrule{
     \hasTJ{\Omega}{\Delta}{c}{\rec{j}{\kappa}}
   }{\hasTJ{\Omega}{\Delta}{\out{c}}{[\rec{j}{\kappa}/j]\kappa}}
 \end{mathpar}
+The calculus described so far is a version of F$\omega$ with recursive
+kinds. This language is quite expressive because recursive kinds allow
+for recursive constructor definitions of arbitrary sort through
+encoding the Y-combinator at the constructor level. It is
+exceptionally poorly behaved, however, because recursive kinds allow
+for constructors which do not have a weak head normal form. This
+forces choices in the language that seem to have no good answers. For
+instance, what terms belong to a constructor of kind $\tp$ that has no
+weak head normal form.
+
+There is a technique for potentially approaching a logical relation
+for even this language with general recursive types. It draws on two
+key ideas, one from Section~\ref{sec:domains} and one from
+Section~\ref{sec:smi}. We define a pair of logical relations
+$\definitely{-}$ and $\possibly{-}$ as in Section~\ref{sec:smi}. This
+logical relation is defined on the \emph{normal forms} of
+constructors however. In order to handle the cases where a term has an
+infinite normal form or simply diverges, we actually work of finite
+fragments of the B\"ohm tree of a term~\citep{TODO-BOHM}. Two terms
+are related at a type with an infinite normal form if and only if they
+are in all finite approximations of that type. In this case, there is
+actually a meaningful difference between $\definitely{-}$ and
+$\possibly{-}$: if we reach a node in the B\"ohm tree which indicates
+that more information exists but we are not allowed access to it in
+this approximation, say ?, $\definitely{?} = \{(\bot, \bot)\}$ while
+$\possibly{?} = \term \times \term$.
+
+This approach for logical relations works in that the logical relation
+is well-defined and if both sides of the birelation $\eta$ are
+well-defined, then $\definitely{\tau}_\eta =
+\possibly{\tau}_\eta$. The issue is that this fact does not scale to
+general case of $c : \kappa$. In particular, it is not the case that
+for an $\eta = \op{\eta}$ that
+$\definitely{\lam{\alpha}{\kappa}{c}}_\eta = \possibly{\lam{\alpha}{x}{\kappa}}_\eta$.
+The issue is that these must be equal as functions on pairs of
+relations $(R_1, R_2)$ and not merely on a single relation $R$. If
+$R_1 = R_2$ they are equal but this information is not sufficient to
+get the case for $\forall$ to go through in the fundamental
+theorem. This failure will be instructive for the coming issue:
+$\forall$ is the only case where the higher-typed constructors factor
+in to the expression language. This interaction is crucial for
+\citet{TODO-POTTIER} so it cannot be ignored, but it will be at the
+heart of the failure of the next attempt.
 
 %%% Local Variables:
 %%% mode: latex

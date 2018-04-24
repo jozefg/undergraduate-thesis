@@ -82,7 +82,7 @@
 \newcommand{\hasTJ}[4]{\ifthenelse{\isempty{#1}}%
   {\ensuremath{#2 \vdash \hasE{#3}{#4}}}%
   {\ensuremath{#1;#2 \vdash \hasE{#3}{#4}}}}
-\newcommand{\hasEJ}[6]{\ifthenelse{\isempty{#1}}%
+\newcommand{\hasEJ}[5]{\ifthenelse{\isempty{#1}}%
   {\ensuremath{#2; #3 \vdash \hasE{#4}{#5}}}%
   {\ensuremath{#1; #2; #3 \vdash \hasE{#4}{#5}}}}
 \newcommand{\hasESigJ}[5]{\ensuremath{#1; #2 \vdash_{#3} \hasE{#4}{#5}}}
@@ -177,6 +177,7 @@
 \input{secs/handedness}
 \input{secs/guarded-recursion}
 \input{secs/conclusion}
+% \input{sec/ack}
 
 \bibliographystyle{plainnat}
 \bibliography{citations}
