@@ -2,7 +2,7 @@
 
 Now that domains are seen to be unhelpful, there is some question
 about where to turn next. There are not many well-studied
-algebraically complete categories~\citep{TODO-FREYD} which support
+algebraically complete categories~\citep{Freyd:70} which support
 interesting denotational semantics. The semantic structures for
 step-indexing that support solving recursive domain equation require
 more than continuity or approximation, they require a notion of
@@ -20,7 +20,7 @@ $n$ steps. Without step-indexing what could this be replaced by?
 The answer is suggested by an idea in domain theory to resolve a
 seemingly unrelated problem. The observant reader may have noticed
 that there is a crucial strengthening that
-Theorem~\ref{thm:step-indexing:fixed-points} provides over
+Theorem~\ref{thm:steps:fixed-points} provides over
 Theorem~\ref{thm:domains:fixed-points}, the former provides unique
 solutions. In fact, there may be many nonisomorphic domains which
 satisfy a given equation. This state of affairs can prove troublesome
@@ -28,7 +28,7 @@ for semantics in domains because it means that not all the properties
 of the domain are determined by the equation. There may be ``exotic''
 elements which are not required to satisfy the domain equation but are
 present none the less which impedes reasoning about recursive domain
-equations by induction or similar. \citet{TODO-PITTS} proposes a
+equations by induction or similar. \citet{Pitts:96} proposes a
 solution to this by imposing an additional requirement on the solution
 to a domain equation: minimal invariance.
 
@@ -60,8 +60,8 @@ equations have a unique minimally invariant solution and these satisfy
 a form of induction through minimal invariance.
 
 An interesting observation made originally by
-\citet{TODO-BIRKEDAL-AND-HARPER} and extend by
-\citet{TODO-CRARY-AND-HARPER} is that for the class of domains arising
+\citet{Birkedal:99} and extend by
+\citet{Crary:07} is that for the class of domains arising
 naturally in semantics (so called ``universal domains'') the
 projection functions, $\pi_i$, are computable
 syntactically. Additionally, since contextual equivalence can be
@@ -126,7 +126,7 @@ immediately follows that
 $\definitely{\tau}_\eta = \possibly{\tau}_\eta$. This maneuver is
 useful because these two definitions are naturally monotone therefore
 its easy to express a natural definition of recursive types, as is
-done in \citet{TODO-CRARY-HARPER} for instance. The only complication
+done in \citet{Crary:07} for instance. The only complication
 is that environments must generalize from relations to birelations, a
 map to a pair of relations rather than a map to a single
 relation. Define $\op{\eta}$ to be the environment mapping $\alpha$ to
@@ -164,7 +164,7 @@ $\bot$ so that $\step{\bot}{\bot}$.
 \end{align*}
 This approach, while effective for recursive types, is not quite what
 is needed to handle state. After all, the issue in
-Section~\ref{sec:step-indexing} was not the definition of
+Section~\ref{sec:steps} was not the definition of
 $den{\cmd{\tau}}_\eta(w)$, it was the construction of the set in which
 $w$ lives. On the other hand, the projections themselves are
 interesting, they provide a way to construct an indexing of semantic
@@ -174,7 +174,7 @@ logical relation for a similar language. This work, however, made use
 of the normal domain theoretic projections rather than their syntactic
 counterparts. The question of producing a logical relation for our
 language is then reduced to the question of producing a syntactic
-account of \citet{Birkedal:domains:10}.
+account of \citet{Birkedal:domain:10}.
 
 In this account, monadic computations are represented by
 store-passing.
@@ -249,8 +249,8 @@ replacing $\lam{x}{\tau}{x}$ with a truncation of itself. This
 truncation would diverge strictly more than the original and thus the
 second piece of code only contextually approximates the first. This
 weakening is discussed more in subsequent work to
-\citet{Birkedal:domains:10}, for instance in
-\citet{TODO-FOLLOW-UP}. In our case, however, this restriction is
+\citet{Birkedal:domain:10}, for instance in
+\citet{Birkedal:adts:12}. In our case, however, this restriction is
 damaging. It makes it impossible to prove any information-hiding
 results using our logical relation and this makes it difficult to
 prove that certain effects are benevolent\footnote{So actually this is

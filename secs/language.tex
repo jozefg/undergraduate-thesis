@@ -6,7 +6,7 @@ calculus suitable for studying the effects of general references on
 reasoning.
 
 The language under consideration here is heavily influenced by the
-Modernized Algol discussed by Harper~\citep{TODO:PFPL}. It features a
+Modernized Algol discussed by Harper~\citep{Harper:16}. It features a
 syntactic separation between commands and expressions. Expressions are
 characterized by being unable to depend on in any way on the
 heap. Commands may modify the heap using assignables, a mutable
@@ -36,7 +36,7 @@ types defined by the following grammar.
 Only one point of this syntax must be clarified, which is the
 unfortunate coincidence of $\alpha$s. In an attempt to maintain
 consistency with the standard literature on System F and
-Harper~\citep{TODO:PFPL} $\alpha$ here refers either to an assignable
+Harper~\citep{Harper:16} $\alpha$ here refers either to an assignable
 (a symbol) or a type variable. Crucially, assignables are \emph{not}
 variables. Assignables are bound by the operators of our language and
 they do $\alpha$-vary as a variable might but they may not be
@@ -61,7 +61,7 @@ and writing a mutable cell are indexed by symbol rather than taking an
 arbitrary term. There is much to be said on the subject of symbols
 and, more generally, nominal binding but it is sadly out-of-scope for
 this discussion. The interested reader is referred
-to~\citep{TODO-NOMINAL-STUFF}.
+to~\citep{Pitts:13}.
 
 The static semantics of the language are divided into three judgments,
 the first of which is the judgment ensuring a type is a
@@ -146,12 +146,11 @@ commands are as follows.
 The operational semantics of this language can be presented in two
 distinct ways differing in the way that the allocation of a fresh heap
 cell is done. In classical literature, an expression is evaluated
-using traditional small step
-semantics~\citep{TODO-SMALL-STEP}. Commands in this framework are
+using traditional small step semantics. Commands in this framework are
 represented as a pair $(m, h)$, a command and the heap it is running
 on, and there is another stepping relation defined between these
-configurations. In \citet{TODO-PFPL} the binding structure of symbols is
-preserved in the operational semantics so that a running command is
+configurations. In \citet{Harper:16} the binding structure of symbols
+is preserved in the operational semantics so that a running command is
 represented as a configuration $\nu \Sigma.\ (m, h)$ where $\nu$ is a
 collection of symbols bound in both $m$ and $h$. The advantage of this
 presentation is that it eliminates the choice of how to pick a fresh
@@ -250,7 +249,7 @@ equivalence to work with open terms. A small point of interest is that
 the fact that we have two sorts which may mention each other leads to
 four different varieties of contexts. This quadratic growth continues
 which makes contextual equivalence difficult to define for complex
-languages. This has been addressed in Crary~\citep{TODO-MODULES} by
+languages. This has been addressed in Crary~\citep{Crary:17} by
 defining contextual equivalence as the unique relation satisfying
 Theorem~\ref{thm:language:cxt}.
 n

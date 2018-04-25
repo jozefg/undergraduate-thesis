@@ -8,7 +8,7 @@ how step-indexing obliterates them, though at a high cost.
 
 Our logical to begin with a mapping from types to semantic types
 (merely sets of terms). In order to handle impredicative polymorphism
-Girard's method~\citep{Girard:71,Girard:72}, see \citet{TODO-PFPL} for
+Girard's method~\citep{Girard:71,Girard:72}, see \citet{Harper:16} for
 a comprehensive explanation of the technique. This means that our
 logical relation is of the form
 \[
@@ -59,17 +59,18 @@ simply not the case that programs that are equivalent in a heap where
 no cells are required to exist if and only if they're equivalent in a
 heap where one cell is required to exist.
 
-The solution to this is called a Kripke logical
-relation~\citep{TODO-KRIPKE}. Kripke logical relations, more generally
-sheaf models, are a recurring phenomenon in computer
-science~\citep{TODO-KRIPKE-STUFF}. The recurring theme of Kripke
-logical relations, or sheaf models, is to abandon the notion of a
-single global truth and judge truth relative to a current state of the
-world. Rather than considering $(e_1, e_2) \in \den{\tau}_\eta$, we
-should consider at some world $w$: $(e_1, e_2)
-\den{\tau}_\eta(w)$. Now the collection of worlds should be
-\emph{ordered} by a reachability relation $\reach$. Importantly,
-Kripke logical relations should be monotone in relation to $\reach$:
+The solution to this is called a Kripke logical relation. Kripke
+logical relations, more generally sheaf models, are a recurring
+phenomenon in computer
+science~\citep{Plotkin:80,Mitchell:91,Appel:01,Ahmed:04}. The
+recurring theme of Kripke logical relations, or sheaf models, is to
+abandon the notion of a single global truth and judge truth relative
+to a current state of the world. Rather than considering
+$(e_1, e_2) \in \den{\tau}_\eta$, we should consider at some world
+$w$: $(e_1, e_2) \den{\tau}_\eta(w)$. Now the collection of worlds
+should be \emph{ordered} by a reachability relation
+$\reach$. Importantly, Kripke logical relations should be monotone in
+relation to $\reach$:
 \[
   \forall w_1, w_2.
   \ w_1 \reach w_2 \land (e_1, e_2) \in \den{\tau}_{w_1}
@@ -121,7 +122,7 @@ What is needed is an judo throw in the vein of Girard's
 method. Instead of attempting to decide what the equality for a
 particular heap location should be in the definition of $\sim_w$, it
 should be told to us already by $w$. This idea, originating with
-\citet{TODO-PITTS-AND-STARK}, means that our Kripke worlds should
+\citet{Pitts:98}, means that our Kripke worlds should
 instead satisfy the relation:
 \[
   \worlds = \assignables \pto \pow{\term \times \term}
@@ -324,39 +325,39 @@ process.
 \]
 This fixed-point construction allows us to build many interesting
 structures inside this category. Through the inclusion of
-universes~\citep{TODO-UNIVERSES}, one can even construct solutions to
+universes~\citep{Hofmann:90s}, one can even construct solutions to
 certain (small) domain equations entirely internally to the
-category~\citep{TODO-QUACK-FIXED-POINTS}. The basic idea is that
+category~\citep{Birkedal:13}. The basic idea is that
 $\presheaves{\omega}$ can be easily made to support an object,
 $\mathcal{U}$, for which global sections classify other smaller
 objects. This is the categorical analog of a Grothendieck
-universe~\citep{TODO-GROTHENDIECK} and proves to be an important
+universe~\citep{Streicher:04} and proves to be an important
 concept in the semantics of dependent type theory. Then, by using
 $\fix_\univ$ it is possible to construct the recursively defined
 presheaves necessary to build logical relations. This approach, while
 not explicit, is latent in the work done in constructing logical
 relations in guarded type theory and guarded
-logics~\citep{TODO-LR-IN-GUARDED}.
+logics~\citep{Dreyer:09,Krogh-Jespersen:17}.
 
 We will consider the more traditional approach of using proper domain
 equations rather than just small ones. In this case, the traditional
 domain theoretic approach is to use functors and to construct fixed
 points of them. This approach in domain theory originates from
-\citet{TODO-PLOTKIN-SMYTH} and subsumed prior work by Scott
+\citet{Smyth:77} and subsumed prior work by Scott
 constructing recursive domain equations by
-hand~\citep{TODO-SCOTT}. One potential issue is that we would like to
+hand~\citep{Scott:76}. One potential issue is that we would like to
 solve domain equations which are not strictly speaking functorial. In
 particular, we want to handle the case where the equation contains
 both positive and negative occurences. We handle these by viewing them
 as functors
 $F : \op{\presheaves{\omega}} \times \presheaves{\omega} \to
 \presheaves{\omega}$
-in the style of \citet{TODO-MIXED-VARIANCE}. The question then
+in the style of \citet{Pitts:96} for instance. The question then
 becomes, for what functors can we construct an object, $I$, so that
 $F(I, I) \cong I$, an invariant object. This construction is a
 generalization of the theorem of America and
-Rutten~\citep{TODO-AMERICA}. The precise accounting the theorem can
-be found in \citet{Birkedal:11} allowing for any enriched functor
+Rutten~\citep{America:87}. The precise accounting the theorem can
+be found in \citet{Birkedal:steps:11} allowing for any enriched functor
 between categories enriched in sheaves over a complete Heyting algebra
 with a well-founded basis. For our purposes though a much less general
 theorem suffices.
@@ -499,8 +500,7 @@ relative to the same world. It was this circularity and
 self-application which drove us to step-indexing in the first place.
 
 The rest of the logical relation is entirely standard step-indexing
-and the curious reader is referred to any of the following excellent
-resources~\citet{TODO-STEP-INDEXING}.
+and the curious reader is referred to \citet{Ahmed:04}.
 
 A final consideration here is that the version of step-indexing
 presented in this paper is ``half-baked''. We have eschewed explicit
@@ -552,7 +552,7 @@ satisfaction working in the internal logic.
 No explicit steps are present only a handful of logical operations to
 handle the new type-constructor later. This approach to step-indexing,
 whether explicitly topos theoretic or not is the subject of a long
-line of work~\citep{TODO-LOGICAL-STEPS}. Importantly, this logical
+line of work~\citep{Svendsen:16}. Importantly, this logical
 approach to step-indexing enables abstraction from the natural numbers
 themselves and suggests more general notions of
 step-indexing~\citep{Svendsen:16}. The most approachable introduction to

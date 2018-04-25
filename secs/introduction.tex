@@ -60,10 +60,13 @@ type-indexed notion of equality. Logical relations have proven
 important for validating certain obviously desirable properties such
 as function extensionality. They have also given rise to a powerful
 theory of data abstraction called
-parametricity~\citep{Reynolds:83}. Parametric reasoning as inspired
-by logical relations has been so important that there have even been
+parametricity~\citep{Reynolds:83}. Parametric reasoning as inspired by
+logical relations has been so important that there have even been
 attempts to reconstruct it in a purely abstract denotational
-sense~\citep{Bainbridge:90,Ma:91,Birkedal:05,Dunphy:04}.
+sense~\citep{Bainbridge:90,Abadi:90,Ma:91,Birkedal:05,Dunphy:04}. This
+program is still largely incomplete however. A summary of the state of
+the art at the time and the fundamental obstacles may be found in
+\citet{Hermida:14}
 
 To be precise, a logical relation in for us is a family of sets
 indexed by the types of the language, $(R_\tau)_\tau$. It is
@@ -122,23 +125,22 @@ reason why $\tau'$ should be smaller than
 $\allNoKind{\alpha}{\tau}$. This is not a minor issue, defining a
 correct logical relation for a language with impredicative
 polymorphism requires the novel method of
-candidates~\citep{Girard:71,Girard:72}. This problem has been a recurring
-issue: features in programming languages tend to have some recursive
-structure which prevents them from easily fitting into the inductive
-definition of a logical relation. For many features clever
+candidates~\citep{Girard:71,Girard:72}. This problem has been a
+recurring issue: features in programming languages tend to have some
+recursive structure which prevents them from easily fitting into the
+inductive definition of a logical relation. For many features clever
 constructions have been found which circumvent well-foundedness
 issues: for parametric polymorphism~\citep{Girard:71,Girard:72}, for
-first-order state~\citep{Pitts:98}, simple
-exceptions~\citep{TODO-I-DUNNO-SURELY-NOT-NUPRL}, and for recursive
-types~\citep{Crary:07}. Despite this work logical
-relations are still a long way away from being able to cope with a
-full programming language. The state of the art for dealing with
-features like higher-order references, nontrivial control passing, or
+first-order state~\citep{Pitts:98}, simple exceptions, and for
+recursive types~\citep{Crary:07}. Despite this work logical relations
+are still a long way away from being able to cope with a full
+programming language. The state of the art for dealing with features
+like higher-order references, nontrivial control passing, or
 concurrency is to use step-indexing.
 
-Step-indexing is a technique first proposed by \citet{Appel:01}. It
-is based on a simple but ingenious idea: if you the logical relation
-is not well-defined by induction on the type just add a number which
+Step-indexing is a technique first proposed by \citet{Appel:01}. It is
+based on a simple but ingenious idea: if you the logical relation is
+not well-defined by induction on the type just add a number which
 decreases and induct on that. This idea means that a logical relation
 is no longer a type-indexed relation but a relation indexed by a
 number (called a \emph{step}) and a type, $(R_\tau^i)_{i, \tau}$. The
@@ -150,30 +152,30 @@ $e_1$ runs to $\tt$ in 10 steps while $e_2$ runs to false in 20, it
 takes 20 steps to distinguish them since we must wait for $e_2$ to
 finish running before they can be compared. This idea of steps has
 proven to be incredibly robust and easily extend to many different
-settings~\citep{TODO-SUCCESSES-OF-STEP-INDEXING}. There is a price to
-be payed for this extra flexibility. Firstly, steps will now pervade
-the definition of the logical relation and any proof now must contain
-pointless bookkeeping activity in order to keep track of
-them. Secondly, the evaluation behavior of the programs under
+settings~\citep{Appel:01,Ahmed:04,Ahmed:06,Appel:07,Dreyer:09,Dreyer:10,Birkedal:steps:11,Turon:13,Svendsen:16}.
+There is a price to be payed for this extra flexibility. Firstly,
+steps will now pervade the definition of the logical relation and any
+proof now must contain pointless bookkeeping activity in order to keep
+track of them. Secondly, the evaluation behavior of the programs under
 consideration has begun to matter again. The goal of contextual
 equivalence was to erase it from consideration but now there are
 instances where in order to use a logical relation a program must be
 modified with spurious NO-OP statements in order to make it take extra
 steps. These issues are even present when just using the logical
 relation to validate contextual
-equivalences~\citep{TODO-TRANSFINITE}. In practice, this has meant
+equivalences~\citep{Svendsen:16}. In practice, this has meant
 that while step-indexing is incredibly widely used it is almost
 universally disliked\footnote{Citation: I walked around at POPL and
   the 5 people I asked seemed like REALLY bummed about it.}.
 
 The structure of this thesis as follows. In Section~\ref{sec:language}
 an ML-like language is described that will serve as target for the
-logical relation. In Section~\ref{sec:step-indexing} a step-indexed
+logical relation. In Section~\ref{sec:steps} a step-indexed
 logical relation for this language is constructed and discussed,
 especially to highlight its short-comings. In
 Section~\ref{sec:domains} the first failed step-index-free logical
 relation is described, the most naive approach centered around using
-domain theory. In Section~\ref{sec:handedness} a variety a number of
+domain theory. In Section~\ref{sec:smi} a variety a number of
 step-index-free logical relations are discussed for languages powerful
 enough to encode general references, largely built around (guarded)
 recursive kinds.

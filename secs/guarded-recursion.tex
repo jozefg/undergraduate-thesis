@@ -73,7 +73,7 @@ $\definitely{-}$ and $\possibly{-}$ as in Section~\ref{sec:smi}. This
 logical relation is defined on the \emph{normal forms} of
 constructors however. In order to handle the cases where a term has an
 infinite normal form or simply diverges, we actually work of finite
-fragments of the B\"ohm tree of a term~\citep{TODO-BOHM}. Two terms
+fragments of the B\"ohm tree of a term~\citep{Barendregt:13}. Two terms
 are related at a type with an infinite normal form if and only if they
 are in all finite approximations of that type. In this case, there is
 actually a meaningful difference between $\definitely{-}$ and
@@ -96,13 +96,13 @@ get the case for $\forall$ to go through in the fundamental
 theorem. This failure will be instructive for the coming issue:
 $\forall$ is the only case where the higher-typed constructors factor
 in to the expression language. This interaction is crucial for
-\citet{TODO-POTTIER} so it cannot be ignored, but it will be at the
+\citet{Pottier:11} so it cannot be ignored, but it will be at the
 heart of the failure of the next attempt.
 
 Instead of considering full recursive kinds, we restrict our attention
 to a particular class of them: the class of guarded recursive
 kinds. Guarded recursion in general originates with
-\citet{TODO-NAKANO}. The idea is to isolate which recursive
+\citet{Nakano:00}. The idea is to isolate which recursive
 definitions are \emph{productive}. Productivity is informally the idea
 that after a finite number of steps something must be produced by a
 program. The program need not compute to a normal form but it should
@@ -115,7 +115,7 @@ still expected to produce work as they go.
 
 The question is how to ensure that a definition is productive. One
 line of work is to consider a syntactic condition on programs. This is
-used by some proof assistants~\citep{TODO-COQ} and is simple and
+used by some proof assistants~\citep{coq} and is simple and
 sound. The idea is to check that no recursive calls occur without
 being underneath a constructor. In the stream example, for instance,
 this means that an element of the stream has to be produced before the
@@ -127,7 +127,7 @@ for handling higher-order functions where the productivity may rely on
 the supplied function being productive.
 
 A more robust solution is to follow the approach of
-\citet{TODO-NAKANO} and equip the type theory with a modality
+\citet{Nakano:00} and equip the type theory with a modality
 indicating that something is only available to use ``at a later point
 in time''. Then, for instance, in a language with streams the
 constructor for a stream would have the type
@@ -148,12 +148,13 @@ All of this is extremely similar to the operations available in
 $\presheaves{\omega}$. The first two operations were facts about the
 functor $\later$ and the last one is L\"ob induction. Nakano's work on
 guarded recursion provides a syntactic account of this modality. In
-the original presentation the operations written above were
-presented as subtyping relations in the calculus rendering them all
-silent. In more recent presentations~\citep{TODO-GUARDED} these
-operations are all made explicit again as they are mediated by
+the original presentation the operations written above were presented
+as subtyping relations in the calculus rendering them all silent. In
+more recent
+presentations~\citep{Birkedal:steps:11,Bizjak:16,Birkedal:16,Bahr:17}
+these operations are all made explicit again as they are mediated by
 nontrivial isomorphisms. For our purposes, we will continue the
-subtyping presentation for consistency with \citet{TODO-POTTIER} which
+subtyping presentation for consistency with \citet{Pottier:11} which
 describes the encoding motivating this construction.
 
 Guarded recursive kinds are slightly different than guarded recursion
@@ -263,16 +264,18 @@ semantic object so that $\den{\tp}$ is the collection of semantic
 types needed for the logical relation. Traditionally the literature
 around logical relations for higher-kinded languages has been
 concerned with notions of parametricity at higher
-kind~\citep{TODO-ROSILINI-DUNPHY-REDDY-ATKEY-TAKEUTI-WEIRICH},
+kind~\citep{Hasegawa:94,Robinson:94,Dunphy:04,Vytiniotis:10,Atkey:12},
 which extends the object-relational interpretation of
-Reynolds~\citep{TODO-ORIGINAL-PARAMETRICITY} to include natural
-notions of candidates at higher kind. This is not the goal of our
-work. In particular, parametricity arguments will only be
-interesting for type variables of kind $\tp$. At all other kinds the
-candidates are not relations between semantic types but rather just
-semantic types. For instance the interpretation of a constructor
-function of kind $\fn{\tp}{\tp}$ is a map between relations, not a
-relation between maps of semantic types.
+Reynolds~\citep{Reynolds:83} to include natural
+notions of candidates at higher kind. These candidates include more
+complex conditions that also necessitate the use semantic tools to
+handle but it is not the goal of our work. In particular,
+parametricity arguments will only be interesting for type variables of
+kind $\tp$. At all other kinds the candidates are not relations
+between semantic types but rather just semantic types. For instance
+the interpretation of a constructor function of kind $\fn{\tp}{\tp}$
+is a map between relations, not a relation between maps of semantic
+types.
 
 This is an undesirable simplification for a general purpose logical
 relation but the only motivation for constructing this logical
@@ -283,7 +286,7 @@ setting with only $\tp$ and Kripke worlds. It is not clear what it
 would mean to consider a model where Kripke worlds were subject to a
 relational interpretation as well. To my knowledge this has not been
 studied explicitly but it is perhaps latent in work like
-\citet{TODO-DREYER} where the Kripke world is more relational to allow
+\citet{Dreyer:10} where the Kripke world is more relational to allow
 for relations between heaps that are not merely point-wise. This,
 however, is a much loftier goal than merely constructing any logical
 relation for state which is what we are after.
@@ -291,7 +294,7 @@ relation for state which is what we are after.
 Now the answer to these questions is given by the earlier remark that
 our language is the guarded simply-typed lambda calculus with guarded
 recursive types and a strange base type. Models of this language are
-readily available in $\presheaves{\omega}$~\citep{TODO-LARS} and we
+readily available in $\presheaves{\omega}$~\citep{Birkedal:guarded:10,Birkedal:steps:11} and we
 make use of these.
 
 Specifically, we interpret kinds as follows as maps a functor from
@@ -314,7 +317,7 @@ It is a straightforward proof to show that this defines a functor. The
 only exceptional fact is that it is necessary to show that taking a
 fixed point some arguments of a mixed-variance functor results in a
 functor in the remaining arguments. This is proven in Section 7 of
-\citet{Birkedal:steps:10} for instance.
+\citet{Birkedal:steps:11} for instance.
 
 The interesting part of this definition is the interpretation of
 $\tp$, $\den{\semtypes}$. The other clauses are simply induced by the
@@ -354,7 +357,7 @@ deduced about $K[\alpha]$
 
 The presheaf structure on uniform relations is instance of a more
 general and well-known embedding of complete 1-bounded ultrametric
-spaces~\citep{TODO-CBULT} into $\presheaves{\omega}$:
+spaces into $\presheaves{\omega}$ described for instance in \citet{Birkedal:steps:11}:
 \[
   \semtypes(n) = \urel / {\equiv_n}
 \]
@@ -502,7 +505,7 @@ inhabit.
 Any cure for this issue seems worse than the illness. Adding type-case
 for instance allows us to define a correct projection for instance but
 it destroys the parametricity of the system. One could consider a
-system like LX~\citep{TODO-LX} and define projection with respect to
+system like LX~\citep{Crary:99} and define projection with respect to
 the reification of a type. This solves the issue for all the
 types that we have reifications of but there is a diagonalization
 issue here: codes are needed for every single constructor but the
