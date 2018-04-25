@@ -229,7 +229,7 @@ following.
   }{\subKJ{}{\fn{\later \kappa}{\later \kappa'}}{\later (\fn{\kappa}{\kappa'})}}
 \end{mathpar}
 \begin{mathpar}
-  \declareJudgement{\hasTJ{}{\Delta}{c}{\kappa} \quad \hasEJ{}{\Delta}{\Gamma}{e}{\tau}}\\
+  \declareJudgement{\hasTJ{}{\Delta}{c}{\kappa} \qquad \hasEJ{}{\Delta}{\Gamma}{e}{\tau}}\\
   \inferrule{
     \hasTJ{}{\Delta}{\tau_1}{\later \tp}\\
     \hasTJ{}{\Delta}{\tau_2}{\later \tp}
@@ -248,7 +248,275 @@ following.
     \hasTJ{}{\Delta}{c}{\later^n \kappa}
   }{\hasEJ{}{\Delta}{\Gamma}{\Ap{e}{c}}{[c / \alpha] \tau}}
 \end{mathpar}
+Turning now to the question of how to construct a logical relation for
+this language there are two questions to be answered:
+\begin{enumerate}
+\item We want to interpret kinds as objects of a category, which
+  category should be used?
+\item Pairs of related terms should then be points of this object,
+  what does it mean to be a point of $\den{\tp}$.
+\end{enumerate}
+This two-layer approach is typical of a logical relation for languages
+with a rich kind structure. We need to interpret kinds as some sort of
+semantic object so that $\den{\tp}$ is the collection of semantic
+types needed for the logical relation. Traditionally the literature
+around logical relations for higher-kinded languages has been
+concerned with notions of parametricity at higher
+kind~\citep{TODO-ROSILINI-DUNPHY-REDDY-ATKEY-TAKEUTI-WEIRICH},
+which extends the object-relational interpretation of
+Reynolds~\citep{TODO-ORIGINAL-PARAMETRICITY} to include natural
+notions of candidates at higher kind. This is not the goal of our
+work. In particular, parametricity arguments will only be
+interesting for type variables of kind $\tp$. At all other kinds the
+candidates are not relations between semantic types but rather just
+semantic types. For instance the interpretation of a constructor
+function of kind $\fn{\tp}{\tp}$ is a map between relations, not a
+relation between maps of semantic types.
 
+This is an undesirable simplification for a general purpose logical
+relation but the only motivation for constructing this logical
+relation is to study the semantics of guarded recursive kinds and
+their impact on the definition. The technical complications introduced
+by studying reflexive graphs would be wasted when we plan to move to a
+setting with only $\tp$ and Kripke worlds. It is not clear what it
+would mean to consider a model where Kripke worlds were subject to a
+relational interpretation as well. To my knowledge this has not been
+studied explicitly but it is perhaps latent in work like
+\citet{TODO-DREYER} where the Kripke world is more relational to allow
+for relations between heaps that are not merely point-wise. This,
+however, is a much loftier goal than merely constructing any logical
+relation for state which is what we are after.
+
+Now the answer to these questions is given by the earlier remark that
+our language is the guarded simply-typed lambda calculus with guarded
+recursive types and a strange base type. Models of this language are
+readily available in $\presheaves{\omega}$~\citep{TODO-LARS} and we
+make use of these.
+
+Specifically, we interpret kinds as follows as maps a functor from
+environments to presheaves. These environments are mixed-variance.
+They send a kind variable to two distinct presheaves, one of which is
+used covariantly and one contravariantly. Let us signify these
+environments by $\theta$ (to distinguish them with from the
+environment used by the interpretation of constructors) and write
+$\op{\theta}$ for the operation exchanging all the components of
+$\theta$. Finally, by convention let $\theta(\alpha)$ project out the
+presheaf being used covariantly.
+\begin{align*}
+  \den{j}_\theta &= \theta(j)\\
+  \den{\later \kappa}_\theta &= \later \den{\kappa}_\theta\\
+  \den{\fn{\kappa_1}{\kappa_2}}_\theta &= \den{\kappa_2}_\theta^{\den{\kappa_1}_{\op{\theta}}}\\
+  \den{\rec{j}{\kappa}}_\theta &= \fix((P_1, P_2) \mapsto \den{\kappa}_{\theta[j \mapsto (P_1, P_2)]})\\
+  \den{\tp}_\theta &= \semtypes\\
+\end{align*}
+It is a straightforward proof to show that this defines a functor. The
+only exceptional fact is that it is necessary to show that taking a
+fixed point some arguments of a mixed-variance functor results in a
+functor in the remaining arguments. This is proven in Section 7 of
+\citet{Birkedal:steps:10} for instance.
+
+The interesting part of this definition is the interpretation of
+$\tp$, $\den{\semtypes}$. The other clauses are simply induced by the
+logical meaning of the connectives. Interpreting $\to$ as the
+exponential, for instance, induces a canonical interpretation of
+$\lam{\alpha}{\kappa}{c}$ and $ap{c_1}{c_2}$.
+
+The space of semantic types is where we make crucial use of syntactic
+minimal invariance. First we need to define a class of relations
+appropriate for semantic types.
+\begin{defn}\label{def:guarded:urel}
+  A uniform relation is a subset
+  $R \subseteq \term_{\tau_1} \times \term_{\tau_2}$ for some $\tau_1$
+  and $\tau_2$ so that the following hold.
+  \begin{itemize}
+  \item $R$ is closed on both sides under contextual equivalence.
+  \item $R$ is admissible and in particular contains limits of all
+    $\pi$-chains.
+  \item If $(e_1, e_2) \in R$ then for all $n$,
+    $(\ap{\pi_{\tau_1}^n}{e_1}, \ap{\pi_{\tau_2}^n}{e_2}) \in R$.
+  \end{itemize}
+  The set of uniform relations is denoted $\urel$.
+\end{defn}
+Uniform relations are a natural setting for our logical relation since
+the assumptions imposed on them are quite natural for anything to be
+called a semantic type. Items 1 and 3 require that we respect
+observation in and item 2 is a technically necessary and quite
+reasonable assumption. The definition of projection in this language
+is identical to what is was for the System F-like language considered
+previously with the slight proviso that instead of
+$\pi_{\alpha}^{n + 1} = \lam{x}{\alpha}{x}$ we must generalize it to
+$\pi_{K[\alpha]}^{n + 1} = \lam{x}{\alpha}{x}$ so that any
+\emph{neutral type} is impossible to truncate. This definition is
+forced, there are no other reasonable moves to make at higher-type
+since without knowing anything about $\alpha$ no information can be
+deduced about $K[\alpha]$
+
+The presheaf structure on uniform relations is instance of a more
+general and well-known embedding of complete 1-bounded ultrametric
+spaces~\citep{TODO-CBULT} into $\presheaves{\omega}$:
+\[
+  \semtypes(n) = \urel / {\equiv_n}
+\]
+The equivalence relation at $n$ is defined to equate uniform relations
+which agree on $n$ truncations. Formally, this is expressed as
+follows.
+\begin{align*}
+  R \equiv_n &S =\\
+  &(\forall (e_1, e_2) \in R.\ (\ap{\pi^i_{\tau_1}}{e_1}, \ap{\pi^i_{\tau_2}}{e_2}) \in S) \land {}\\
+  &(\forall (e_1, e_2) \in S.\ (\ap{\pi^i_{\tau_1}}{e_1}, \ap{\pi^i_{\tau_2}}{e_2}) \in R)
+\end{align*}
+Restriction maps simply send equivalence classes of uniform relations
+to even coarser equivalence classes of uniform relations.
+
+This definition implies that a global point: $h : 1 \to \semtypes$
+precisely in correspondence to a particular uniform relation. It picks
+out a family of equivalences classes so that each is increasingly fine
+$h(0)(\star) \supseteq h(1)(\star) \supseteq ... \supseteq h(n)(\star)$
+Syntactic minimal invariance and admissiblity of uniform relation
+tells us that if two uniform relations are equated by $\equiv_n$ for
+all $n$ then they are equal on the nose. This means that there can be
+at most one uniform relation in all the equivalence classes selected
+by $h$ and $h$ is uniquely induced by the uniform relation. This
+result is in fact a corollary of the fact that the aforementioned
+embedding preserves finite limits.
+
+Now the logical relation (the constructor interpretation) is really a
+standard interpretation of the simply-typed lambda calculus with a
+base type who's occupants are relations. It is defined as follows.
+\begin{align*}
+  \den{\alpha}_\eta(n) &= \eta(\alpha)(n)\\
+  \den{\lam{\alpha}{\kappa}{c}}_\eta(n) &= (\star, S) \mapsto \den{c}_{\eta[\alpha \mapsto S]}(n)\\
+  \den{\ap{c_1}{c_2}}_\eta(n) &= \den{c_1}_\eta(n)(\star)(\den{c_2}_\eta(n))\\
+  \den{\out{c}}_\eta &= \mathsf{out}_n(\den{c}_\eta(n))\\
+  \den{\into{c}}_\eta &= \mathsf{in}_n(\den{c}_\eta(n))\\
+  \den{\fn{\tau_1}{\tau_2}}_\eta(n) &=\\
+  \{(e_1, e_2) \mid&\ e_1 \Downarrow \iff {e_2 \Downarrow} \AND \\
+  & \forall (a_1, a_2) \in \den{\tau_1}_\eta(n). \ (\ap{e_1}{a_1}, \ap{e_2}{a_2}) \in \den{\tau_2}_\eta\}\\
+  \den{\all{\alpha}{\kappa}{\tau}}_\eta &=\\
+  \{(e_1, e_2) \mid&\ e_1 \Downarrow \iff {e_2 \Downarrow} \AND\\
+  &\forall c_1, c_2 : \kappa,\ S \in \den{\kappa}.
+    \ (\Ap{e_1}{c_1}, \Ap{e_2}{c_2}) \in \den{\tau}_{\eta[\alpha \mapsto S]}\}
+\end{align*}
+In this definition we are using $\mathsf{out}$ and $\mathsf{in}$ as
+the isomorphisms mediating a recursive type and its unfolding. There
+is a technical issue with this presentation: it properly should be
+done on \emph{derivations} of terms and a coherence theorem must be
+proven. This is because the while it is the case that if
+$\kappa_1 \le kappa_2$ then there is a canonical
+$i : \den{\kappa_1} \mono \den{kappa_2}$, it is not the case that $i$
+is an identity. This means that when the subtyping rule is applied in
+a derivation the resulting semantic object must be adjusted
+explicitly. This issue is obliviated when working in ultrametric
+spaces because the subtyping coercions are simply identities
+there. This technical detail is not relevant to the issue with this
+approach and thus we have suppressed it.
+
+The extra applications of $n$ and $\star$ are results of the fact that
+the interpretation is a natural transformation from $\den{\Delta}$,
+here written $\eta \in \den{\Delta}$ to $\den{\kappa}$. This is
+defined by an indexed family of functions which is what has been done
+here. Additionally, since constructor functions are exponentials in
+the category at stage $n$ they are natural transformations
+$\yoneda(n) \times \den{\kappa_1}_\eta \to \den{\kappa_2}_\eta$ so we
+must apply them to an element of $\yoneda(n)(n) = \{\star\}$ in
+addition to the actual argument.
+
+The issue arises from the fact that this must be made well-typed and
+natural. These two requirements are inexorably tied together by the
+interpretation of $\lambda$ which is only a valid natural
+transformation if $\den{c}$ is natural in $\eta$. It is unfortunately
+the case that these properties fail to hold for the definition of
+$\den{\all{\alpha}{\kappa}{\tau}}$. In this case, being well-typed
+implies that for at $n$, for every pair $\eta$, $\eta'$ which are
+equal at stage $n$ it must be that
+$\den{\all{\alpha}{\kappa}{\tau}}_\eta \equiv_n \den{\all{\alpha}{\kappa}{\tau}}_{\eta'}$.
+Importantly, equality at stage $n$ is \emph{not} necessarily just
+point-wise equality because two semantic types are equal at stage $n$
+if they are related by $\equiv_n$. This essentially is a statement
+that $\den{\all{\alpha}{\kappa}{\tau}}$ is functional with respect to
+$\equiv_n$ and this is simply false.
+
+As a counter example, consider the following instance of $\tau$.
+\[
+  \tau = \fn{\ap{\alpha}{\beta}}{\ap{\alpha}{\gamma}}
+\]
+For convenience, let us denote
+$\all{\alpha}{\fn{\tp}{\tp}}{\fn{\ap{\alpha}{\beta}}\ap{\alpha}{\gamma}}$
+as $\tau'$ In this case we must show that show that
+$\den{\tau'}_\eta \equiv_n \den{\tau'}_{\eta'}$ provided that
+$\eta(\beta) \equiv_n \eta'(\beta)$ and
+$\eta(\gamma) \equiv_n \eta'(\gamma)$. Let us suppose that
+$\eta(\beta)$ is a uniform relation $R \subseteq \tau_a \times \tau_a$
+and $\eta'(\beta)$ is $S \subseteq \tau_a \times \tau_a$ and both
+$\eta(\gamma)$ and $\eta'(\gamma)$ are $R$. All that is needed to
+cause a problem is to assume that $R \neq S$. If such an $R$ and $S$
+cannot be constructed then $\urel$ is trivial and our logical relation
+is degenerate.
+
+We are required to show that $\pi^n$ transports from
+$\den{\tau'}_\eta(n)$ to $\den{\tau'}_{\eta'}(n)$ and back again. Proving
+the first part of this means showing that if
+$(e_1, e_2) \in \den{\tau'}_\eta(n)$ then the following holds.
+\[
+  (\ap{\pi_{[\tau_a/\beta]\tau'}}{e_1}, \ap{\pi_{[\tau_a/\beta]\tau'}}{e_1})
+  \in \den{\tau'}_{\eta'}(n)
+\]
+However, if $n > 2$ and $e_1$ and $e_2$ do not diverge, then this is
+equivalent to showing the following.
+\[
+  (\Lam{\alpha}{\tp}{\Ap{e_1}{\alpha}}, \Lam{\alpha}{\tp}{\Ap{e_1}{\alpha}})
+  \in \den{\tau'}_{\eta'}(n)
+\]
+This can be simplified further since $\den{\tau'}_{\eta'}(n)$ is a uniform
+relation to just the following.
+\[
+  (e_1, e_2) \in \den{\tau'}_{\eta'}(n)
+\]
+Which is to say, we are required to show that if $\eta$ and $\eta'$
+are only related by $\equiv_n$ then we must show that
+$\den{\tau'}_{\eta}$ and $\den{\tau'}_{\eta'}$. However, it is not
+hard to show that the following two facts are true.
+\[
+  (\Lam{\alpha}{\fn{\tp}{\tp}}{\lam{x}{\ap{\alpha}{\tau_a}}{x}},
+   \Lam{\alpha}{\fn{\tp}{\tp}}{\lam{x}{\ap{\alpha}{\tau_a}}{x}})
+   \in \den{\tau'}_\eta
+\]
+\[
+  (\Lam{\alpha}{\fn{\tp}{\tp}}{\lam{x}{\ap{\alpha}{\tau_a}}{x}},
+   \Lam{\alpha}{\fn{\tp}{\tp}}{\lam{x}{\ap{\alpha}{\tau_a}}{x}})
+   \not\in \den{\tau'}_{\eta'}
+\]
+This means that $\den{-}$ is not type-correct and not a well-formed
+definition. At the root of the issue is the fact that syntactic
+minimal invariance does not seem to scale to higher kinds without some
+fundamentally new idea. Without something akin to a type-casing
+operation it does not seem possible to define a correct version of
+$\pi$ at neutral types. It really seems that it must proceed by
+induction on the variable the neutral constructor is stuck on. This
+issue does not arise in domain theory because in this setting
+projections are untyped and case on the structure of the element of
+the domain not the ``type'' that this element may later be shown to
+inhabit.
+
+Any cure for this issue seems worse than the illness. Adding type-case
+for instance allows us to define a correct projection for instance but
+it destroys the parametricity of the system. One could consider a
+system like LX~\citep{TODO-LX} and define projection with respect to
+the reification of a type. This solves the issue for all the
+types that we have reifications of but there is a diagonalization
+issue here: codes are needed for every single constructor but the
+codes themselves are constructors.
+
+Finally, as mentioned previously $\urel$ is inadequate for
+representation independence results. Since we have required that
+uniform relations are closed under truncations any uniform relation
+between different types will relate divergent terms on one side to
+nondivergent terms on the other. This puts a dent in using this
+technique to construct a logical relation for state. Essentially, we
+have removed the explicitly need for $\trunc_i$ but all proofs must
+act as though $\trunc_i$ is still in the language. All together, this
+means that even fixing this particular logical relation is likely
+inadequate for our purposes.
 
 %%% Local Variables:
 %%% mode: latex

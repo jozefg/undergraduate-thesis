@@ -239,11 +239,11 @@ the function must respect the indexing structure.
   Given two presheaves $X, Y : \presheaves{\Ccat}$, the exponential
   between them is
   \[
-    (Y^X)(c) \triangleq \hom(X \times y(c), Y)
+    (Y^X)(c) \triangleq \hom(\yoneda(c) \times X, Y)
   \]
-  where $y$ is the Yoneda embedding, defined by the following.
+  where $\yoneda$ is the Yoneda embedding, defined by the following.
   \[
-    y(c) = hom_\Ccat(-, c)
+    \yoneda(c) = hom_\Ccat(-, c)
   \]
 \end{lem}
 This definition may seem abstract but it is, importantly,
