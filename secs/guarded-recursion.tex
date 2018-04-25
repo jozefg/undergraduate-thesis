@@ -6,7 +6,7 @@ state. This is not sufficient to solve many of the original goals of
 this work but it's a simpler problem and a natural stop along the way
 to a proper logical relation. The natural candidate for a logical
 relation is to consider (guarded) recursive kinds as described by
-\citet{TODO-FORK}. The motivation for doing this is that a language
+\citet{Pottier:11}. The motivation for doing this is that a language
 with guarded recursive kinds is quite complex but in a very different
 way than a language with state. It does not require Kripke worlds in
 particular, the recursion is instead present in the kind structure. By
@@ -41,8 +41,9 @@ rule.
     \hasTJ{\Omega}{\Delta}{\tau_1 \equiv \tau_2}{\tp}
   }{\hasEJ{\Omega}{\Delta}{\Gamma}{e}{\tau_2}}
 \]
-The constructor language typing judgments are standard for
-F$\omega$\citep{TODO-FOMEGA} except for the following rules.
+The constructor language typing judgments are standard for F$\omega$
+(see \citet{Barendregt:13} for an explanation) except for the
+following rules.
 \begin{mathpar}
   \inferrule{
     \hasKJ{\Omega, j}{\kappa}

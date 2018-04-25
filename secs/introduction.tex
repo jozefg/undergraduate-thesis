@@ -40,7 +40,7 @@ Broadly speaking, there are two classes of these tools. One may
 consider denotational approaches, where in the equality of programs is
 reduced to the question of the equality of normal mathematical
 objects. This line of study begins with Dana Scott's investigations of
-the lambda calculus~\citep{TODO-CITE-SCOTT}. These tools have been
+the lambda calculus~\citep{Scott:76}. These tools have been
 immensely effective when they may be applied but they are difficult to
 use. Complex programming languages often make use of extremely
 sophisticated mathematical objects and using the model requires
@@ -53,16 +53,17 @@ these date back to the original study of the lambda calculus and its
 reduction properties. Syntactic tools tend to be simpler to use,
 relying only one elementary mathematics and an understanding of the
 syntax itself. For equality, the tool of choice when working
-syntactically is a logical relation~\citep{TODO-TAIT-AMAL}. Dating
-back to~\citet{TODO-TAIT} logical relations crucially define a
+syntactically is a logical
+relation~\citep{Tait:67,Girard:72,Pitts:98,Appel:01,Ahmed:04,Ahmed:06,Appel:07,Dreyer:09,Dreyer:10}.
+Dating back to~\citet{Tait:67} logical relations crucially define a
 type-indexed notion of equality. Logical relations have proven
 important for validating certain obviously desirable properties such
 as function extensionality. They have also given rise to a powerful
 theory of data abstraction called
-parametricity~\citep{TODO-REYNOLDS}. Parametric reasoning as inspired
+parametricity~\citep{Reynolds:83}. Parametric reasoning as inspired
 by logical relations has been so important that there have even been
 attempts to reconstruct it in a purely abstract denotational
-sense~\citep{TODO-FIBRATIONAL}.
+sense~\citep{Bainbridge:90,Ma:91,Birkedal:05,Dunphy:04}.
 
 To be precise, a logical relation in for us is a family of sets
 indexed by the types of the language, $(R_\tau)_\tau$. It is
@@ -121,21 +122,21 @@ reason why $\tau'$ should be smaller than
 $\allNoKind{\alpha}{\tau}$. This is not a minor issue, defining a
 correct logical relation for a language with impredicative
 polymorphism requires the novel method of
-candidates~\citep{TODO-GIRARD}. This problem has been a recurring
+candidates~\citep{Girard:71,Girard:72}. This problem has been a recurring
 issue: features in programming languages tend to have some recursive
 structure which prevents them from easily fitting into the inductive
 definition of a logical relation. For many features clever
 constructions have been found which circumvent well-foundedness
-issues: for parametric polymorphism~\citep{TODO-GIRARD}, for
-first-order state~\citep{TODO-PITTS-AND-STARK}, simple
+issues: for parametric polymorphism~\citep{Girard:71,Girard:72}, for
+first-order state~\citep{Pitts:98}, simple
 exceptions~\citep{TODO-I-DUNNO-SURELY-NOT-NUPRL}, and for recursive
-types~\citep{TODO-CRARY-AND-HARPER}. Despite this work logical
+types~\citep{Crary:07}. Despite this work logical
 relations are still a long way away from being able to cope with a
 full programming language. The state of the art for dealing with
 features like higher-order references, nontrivial control passing, or
 concurrency is to use step-indexing.
 
-Step-indexing is a technique first proposed by \citet{TODO-APPEL}. It
+Step-indexing is a technique first proposed by \citet{Appel:01}. It
 is based on a simple but ingenious idea: if you the logical relation
 is not well-defined by induction on the type just add a number which
 decreases and induct on that. This idea means that a logical relation
