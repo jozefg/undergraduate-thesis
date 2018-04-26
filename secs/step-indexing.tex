@@ -1,16 +1,17 @@
 \section{A Step-Indexed Logical Relation}\label{sec:steps}
 
 Before diving into the various approaches for constructing a logical
-relation without step-indexing, it is well worth the time to see how
-a logical relation can be done with it. The purpose of this section is
-to sketch the complication intrinsic to any logical relation and show
-how step-indexing obliterates them, though at a high cost.
+relation without step-indexing, it is well worth the time to see how a
+logical relation can be done with it. The purpose of this section is
+to sketch the complications intrinsic to any logical relation for
+state and show how step-indexing obliterates them, though at a high
+cost.
 
 Our logical to begin with a mapping from types to semantic types
 (merely sets of terms). In order to handle impredicative polymorphism
-Girard's method~\citep{Girard:71,Girard:72}, see \citet{Harper:16} for
-a comprehensive explanation of the technique. This means that our
-logical relation is of the form
+we use Girard's method~\citep{Girard:71,Girard:72}, see
+\citet{Harper:16} for an introduction of the technique. This means
+that our logical relation is of the form
 \[
   \den{-}_{-} : \types \to \typesEnv \to \pow{\term \times \term}
 \]
@@ -34,13 +35,14 @@ heaps. This is in fact a major issue because there appears to be no
 good way to identify when two heaps ought to be equal. The first issue
 here is that semantic equality of terms (be it contextual or logical)
 is type-indexed. This means that in order to compare heaps pointwise
-for equality (a reasonable though still wrong idea) requires that we
-at least know the types of the entries. Furthermore, we shouldn't
-compare these heaps for equality at all locations necessarily, two
-heaps should only need to agree on the cells that the programs are
-going to use. This is a significant concept if we want to prove
-programs to be equivalent which do not use the heap identically. For
-instance, consider the two programs:
+for equality (a reasonable first approach) requires that we at least
+know the types of the entries. Furthermore, we should not compare these
+heaps for equality at all locations necessarily, two heaps should only
+need to agree on the cells that the programs are going to use.
+
+These two caveats are important if we want to prove programs to be
+equivalent which do not use the heap identically. For instance,
+consider the two programs:
 \[
   \dcl{\alpha}{1}{\ret{\cmd{\get{\alpha}}}} \qquad\qquad
   \ret{\cmd{\ret{1}}}
@@ -48,29 +50,37 @@ instance, consider the two programs:
 These are contextually equivalent (the assignable of the first program
 is hidden from external manipulation) and yet they allocate in
 different ways. So $\sim$ must not be \emph{merely} pointwise equality
-in the most general case. Additionally, proving that these two
-programs are equal requires showing that $h_1 ~ h_2$ if and only if
-$h_1(\alpha) = 1$. That is, this program doesn't merely require that
-heap cells contain values of some syntactic type, but they may need to
-belong to an arbitrary semantic type. In order to reconcile these
-constraints, one thing is clear: the logical relation must somehow
-vary depending on the state that the heap is supposed to be in. It is
-simply not the case that programs that are equivalent in a heap where
-no cells are required to exist if and only if they're equivalent in a
-heap where one cell is required to exist.
+of all cells in the most general case. It is also easy to see that
+proving that the programs above are equal requires showing that
+$h_1 ~ h_2$ if and only if $h_1(\alpha) = 1$. That is, this program
+doesn't merely require that heap cells contain values of some
+syntactic type, but they may need to belong to an arbitrary semantic
+type.
+
+In order to reconcile these constraints, one thing is clear: the
+logical relation must somehow vary depending on the state that the
+heap is supposed to be in. It is simply not the case that programs
+that are equivalent in a heap where no cells are required to exist if
+and only if they're equivalent in a heap where one cell is required to
+exist.
 
 The solution to this is called a Kripke logical relation. Kripke
 logical relations, more generally sheaf models, are a recurring
 phenomenon in computer
 science~\citep{Plotkin:80,Mitchell:91,Appel:01,Ahmed:04}. The
-recurring theme of Kripke logical relations, or sheaf models, is to
+underlying idea of Kripke logical relations, or sheaf models, is to
 abandon the notion of a single global truth and judge truth relative
-to a current state of the world. Rather than considering
-$(e_1, e_2) \in \den{\tau}_\eta$, we should consider at some world
-$w$: $(e_1, e_2) \den{\tau}_\eta(w)$. Now the collection of worlds
-should be \emph{ordered} by a reachability relation
-$\reach$. Importantly, Kripke logical relations should be monotone in
-relation to $\reach$:
+to a current state of the world. The notion of ``state of the world''
+varies from application to application but is always a described as
+a partially ordered set, $\worlds$. Elements of $\worlds$ represent
+the different states of knowledge we may have about the world and the
+partial order, $w_1 \reach w_2$ describes when $w_2$ is a consistent
+expansion of the knowledge of $w_1$.
+
+For a Kripke logical relation rather than considering
+$\den{\tau}_\eta$ we work relative to a world $w$:
+$(e_1, e_2) \den{\tau}_\eta(w)$. Importantly, Kripke logical relations
+should be monotone in relation to $\reach$:
 \[
   \forall w_1, w_2.
   \ w_1 \reach w_2 \land (e_1, e_2) \in \den{\tau}_{w_1}
@@ -78,16 +88,17 @@ relation to $\reach$:
 \]
 Intuitively, if we know that some fact holds at a world, $w_1$, and we
 add more knowledge to $w_1$ to reach $w_2 \breach w_1$ it should not
-reduce what we know to be true.
+reduce what we know to be true. Put in a more philosophical way: the
+absence of knowledge does not imply its negation.
 
 In this case, the choice of Kripke world is meant to be express the
 current state of the heap that programs are being compared at, or at
 least, what is known about it. What is this world concretely however?
 As a first cut, one could consider a simple collection of symbols and
 types. That is,
-$\worlds \triangleq \powfin{\assignables \times \types}$. We can change
-our clause for the logical relation to take these worlds into
-account.
+$\worlds \triangleq \powfin{\assignables \times \types}$ equipped with
+$\subseteq$. We can change our clause for the logical relation to take
+these worlds into account.
 \begin{align*}
   \den{\cmd{\tau}}_\eta\different{(w_1)}& \triangleq \{(e_1, e_2) \mid\\
   &\exists m_1, m_2.\ \steps{e_i}{\cmd{m_i}} \land{}\\
@@ -98,16 +109,15 @@ account.
   &\qquad \implies (\different{\exists w_3 \breach w_2}.
     \ h_1' \different{\sim_{w_3}} h_2' \land (v_1, v_2) \in \den{\tau}_\eta\different{(w_3)})
 \end{align*}
-This addition of the Kripke worlds is largely forced. We must quantify
-over all possible $w_2$ extending $w_1$ at the beginning: if this was
-elided then $\den{\cmd{\tau}}_\eta$ would not be monotone. The
-extension at the end, $w_3 \breach w_2$, is so that the world may be
-updated to reflect the changes that were caused by allocating new
-cells or updating existing ones. Still unexplained is
-$h_1 \sim_w h_2$. At this point it can be defined in a slightly more
-refined way since $w$ at least specifies what cells we ought to
-compare for equality. The notion of equality that we want is
-problematic though.
+These changes are largely forced. We must quantify over all possible
+$w_2$ extending $w_1$ at the beginning: if this was elided then
+$\den{\cmd{\tau}}_\eta$ would not be monotone. The extension at the
+end, $w_3 \breach w_2$, is so that the world may be updated to reflect
+the changes that were caused by allocating new cells or updating
+existing ones. Still unexplained is $h_1 \sim_w h_2$. At this point it
+can be defined in a slightly more refined way since $w$ at least
+specifies what cells we ought to compare for equality. The notion of
+equality that we want is problematic though.
 \begin{itemize}
 \item If some stronger notion of equality than logical equivalence,
   such as $\alpha$-equivalence, is used the fundamental theorem will
@@ -118,11 +128,11 @@ problematic though.
   become ill-founded. This is because the heap may contain cells with
   a type larger than $\cmd{\tau}$.
 \end{itemize}
-What is needed is an judo throw in the vein of Girard's
-method. Instead of attempting to decide what the equality for a
-particular heap location should be in the definition of $\sim_w$, it
-should be told to us already by $w$. This idea, originating with
-\citet{Pitts:98}, means that our Kripke worlds should
+What is needed is an maneuver in the vein of Girard's method. Instead
+of attempting to decide what the equality for a particular heap
+location should be in the definition of $\sim_w$, it should be told to
+us already by $w$. This idea, originating with the very early work on
+denotational models of state, means that our Kripke worlds should
 instead satisfy the relation:
 \[
   \worlds = \assignables \pto \pow{\term \times \term}
@@ -144,11 +154,11 @@ The issue here is more subtle and causes the fundamental theorem to
 fail in the rule for allocation: what relation should we pick when a
 fresh cell is allocated? It seems that the only choice when allocating
 a cell of type $\tau$ at world $w$ is to extend our world with
-$\den{\tau}_\eta(w)$. The complication arises when we allocate more
-cells later and move to a fresh world. The relation at $\alpha$ is now
-stale, it refers to an outdated world and doesn't allow for
-equivalences which are true at this new world but were previously
-false. To concretely see this, consider the program:
+$\alpha \mapsto \den{\tau}_\eta(w)$. The complication arises when we
+allocate more cells later and move to a fresh world. The relation at
+$\alpha$ is now stale, it refers to an outdated world and doesn't
+allow for equivalences which are true at this new world but were
+previously false. To concretely see this, consider the program:
 \begin{align*}
   \cmd{
     &\dcl{\alpha}{\lam{x}{\nat}{\cmd{\ret{1}}}}{\\
@@ -165,7 +175,7 @@ logical relation, $\alpha$ could only ever contain terms in
 $\den{\fn{\nat}{\cmd{\nat}}}(\emptyset)$. In particular, this never
 includes a command which mentions $\alpha$. This prevents this
 perfectly type safe program from being included in the logical
-relation. This will mean that the fundamental theorem fails.
+relation and so the fundamental theorem must fails.
 
 What is to be done here? The root of the issue is that when we
 allocate a cell it is impossible to determine precisely what programs
@@ -180,16 +190,16 @@ of the definition of Kripke worlds.
 \[
   \worlds = \assignables \pto (\worlds \to \pow{\term \times \term})
 \]
-Herein lies the rub, this definition of the set of worlds is precisely
-what is required for this logical relation. It is not a set
-though. A simple cardinality argument shows that there can be no such
-set since it would have to be larger than its own power set. This is
-not an easily avoided problem. It is unknown how to simply avoid this
-using ingenuity in the choice of the Kripke world.
+Herein lies the rub: this definition of the set of worlds is precisely
+what is required for this logical relation but it is not a set. A
+simple cardinality argument shows that there can be no such set since
+it would have to be larger than its own power set. This is not an
+easily avoided problem. It is unknown how to simply avoid this using
+ingenuity in the choice of the Kripke world.
 
 This is where step-indexing enters the picture. Step-indexing after
 all was introduced to break precisely these sort of circularities and
-``solve'' recursive equations up to an approximation.
+solve recursive equations up to an approximation.
 
 With step-indexing, the space of semantic types becomes indexed by
 natural numbers and we will likewise index the world by these same
@@ -225,8 +235,9 @@ presheaves synthetically. For instance, we can define the exponential
 of two presheaves rather than mucking about to create an implication
 which interacts properly with the step.
 \begin{lem}
-  The (co)limit (a generalized version of products and sums) of
-  presheaves is determined pointwise.
+  The (co)limit\footnote{A generalization of products and sums.} of
+  presheaves exists for all small diagrams and is determined
+  pointwise.
 \end{lem}
 The above theorem tells us, for instance, that if we want to form the
 product of two presheaves, $X$ and $Y$, over $\omega$, at time $n$ it's just the
@@ -247,16 +258,15 @@ the function must respect the indexing structure.
     \yoneda(c) = hom_\Ccat(-, c)
   \]
 \end{lem}
-This definition may seem abstract but it is, importantly,
-monotone and so determines a valid presheaf. The real power of this
-approach is that \emph{it does not matter} that this definition is
-complex. The point is that this definition determines a function of
-presheaves in that it contains elements we can apply and only elements
-we can apply and beyond that its construction is entirely
-irrelevant. The categorical methodology of only caring about how an
-object relates through morphisms to the rest of the category is
-designed to let us avoid having to think too hard about any precise
-construction of an object. % TASTE IT.
+This definition may seem abstract but it is, importantly, monotone and
+so determines a valid presheaf. The real power of this approach is
+that \emph{it does not matter} that this definition is complex. The
+point is that this definition determines a function of presheaves in
+that it contains elements we can apply and only elements we can
+apply. Beyond these two facts its construction is entirely
+irrelevant. The categorical methodology, after all, is to only care
+about how an object relates through morphisms to the rest of the
+category. % TASTE IT.
 
 The constructions so far have given us a wide variety of constructible
 presheaves but nothing thus far has increased our expressive power of
@@ -285,24 +295,29 @@ see this, first let us define a functor on $\presheaves{\omega}$.
   of maps $\delay_X : X \to \later X$ so that
   $\delay_Y \circ f = f \circ \delay_X$ for any $f : X \to Y$.
 \end{defn}
-The later modality is the logical essence of step-indexing. The key
-idea of step-indexing, after all, is not merely that it suffices to
-ensure that two programs are related for all steps in order to
-conclude that they're related. The second, subtler, key idea is that
-in order for two programs to be related for $n$ steps, a subcomponent
-of these programs needs to be related for only $n - 1$ steps. If this
-was not the case, then it would never be possible to decrement the
-step-index and the exercise would have been largely moot. The later
-modality internalizes the idea of ``$n - 1$ steps'' and so it lets us
-talk about (uniformly) constructing an element at stage $n$ from an
-element at stage $n - 1$. The $\delay$ operation even crystallizes the
+The later modality is the logical essence of step-indexing.
+After all, the key insight of step-indexing is actually two-fold:
+\begin{enumerate}
+\item In order to show that two programs are indistinguishable, it
+  suffices to show that they're indistinguishable for $n$ steps for
+  any $n$.
+\item When showing that two programs are indistinguishable from other
+  programs at $n$ steps it suffices to show that subcomponents are
+  only indistinguishable for $n - 1$ steps.
+\end{enumerate}
+If this second point was not the case, then it would never be possible
+to decrement the step-index and the exercise would have been largely
+moot. The later modality internalizes the idea of ``$n - 1$ steps''
+without ever mentioning $n$. Using $\later X$ we can talk about
+(uniformly) constructing an element at stage $n$ from an element at
+stage $n - 1$. The $\delay$ operation even crystallizes the
 monotonously of the logical relation: if we have an element at stage
 $n$ we can always construct one at stage $n - 1$.
 
 A crucial point about using natural numbers for step-indexing is that
-natural numbers are well-founded. There's no way to pick a natural
+natural numbers are well-founded; there's no way to pick a natural
 number that we can decrement forever. This justifies reasoning by
-induction on the natural numbers. In particular, it justifies
+induction on the natural numbers and, in particular
 constructing an object at any stage provided we can take a
 construction of it at stage $n - 1$ and construct it at stage
 $n$. This principle may be expressed with the later modality: it's
@@ -335,32 +350,32 @@ universe~\citep{Streicher:04} and proves to be an important
 concept in the semantics of dependent type theory. Then, by using
 $\fix_\univ$ it is possible to construct the recursively defined
 presheaves necessary to build logical relations. This approach, while
-not explicit, is latent in the work done in constructing logical
+not always explicit, is latent in the work done in constructing logical
 relations in guarded type theory and guarded
-logics~\citep{Dreyer:09,Krogh-Jespersen:17}.
+logics~\citep{Dreyer:09,Paviotti:15,Krogh-Jespersen:17}.
 
 We will consider the more traditional approach of using proper domain
-equations rather than just small ones. In this case, the traditional
-domain theoretic approach is to use functors and to construct fixed
-points of them. This approach in domain theory originates from
-\citet{Smyth:77} and subsumed prior work by Scott
-constructing recursive domain equations by
-hand~\citep{Scott:76}. One potential issue is that we would like to
-solve domain equations which are not strictly speaking functorial. In
-particular, we want to handle the case where the equation contains
-both positive and negative occurences. We handle these by viewing them
-as functors
+equations rather than just small ones. With this methodology, we model
+equations as functors and fixed points of them as solutions. This
+approach in domain theory originates from \citet{Smyth:77} and
+subsumed prior work by \citet{Scott:76} constructing recursive domain
+equations by hand.
+
+One potential issue is that we would like to solve domain equations
+which are not strictly speaking functorial. In particular, we want to
+handle the case where the equation contains both positive and negative
+occurences. We handle these by viewing them as functors
 $F : \op{\presheaves{\omega}} \times \presheaves{\omega} \to
 \presheaves{\omega}$
 in the style of \citet{Pitts:96} for instance. The question then
 becomes, for what functors can we construct an object, $I$, so that
 $F(I, I) \cong I$, an invariant object. This construction is a
 generalization of the theorem of America and
-Rutten~\citep{America:87}. The precise accounting the theorem can
-be found in \citet{Birkedal:steps:11} allowing for any enriched functor
-between categories enriched in sheaves over a complete Heyting algebra
-with a well-founded basis. For our purposes though a much less general
-theorem suffices.
+Rutten~\citep{America:87}. The precise accounting the theorem can be
+found in \citet{Birkedal:domain:10,Birkedal:steps:11} allowing for any
+enriched functor between categories enriched in sheaves over a
+complete Heyting algebra with a well-founded basis. For our purposes
+though a much less general theorem suffices.
 \begin{defn}
   A functor, $F$, is said to be locally contractive if there is a
   family of contractive morphisms
@@ -372,12 +387,13 @@ theorem suffices.
   so that for each $\pair{g}{h} : 1 \to X_1^{X_2} \times Y_2^{Y_1}$
   then the following equation holds.
   \[
-    \transpose{f_{X_1, X_2, Y_1, Y_2} \circ \pair{g}{h}} =
-    F(\transpose{g}, \transpose{h})
+    f_{X_1, X_2, Y_1, Y_2} \circ \pair{g}{h} =
+    \transpose{F(\transpose{g}, \transpose{h})}
   \]
-  If just the latter condition holds $F$ is said to have a strength
-  $f$ and if the family of morphisms is not contractive we shall call
-  the functor locally nonexpansive.
+  If just the latter condition holds (no respect for identity or
+  composition) $F$ is said to have a strength $f$ and if the family of
+  morphisms is not contractive we shall call the functor locally
+  nonexpansive.
 \end{defn}
 This definition is subtly different than some presentations of this
 theorem, which require only that $F$ have a strength comprised of
@@ -429,10 +445,10 @@ isolates those functions which are monotone. In order to define this,
 we must assume that $Y$ comes equipped with a partial order. Viewed
 from the external perspective this is a family of relations indexed by
 natural numbers which respects reindexing. If one views the partial
-order internally, however, it is just a normal partial order. The
-subobject desired can be defined internally in a way which is
-obviously correct using the internal logic of $\presheaves{\omega}$ as
-follows.
+order internally, however, it is just a normal partial order presented
+categorically. The subobject desired can be defined internally in a
+way which is obviously correct using the internal logic of
+$\presheaves{\omega}$ as follows.
 \begin{align*}
   (\assignables \pto X) \mto Y &\triangleq \\
   \{f : Y^{\assignables \pto X} \mid{}&
@@ -443,18 +459,19 @@ construct, but still quite possible. It's
 \begin{align*}
   ((\assignables \pto X) \mto Y)(n) &= \\
   \{f : (Y^{\assignables \pto X})(n) \mid{}&
-   \forall m \le n.\ \forall w_1 w_2 : (\assignables \pto X)(n).\\
+   \forall m \le n.\ \forall w_1, w_2 : (\assignables \pto X)(n).\\
   &\qquad w_1 \reach_n w_2 \implies f(m)(\star, w_1) \le_n f(m)(\star, w_2)\}
 \end{align*}
 This external definition is neither more precise nor more intuitive,
 so it is more helpful to read the internal version and understand that
 all the quantifiers in the predicate implicitly handle the steps
-correctly.
+correctly. A more technical discussion of the internal language of
+$\presheaves{\omega}$ is postponed until the end of this section.
 
 At the end of these constructions, we may define the following
 contractive functor.
 \[
-  X \mapsto \later (\assignables \pto X \mto \upred{\term \times \term})
+  X \mapsto \later ((\assignables \pto X) \mto \upred{\term \times \term})
 \]
 Solving this for a fixed point gives the desired presheaf of Kripke
 worlds. Defining the rest of the logical relation proves to be quite
@@ -540,10 +557,10 @@ a logical version of later, $\ilater$. Working this way sweeps the
 step-index entirely under the rug and obliterates the requirement to
 perform explicit index math anywhere. Instead, the frustrating
 mismatch of having a fact at $n - 1$ and needing it at $n$ manifests
-through the more explicit having $\later \phi$ and needing
-$\phi$. Proper index discipline is replaced by the proper handling of
-the later modality. For instance, here is the definition of world
-satisfaction working in the internal logic.
+through having $\ilater \phi$ and needing $\phi$. Proper index
+discipline is replaced by the proper handling of the later
+modality. For instance, here is the definition of world satisfaction
+working in the internal logic.
 \[
   h_1 \sim_w h_2 \triangleq
   \forall \alpha \in \dom(w).
