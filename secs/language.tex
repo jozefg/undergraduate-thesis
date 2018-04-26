@@ -14,12 +14,14 @@ heap. Commands may modify the heap using assignables, a mutable
 than substitutive). A crucial component of the system is a modality
 for internalizing and suspending commands to treat them as
 expressions. Arguably this language is heavier-weight than the ML-like
-languages usually discussed which just allow references in any
-location. It does confer that advantage that handling state is now a
-question of defining the logical action of the command modality and
-its complexity is not littered throughout the full logical
-relation. Indeed, the definitions of the logical relation at $\to$ or
-$\forall$ are almost completely unchanged.
+languages usually discussed; normally languages considered allow
+imperative computation anywhere in the program. A language with
+isolated commands has the advantage that handling state is now a
+question of defining the logical action of the command
+modality. Normally the complexity of state is is not littered
+throughout the full logical relation. Indeed, the definitions of the
+logical relation at $\to$ or $\forall$ are almost completely
+unchanged.
 
 The syntax of our language has three sorts: commands, expressions, and
 types defined by the following grammar.
@@ -35,32 +37,33 @@ types defined by the following grammar.
 \]
 Only one point of this syntax must be clarified, which is the
 unfortunate coincidence of $\alpha$s. In an attempt to maintain
-consistency with the standard literature on System F and
-Harper~\citep{Harper:16} $\alpha$ here refers either to an assignable
-(a symbol) or a type variable. Crucially, assignables are \emph{not}
+consistency with the standard literature on System F and Harper's
+Modernaized Algol $\alpha$ here refers either to an assignable (a
+symbol) or a type variable.
+
+A crucial point of this language is that assignables are \emph{not}
 variables. Assignables are bound by the operators of our language and
-they do $\alpha$-vary as a variable might but they may not be
-substituted for. This justifies comparing bound symbols for equality;
-they are placeholders and contain an intrinsic notion of identity in
-the form of a binding site. It is nonsensical to talk about a rule
-like the following.
+they do $\alpha$-vary as a variable might but you can not substitute
+for an assignable. This justifies comparing bound symbols for
+equality; they are less placeholders and more pointers to binders. It
+is nonsensical to talk about a rule like the following.
 \[
   \inferrule{ }{\step{\dcl{\alpha}{v}{c}}{[v/\alpha]c}}
 \]
-In some sense, this is similar to the confusion that many programmers
-have when discussing languages with variables: C-like languages do not
+This is similar to the confusion that many programmers have when
+discussing languages with ``variables'': C-like languages do not
 permit substitution because they do not possess variables but rather
 assignables. In C a rule like the above is clearly false and leads to
 statements such as \verb+1 = 2+. One can understand the difference
 between $\bnd{x}{e}{c}$ and $\dcl{x}{e}{c}$ as the difference between
 \emph{variables}, defined through substitution, and \emph{assignables}
-which are defined through binding identity. The former is like a
-let-binding while the latter is closer to a declaration in C. In our
-language this separation exists which is why the operators for reading
-and writing a mutable cell are indexed by symbol rather than taking an
-arbitrary term. There is much to be said on the subject of symbols
-and, more generally, nominal binding but it is sadly out-of-scope for
-this discussion. The interested reader is referred
+which are defined by the site in which they are bound. The former is
+like a let-binding while the latter is closer to a declaration in
+C. In our language this separation exists which is why the operators
+for reading and writing a mutable cell are indexed by symbol rather
+than taking an arbitrary term. There is much to be said on the subject
+of symbols and, more generally, nominal binding but it is sadly
+out-of-scope for this discussion. The interested reader is referred
 to~\citep{Pitts:13}.
 
 The static semantics of the language are divided into three judgments,
@@ -147,14 +150,18 @@ The operational semantics of this language can be presented in two
 distinct ways differing in the way that the allocation of a fresh heap
 cell is done. In classical literature, an expression is evaluated
 using traditional small step semantics. Commands in this framework are
-represented as a pair $(m, h)$, a command and the heap it is running
-on, and there is another stepping relation defined between these
-configurations. In \citet{Harper:16} the binding structure of symbols
-is preserved in the operational semantics so that a running command is
-represented as a configuration $\nu \Sigma.\ (m, h)$ where $\nu$ is a
-collection of symbols bound in both $m$ and $h$. The advantage of this
-presentation is that it eliminates the choice of how to pick a fresh
-symbol during allocation. In the more traditional set up the stepping
+evaluated by a small step semantics as well but the relation is
+between configurations, not just commands. A configuration is a pair
+$(m, h)$, a command and the heap it is running on. In
+\citet{Harper:16} the binding structure of symbols is preserved in the
+operational semantics so that a running command is represented as a
+configuration $\nu \Sigma.\ (m, h)$ where $\Sigma$ is a collection of
+symbols bound in both $m$ and $h$.
+
+The advantage of this presentation is that it eliminates the choice of
+how to pick a fresh symbol during allocation. Allocated assignables
+are bound and so they automatically $\alpha$-vary to avoid collisions
+with other assignables. In the more traditional set up the stepping
 relation nondeterministic, allowing for any fresh location to be
 chosen. This nondeterminism complicates many metatheoretic properties
 and obscures what is really happening since the language is
@@ -225,9 +232,9 @@ construct a logical relation for. Still undefined, however, is the
 notion of equivalence that this logical relation should capture. It
 was informally sketched in the introduction as the ability to replace
 one program with the other in an arbitrary context. It is now possible
-to make this definition formal. First, a context formally is a term
-with a distinguished hole in it, written $\hole$. They are generated
-from the following grammar.
+to make this definition formal. First, a context is a term with a
+distinguished hole in it, written $\hole$. They are generated from the
+following grammar:
 \[
   \begin{array}{lcl}
     C &::=& \hole \mid \ap{C}{e} \mid \ap{e}{C} \mid \lam{x}{\tau}{C} \mid
@@ -244,23 +251,27 @@ Two of varieties contexts, $C$ and $C_m$, come equipped with a natural
 operation replacing $\hole$ with an expression, denoted $C[e]$, while
 the other two possess an identical operation for commands. Notice that
 crucially this operation is capturing; $e$ is allowed to make use of
-the variables bound in $C$. This is crucial to allowing contextual
-equivalence to work with open terms. A small point of interest is that
-the fact that we have two sorts which may mention each other leads to
-four different varieties of contexts. This quadratic growth continues
-which makes contextual equivalence difficult to define for complex
-languages. This has been addressed in Crary~\citep{Crary:17} by
-defining contextual equivalence as the unique relation satisfying
-Theorem~\ref{thm:language:cxt}.
-n
-Finally, contexts can be equipped with a notion of typing. This typing
-relation for $C$ for instance expresses that when filled with
-a program $\hasESigJ{\Delta}{\Gamma}{\Sigma}{e}{\tau}$ they produce a
-term $\hasESigJ{\Delta'}{\Gamma'}{\Sigma'}{C[e]}{\tau'}$. This typing
-relation is unsurprising and therefore omitted.
+the variables bound in $C$. This is important for allowing contextual
+equivalence to work with open terms.
 
-With this, we are in a position to define contextual equivalence for
-our language.
+A small point of interest is that having two sorts which may mention
+each other leads to four different varieties of contexts. This
+quadratic growth continues which makes contextual equivalence
+difficult to define for complex languages. This has been addressed in
+Crary~\citep{Crary:17} by defining contextual equivalence as the
+unique relation satisfying Theorem~\ref{thm:language:cxt}. Finally,
+contexts can be equipped with a notion of typing. This typing relation
+for a context representing an expression with an expression hole, $C$,
+expresses that when filled with a program
+$\hasESigJ{\Delta}{\Gamma}{\Sigma}{e}{\tau}$ then
+$\hasESigJ{\Delta'}{\Gamma'}{\Sigma'}{C[e]}{\tau'}$. This typing
+relation is unsurprising and therefore omitted. This judgment is
+written as
+$\hasCEJ{\Delta}{\Gamma}{\Sigma}{\tau}{C}{\Delta'}{\Gamma'}{\Sigma'}{\tau'}$
+if $C$ sends an object of type $\tau$ to an object of type $\tau'$.
+
+In order to define contextual equivalence, two supplementary
+definitions are required.
 \begin{defn}\label{def:language:heapmatch}
   A heap, $h$, is said to match $\Sigma$, written $h : \Sigma$, if for
   all $\alpha \div \tau \in \Sigma$,
@@ -269,21 +280,24 @@ our language.
 \begin{defn}\label{def:language:kleene}
   To programs are said to be Kleene equal at $\Sigma$, written
   $e_1 \simeq_\Sigma e_2$ if for all $h : \Sigma$ and $m_1, m_2$ so
-  that $\steps{e_i}{m_i}$ then $(m_1, h) \Downarrow$ and
+  that $\steps{e_i}{\cmd{m_i}}$ then $(m_1, h) \Downarrow$ and
   $(m_2, h) \Downarrow$ or $(m_1, h) \Uparrow$ and
   $(m_2, h) \Uparrow$.
 \end{defn}
-This definition of Kleene equality is slightly non-standard in that it
-requires that the expressions are commands and that it only checks if
-the coterminate, not that they terminate at the same value. This
-deviation is due to the fact that there is no base observable type in
-this language and so there is no observation to by made besides
+This definition of Kleene equality is slightly non-standard in two
+ways: it requires that the expressions are commands and that it only
+checks if the resulting commands coterminate, not that they result in
+the same value. These deviations are less surprising because without
+them Kleene equivalence is unhelpful. There is no base observable type
+in this language and so there is no observation to by made besides
 termination. Furthermore, it is not hard to prove that expressions
 always terminate (they behave as System F with a new base type) so
-\emph{no} interesting observations may be made of just expressions. We
-will also make use of the notation $(m_1, h_1) \simeq (m_2, h_2)$ to
-signify just the final part of this definition. Finally, we can lift
-Kleene equality to a definition of contextual equivalence.
+\emph{no} interesting observations may be made of just
+expressions. These facts
+
+We will also make use of the notation $(m_1, h_1) \simeq (m_2, h_2)$
+to signify just the final part of this definition. Finally, we can
+lift Kleene equality to a definition of contextual equivalence.
 \begin{defn}\label{def:language:cxt}
   To programs are contextually equivalent,
   $\equivESigJ{\Delta}{\Gamma}{\Sigma}{e_1}{e_2}{\tau}$ if for all
