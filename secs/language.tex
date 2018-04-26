@@ -168,7 +168,7 @@ would be required in any case since programs will be run on heaps
 containing locations varying over not syntactic but semantic
 types. This means for expository purposes the traditional operational
 semantics are chosen.
-\begin{mathpar}
+\begin{mathparpagebreakable}
   \declareJudgement{\valueJ{v}}\\
   \inferrule{ }{\valueJ{\lam{x}{\tau}{e}}}\and
   \inferrule{ }{\valueJ{\LamNoKind{\alpha}{e}}}\and
@@ -219,7 +219,7 @@ semantics are chosen.
   \inferrule{
     \valueJ{v}
   }{\stepsM{\set{\alpha}{v}}{h}{\ret{v}}{h[\alpha \mapsto v]}}\and
-\end{mathpar}
+\end{mathparpagebreakable}
 This gives a precise account of the language which we want to
 construct a logical relation for. Still undefined, however, is the
 notion of equivalence that this logical relation should capture. It
@@ -257,7 +257,7 @@ Finally, contexts can be equipped with a notion of typing. This typing
 relation for $C$ for instance expresses that when filled with
 a program $\hasESigJ{\Delta}{\Gamma}{\Sigma}{e}{\tau}$ they produce a
 term $\hasESigJ{\Delta'}{\Gamma'}{\Sigma'}{C[e]}{\tau'}$. This typing
-relation is unsurprising and therefore admitted.
+relation is unsurprising and therefore omitted.
 
 With this, we are in a position to define contextual equivalence for
 our language.
@@ -310,7 +310,7 @@ coterminate. A congruence relation is an equivalence relation
 terms. To make this precise, a pair of relations $(\relR, \relS)$ is
 said to respect the structure of terms if the following inferences are
 valid.
-\begin{mathpar}
+\begin{mathparpagebreakable}
   \inferrule{
     e_1 \relR e_2
   }{\lam{x}{\tau}{e_1} \relR \lam{x}{\tau}{e_2}}\and
@@ -343,7 +343,7 @@ valid.
   }{\set{\alpha}{e_1} \relS \set{\alpha}{e_2}}\and
   \inferrule{
   }{\get{\alpha} \relS \get{\alpha}}
-\end{mathpar}
+\end{mathparpagebreakable}
 The standard result is then captured by the following theorem.
 \begin{thm}\label{thm:language:cxt}
   Contextual equivalence on expressions and commands is the coarsest

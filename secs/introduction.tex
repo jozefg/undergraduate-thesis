@@ -1,46 +1,62 @@
 In the study of programming languages a great number of important
-questions can be reduced to questions about the equality of
-programs. The verification of a compiler pass is nothing but a
-question of equality of the naive program and its optimized version,
-an optimized data structure may be shown to be correct relative to a
-much simpler reference solution, a type theory hinges on the
-construction of definitional equality and so on. Given the role that
-equality plays in programming languages, a great variety of
-mathematical tools have been developed to analyze the various notions
-of equality possible in a programming language.
+questions hinge on the equality of programs.
+\begin{itemize}
+\item The verification of a compiler pass is nothing but a
+  question of equality of the naive program and its optimized
+  version.
+\item An optimized data structure may be shown to be correct relative to a
+  much simpler reference solution
+\item Much of the research in dependent type theory centers around
+  what terms should be judged equal.
+\end{itemize}
+Given the role that equality plays in programming languages it is
+unsurprising that a great variety of mathematical tools have been
+developed to study it.
 
-When in this thesis equality is discussed, it is generally meant to be
-\emph{contextual equivalence}. Contextual equivalence is formally
-defined later (see Definition~\ref{def:language:cxt}) but informally
-contextual equivalence of two programs, $e_1 \cong e_2$, expresses
-that $e_1$ and $e_2$ are internally indistinguishable. This means that
-there is no program containing $e_1$ so that if $e_1$ is replaced with
-$e_2$ then the program returns a different result. This notion of
-equivalence is appealing because there is no aspect of a program we
-care about other than how it computes. Contextual equivalence allow to
-ignore unimportant differences in the precise way that the answer of a
+Before anything can be said about tools for analyzing equality,
+however, a precise characterization of equality must be given. There
+are many reasonable notions of equality between programs and all of
+them are suitable for different circumstances. For instance, one can
+compare programs up to renaming of variables, $\alpha$-equivalence, in
+compilers and other applications where it is important that no
+information is lost. In type-checkers for dependently typed languages,
+it is natural to be more flexible and regard programs as the same if
+they share a normal form, some sort of $\beta\eta$-equivalence at
+least. In this work, we are interested in studying program behavior
+and verifying properties about it so an even more relax notion of
+equality is called for: \emph{contextual equivalence}.
+
+Contextual equivalence is formally defined later (see
+Definition~\ref{def:language:cxt}) but informally contextual
+equivalence of two programs, $e_1 \cong e_2$, expresses that $e_1$ and
+$e_2$ are internally indistinguishable. This means that there is no
+program containing $e_1$ so that if $e_1$ is replaced with $e_2$ then
+the program returns a different result. This notion of equivalence is
+appealing because there is no aspect of a program we care about other
+than what it computes to. Contextual equivalence allows us to ignore
+unimportant differences in the precise way that the answer of a
 program is computed and focus instead on the answer itself. This means
-that two well-behaved implementations of a data structure, for
-instance, are contextually equivalent even if one is far more complex
-and efficient than the other.
+that two implementations of a data structure, for instance, are
+contextually equivalent even if one is far more complex and efficient
+than the other.
 
 For all the appeal of contextual equivalence, it is very difficult to
-establish that two programs are contextually equivalent. In order to
-establish that $e_1 \cong e_2$ it is necessary to quantify over all possible
-programs using $e_1$ and $e_2$ and reason about their behavior. This
-includes programs which do not really make use of $e_1$ or $e_2$ such
-as $\ap{(\lam{x}{\fn{\unit}{\tau}}{1})}{\lam{x}{\unit}{e_1}}$. This
-lack of constraints on how $e_1$ or $e_2$ is used is precisely what
-makes contextual equivalence so useful but it makes even the most
-basic proofs involved affairs. In order to compensate for this, a
-variety of tools have been developed to simply the process of
-establishing when $e_1 \cong e_2$.
+establish any instances of it. In order to show that
+$e_1 \cong e_2$ it is necessary to quantify over all possible programs
+using $e_1$ and $e_2$ and reason about their behavior. This includes
+programs which do not really make use of $e_1$ or $e_2$ such as
+$\ap{(\lam{x}{\fn{\unit}{\tau}}{1})}{(\lam{x}{\unit}{e_1})}$. This lack
+of constraints on how $e_1$ or $e_2$ is used is precisely what makes
+contextual equivalence so useful but it makes even the most basic
+proofs involved affairs. In order to compensate for this, a variety of
+tools have been specialized to simplify the process of establishing when
+$e_1 \cong e_2$.
 
 Broadly speaking, there are two classes of these tools. One may
 consider denotational approaches, where in the equality of programs is
 reduced to the question of the equality of normal mathematical
 objects. This line of study begins with Dana Scott's investigations of
-the lambda calculus~\citep{Scott:76}. These tools have been
+the lambda calculus~\citep{Scott:76}. Such tools have been
 immensely effective when they may be applied but they are difficult to
 use. Complex programming languages often make use of extremely
 sophisticated mathematical objects and using the model requires
@@ -55,33 +71,40 @@ relying only one elementary mathematics and an understanding of the
 syntax itself. For equality, the tool of choice when working
 syntactically is a logical
 relation~\citep{Tait:67,Girard:72,Pitts:98,Appel:01,Ahmed:04,Ahmed:06,Appel:07,Dreyer:09,Dreyer:10}.
-Dating back to~\citet{Tait:67} logical relations crucially define a
-type-indexed notion of equality. Logical relations have proven
-important for validating certain obviously desirable properties such
-as function extensionality. They have also given rise to a powerful
-theory of data abstraction called
-parametricity~\citep{Reynolds:83}. Parametric reasoning as inspired by
-logical relations has been so important that there have even been
-attempts to reconstruct it in a purely abstract denotational
+Dating back to~\citet{Tait:67} logical relations generalize
+homomorphisms and can be thought of as \emph{structure preserving
+  relations}\footnote{This viewpoint is more liberating than the
+  traditional explanation that they are a type-indexed inductively
+  defined family of relations. Logical relations arise for general
+  mathematical structure. A programming language is merely one example
+  of such structure.}. Logical relations are used for a wide variety
+of tasks but the most important one for us is as a method for
+demonstrating contextual equivalences. The study of logical relations
+has given rise to a powerful generalization of the theory of data
+abstraction called parametricity~\citep{Reynolds:83}. Parametric
+reasoning has been so important that there have even been attempts to
+reconstruct it in a denotational
 sense~\citep{Bainbridge:90,Abadi:90,Ma:91,Birkedal:05,Dunphy:04}. This
-program is still largely incomplete however. A summary of the state of
-the art at the time and the fundamental obstacles may be found in
-\citet{Hermida:14}
+work is important for crystallizing the connections between
+naturality and parametricity as well as cementing parametricity in the
+broader tradition of logical relations. At the present time this
+program is still incomplete however. A summary of the state of the art
+in 2013 and the fundamental challenges may be found in
+\citet{Hermida:14}.
 
-To be precise, a logical relation in for us is a family of sets
-indexed by the types of the language, $(R_\tau)_\tau$. It is
-constructed by induction over the types indexing it so that
-$R_{\fn{\tau_1}{\tau_2}}$ is defined in terms of $R_{\tau_1}$ and
-$R_{\tau_2}$. For each $\tau$, the following property is expected to
-hold:
+To be precise, a logical relation for us is a family of binary
+relations indexed by the types of the language,
+$(R_\tau)_{\tau \in \types}$. It is constructed by induction over the
+types indexing it so that $R_{\fn{\tau_1}{\tau_2}}$ is defined in
+terms of $R_{\tau_1}$ and $R_{\tau_2}$. For each $\tau$, the following
+property is expected to hold:
 \[
   (e_1, e_2) \in R_\tau \implies
-  \hasE{\cdot}{e_1, e_2}{\tau} \land e_1 \cong e_2
+  \hasE{e_1, e_2}{\tau} \land e_1 \cong e_2
 \]
 This property expresses the soundness of the logical relation with
-regards to contextual equivalence: logical equivalence implies
-contextual equivalence. The reverse property, completeness, is
-desirable but often unachievable\footnote{Instead a variety of
+respect to contextual equivalence. The reverse property, completeness,
+is desirable but often unachievable\footnote{Instead a variety of
   techniques for \emph{forcing} completeness to hold are
   employed. These amount to adding all the missing identifications to
   the logical relation. While theoretically desirable, this is useless
@@ -108,11 +131,11 @@ programming language. The central stumbling block to this goal is that
 logical relations are difficult to extend to new programming languages
 and especially to new types and computational effects.
 
-For an instance of where trouble might arise, consider a language with
-polymorphic types: $\allNoKind{\alpha}{\tau}$. What should the
-definition of $R_{\allNoKind{\alpha}{\tau}}$ be? Phrased different,
-the question is when are two polymorphic functions
-indistinguishable. One might expect a definition like the following.
+To see where trouble might arise, consider a language with polymorphic
+types: $\allNoKind{\alpha}{\tau}$. What should the definition of
+$R_{\allNoKind{\alpha}{\tau}}$ be? Phrased different, when are two
+polymorphic functions indistinguishable? One might expect a definition
+like the following:
 \[
   (e_1, e_2) \in R_{\allNoKind{\alpha}{\tau}} \defs
   \forall \tau'.\ (\Ap{e_1}{\tau'}, \Ap{e_2}{\tau'}) \in R_{[\tau'/\alpha]\tau}
@@ -125,17 +148,18 @@ reason why $\tau'$ should be smaller than
 $\allNoKind{\alpha}{\tau}$. This is not a minor issue, defining a
 correct logical relation for a language with impredicative
 polymorphism requires the novel method of
-candidates~\citep{Girard:71,Girard:72}. This problem has been a
+candidates~\citep{Girard:71,Girard:72}. This situation has been a
 recurring issue: features in programming languages tend to have some
 recursive structure which prevents them from easily fitting into the
-inductive definition of a logical relation. For many features clever
+inductive definition of a logical relation. For many features, clever
 constructions have been found which circumvent well-foundedness
-issues: for parametric polymorphism~\citep{Girard:71,Girard:72}, for
-first-order state~\citep{Pitts:98}, simple exceptions, and for
-recursive types~\citep{Crary:07}. Despite this work logical relations
-are still a long way away from being able to cope with a full
-programming language. The state of the art for dealing with features
-like higher-order references, nontrivial control passing, or
+issues: for instance parametric
+polymorphism~\citep{Girard:71,Girard:72}, first-order
+state~\citep{Pitts:98}, simple exceptions, and recursive
+types~\citep{Birkedal:99,Crary:07}. Despite this work logical
+relations are still a long way away from being able to cope with a
+full programming language. The state of the art for dealing with
+features like higher-order references, nontrivial control passing, or
 concurrency is to use step-indexing.
 
 Step-indexing is a technique first proposed by \citet{Appel:01}. It is
@@ -143,39 +167,42 @@ based on a simple but ingenious idea: if you the logical relation is
 not well-defined by induction on the type just add a number which
 decreases and induct on that. This idea means that a logical relation
 is no longer a type-indexed relation but a relation indexed by a
-number (called a \emph{step}) and a type, $(R_\tau^i)_{i, \tau}$. The
-meaning of a relation at step $i$ and type $\tau$ is that two programs
-are related if they are indistinguishable at type $\tau$ for $i$
-steps. Two programs are related for $i$ steps intuitively if it will
-take at least $i$ steps to tell them apart. For instance, if a program
-$e_1$ runs to $\tt$ in 10 steps while $e_2$ runs to false in 20, it
-takes 20 steps to distinguish them since we must wait for $e_2$ to
-finish running before they can be compared. This idea of steps has
-proven to be incredibly robust and easily extend to many different
+number (called a \emph{step}) and a type, $(R_\tau^i)_{i, \tau}$.
+
+The meaning of two programs related at step $i$ and type $\tau$ they
+are indistinguishable at type $\tau$ for $i$ steps. Two programs are
+related for $i$ steps intuitively if it will take at least $i$ steps
+in order to make an observation which distinguishes them. For
+instance, if a program $e_1$ runs to $\tt$ in 10 steps while $e_2$
+runs to false in 20, it takes 20 steps to distinguish them since we
+must wait for $e_2$ to finish running before they can be compared.
+
+This idea of steps has proven to be incredibly robust and easily
+extend to many different
 settings~\citep{Appel:01,Ahmed:04,Ahmed:06,Appel:07,Dreyer:09,Dreyer:10,Birkedal:steps:11,Turon:13,Svendsen:16}.
 There is a price to be payed for this extra flexibility. Firstly,
 steps will now pervade the definition of the logical relation and any
 proof now must contain pointless bookkeeping activity in order to keep
 track of them. Secondly, the evaluation behavior of the programs under
 consideration has begun to matter again. The goal of contextual
-equivalence was to erase it from consideration but now there are
+equivalence was to erase it from consideration. Now there are
 instances where in order to use a logical relation a program must be
 modified with spurious NO-OP statements in order to make it take extra
-steps. These issues are even present when just using the logical
-relation to validate contextual
-equivalences~\citep{Svendsen:16}. In practice, this has meant
-that while step-indexing is incredibly widely used it is almost
-universally disliked\footnote{Citation: I walked around at POPL and
-  the 5 people I asked seemed like REALLY bummed about it.}.
+steps, a clear violation of this principle. These issues are even
+present when just using the logical relation to validate contextual
+equivalences~\citep{Svendsen:16}. In practice, this has meant that
+while step-indexing is incredibly widely used it is almost universally
+disliked\footnote{Citation: I walked around at POPL and the 5 people I
+  asked seemed like REALLY bummed about it.}.
 
 The structure of this thesis as follows. In Section~\ref{sec:language}
 an ML-like language is described that will serve as target for the
-logical relation. In Section~\ref{sec:steps} a step-indexed
-logical relation for this language is constructed and discussed,
-especially to highlight its short-comings. In
-Section~\ref{sec:domains} the first failed step-index-free logical
-relation is described, the most naive approach centered around using
-domain theory. In Section~\ref{sec:smi} a variety a number of
+logical relation. In Section~\ref{sec:steps} a step-indexed logical
+relation for this language is constructed and discussed, especially to
+highlight its short-comings. In Section~\ref{sec:domains} the first
+failed step-index-free logical relation is described, the most na\"ive
+approach centered around using domain theory. In
+Sections~\ref{sec:smi} and~\ref{sec:guarded} a variety a number of
 step-index-free logical relations are discussed for languages powerful
 enough to encode general references, largely built around (guarded)
 recursive kinds.
