@@ -44,7 +44,7 @@ rule.
 The constructor language typing judgments are standard for F$\omega$
 (see \citet{Barendregt:13} for an explanation) except for the
 following rules.
-\begin{mathpar}
+\begin{mathparpagebreakable}
   \inferrule{
     \hasKJ{\Omega, j}{\kappa}
   }{\hasKJ{\Omega}{\rec{j}{\kappa}}}\and
@@ -54,7 +54,7 @@ following rules.
   \inferrule{
     \hasTJ{\Omega}{\Delta}{c}{\rec{j}{\kappa}}
   }{\hasTJ{\Omega}{\Delta}{\out{c}}{[\rec{j}{\kappa}/j]\kappa}}
-\end{mathpar}
+\end{mathparpagebreakable}
 The calculus described so far is a version of F$\omega$ with recursive
 kinds. This language is quite expressive because recursive kinds allow
 for recursive constructor definitions of arbitrary sort through
@@ -181,7 +181,7 @@ language unconcerned with serving as a logic.
 
 To make this discussion formal, the (selected) rules of our language are the
 following.
-\begin{mathpar}
+\begin{mathparpagebreakable}
   \declareJudgement{\hasKJ{\Omega}{\kappa}}\\
   \inferrule{
     j \in \Omega
@@ -199,8 +199,8 @@ following.
     \hasKJ{\Omega, j : \kind}{\kappa}\\
     \guardJ{j}{\kappa}
   }{\hasKJ{\Omega}{\rec{j}{\kappa}}}
-\end{mathpar}
-\begin{mathpar}
+\end{mathparpagebreakable}
+\begin{mathparpagebreakable}
   \declareJudgement{\guardJ{j}{\kappa}}\\
   \inferrule{
     \mbox{$j$ not free in $\kappa$}
@@ -213,8 +213,8 @@ following.
   \inferrule{
     \guardJ{j}{\kappa}
   }{\guardJ{j}{(\rec{j'}{\kappa})}}
-\end{mathpar}
-\begin{mathpar}
+\end{mathparpagebreakable}
+\begin{mathparpagebreakable}
   \declareJudgement{\subKJ{}{\kappa}{\kappa'}}\\
   \inferrule{
     \subKJ{}{\kappa_1'}{\kappa_1} \\
@@ -229,8 +229,8 @@ following.
   }{\subKJ{}{\later (\fn{\kappa}{\kappa'})}{\fn{\later \kappa}{\later \kappa'}}} \and
   \inferrule{
   }{\subKJ{}{\fn{\later \kappa}{\later \kappa'}}{\later (\fn{\kappa}{\kappa'})}}
-\end{mathpar}
-\begin{mathpar}
+\end{mathparpagebreakable}
+\begin{mathparpagebreakable}
   \declareJudgement{\hasTJ{}{\Delta}{c}{\kappa} \qquad \hasEJ{}{\Delta}{\Gamma}{e}{\tau}}\\
   \inferrule{
     \hasTJ{}{\Delta}{\tau_1}{\later \tp}\\
@@ -249,7 +249,7 @@ following.
     \hasEJ{}{\Delta}{\Gamma}{e}{\forall \alpha : \kappa . \tau}\\
     \hasTJ{}{\Delta}{c}{\later^n \kappa}
   }{\hasEJ{}{\Delta}{\Gamma}{\Ap{e}{c}}{[c / \alpha] \tau}}
-\end{mathpar}
+\end{mathparpagebreakable}
 Turning now to the question of how to construct a logical relation for
 this language there are two questions to be answered:
 \begin{enumerate}
