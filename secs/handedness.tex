@@ -5,7 +5,7 @@ about where to turn next. There are not many well-studied
 algebraically complete categories~\citep{Freyd:70} which support
 interesting denotational semantics. The semantic structures for
 step-indexing that support solving recursive domain equation require
-more than continuity or approximation, they require a notion of
+more than continuity or approximation. They require a notion of
 closeness for two semantic types. In $\presheaves{\omega}$ for
 instance, there was a natural notion of when two points
 $p, q : 1 \to P$ were close by checking at what stage they became
@@ -21,24 +21,23 @@ The answer is suggested by an idea in domain theory to resolve a
 seemingly unrelated problem. The observant reader may have noticed
 that there is a crucial strengthening that
 Theorem~\ref{thm:steps:fixed-points} provides over
-Theorem~\ref{thm:domains:fixed-points}, the former provides unique
-solutions. In fact, there may be many nonisomorphic domains which
-satisfy a given equation. This state of affairs can prove troublesome
-for semantics in domains because it means that not all the properties
-of the domain are determined by the equation. There may be ``exotic''
+Theorem~\ref{thm:domains:fixed-points}: the former provides unique
+solutions. In fact, there may be many nonisomorphic domains satisfying
+a given equation. This state of affairs can prove troublesome for
+semantics in domains because it means that not all the properties of
+the domain are determined by the equation. There may be ``exotic''
 elements which are not required to satisfy the domain equation but are
-present none the less which impedes reasoning about recursive domain
+nevertheless present which impedes reasoning about recursive domain
 equations by induction or similar. \citet{Pitts:96} proposes a
 solution to this by imposing an additional requirement on the solution
 to a domain equation: minimal invariance.
 
-Minimal invariance, precisely, is the statement that given a $D$ so
-that $D \cong F(D, D)$ for a particular family of functions $\pi_i : D
-\to D$ the following equation holds.
+Minimal invarianceis the statement that given a $D$ so
+that $D \cong F(D, D)$ the following equation holds.
 \[
   \join_i \pi_i = 1
 \]
-The function $\pi_i$ is determined by induction on $i$.
+The family of functions $\pi_i$ is determined by induction on $i$.
 \begin{align*}
   \pi_i &: D \to D\\
   \pi_0 &\defs \bot\\
@@ -48,7 +47,7 @@ The intuition behind this definition is that if $\pi_i$ converges to
 $1$ then every element in $D$ must have arisen as the limit of
 elements computed by the inclusion $F^n(\bot, \bot) \to D$ which can
 be viewed as semantic requirement that elements of $D$ are
-finite\footnote{Or rather, determined a the limits of ``finite''
+finite\footnote{Or rather, determined as the limits of ``finite''
   elements. This is not to be confused here with \emph{compact} elements and
   algebraic domains which share a similar intuition but require
   technically different properties since there is no reason to assume
@@ -57,7 +56,7 @@ if $D \cong F(D)$ and $E \cong F(E)$ with $D$ and $E$ both being
 minimally invariant then $E \cong D$ and the standard $D_\infty$
 construction produces a minimally invariant domain. Therefore, domain
 equations have a unique minimally invariant solution and these satisfy
-a form of induction through minimal invariance.
+a form of induction.
 
 An interesting observation made originally by
 \citet{Birkedal:99} and extend by
@@ -70,10 +69,8 @@ invariance can be stated as a syntactic property of the programming
 language itself. In this setting, projections are naturally
 type-indexed and this is denoted $\pi_\tau^i : \fn{\tau}{\tau}$. The
 definition of $\pi_\tau^i$ behaves almost as an $\eta$-expansion where
-after $i$ $\eta$ expansion the function simply diverges.
+after $i$ $\eta$-expansions the function diverges.
 
-It is well worth it to take a moment to be precise about the
-definitions involved.
 \begin{defn}\label{def:smi:contextual-approximation}
   Two terms $\hasESigJ{\Delta}{\Gamma}{\Sigma}{e_1, e_2}{\tau}$ are
   said to be contextually approximate at type $\tau$, written
@@ -96,18 +93,19 @@ Since limits are only unique up to contextual equivalence, it is not
 necessarily well defined to write $\join_i e_i$ as if it were a term
 rather than an equivalence class of terms. We will instead often make
 use of the notation $\join_i e_i = e$ to signify that $e$ belongs to
-this equivalence class. The corresponding syntactic version of minimal
+this equivalence class. The syntactic version of minimal
 invariance can now be precisely stated.
 \begin{thm}\label{thm:smi:smi}
   For all $\hasTJ{}{\Gamma}{\tau}{\tp}$ and $e : \tau$,
-  $\join_i \ap{\pi_\tau^i}{e} = e$
+  $\join_i \ap{\pi_\tau^i}{e} = e$.
 \end{thm}
 The idea behind using syntactic minimal invariance is that instead of
 defining a single logical relation $\den{-}_{-}$ a pair of logical
 relations is defined instead: $\definitely{-}_{-}$ and
-$\possibly{-}_{-}$. The definition of these two logical relations are
-mutually recursive and provide a decomposition of the logical relation
-two monotone halves. The idea is that one should think of
+$\possibly{-}_{-}$ (pronounced ``definitely'' and ``possibly''). The
+definition of these two logical relations are mutually recursive and
+provide a decomposition of the logical relation two monotone
+halves. The idea is that one should think of
 $\definitely{\tau}_{\eta}$ containing equalities that are certainly
 true but it does not contain all of them. On the other hand
 $\possibly{\tau}_\eta$ contains all equalities that are true as well
@@ -124,8 +122,8 @@ Then, by showing the comparatively easy lemma that
 $\possibly{\tau}_\eta$ is always closed under limits when $\eta$ is it
 immediately follows that
 $\definitely{\tau}_\eta = \possibly{\tau}_\eta$. This maneuver is
-useful because these two definitions are naturally monotone therefore
-its easy to express a natural definition of recursive types, as is
+useful because these two definitions are naturally monotone.
+It is then easy to express a natural definition of recursive types, as is
 done in \citet{Crary:07} for instance. The only complication
 is that environments must generalize from relations to birelations, a
 map to a pair of relations rather than a map to a single
@@ -141,16 +139,14 @@ vice-versa, for instance:
 \end{align*}
 This approach seems to naturally fit recursive types and one might
 wonder then if it can be scaled to support state just as step-indexing
-does\footnote{If this sentence leave the reader in suspense I
-  encourage them to glance at the title}.
+does.
 
 The key insight is that while the distinction of
 $\definitely{-}$/$\possibly{-}$ is not useful, projection functions
 give us a notion akin to step-indexing. We can say that two semantic
 types are equal at stage $i$ if they are equal upon truncating all the
-programs in the equalities by $\pi^i$. It remains then to define
-$\pi_\tau^i$ for our language. In order to do this we need a
-divergence at the level of expressions, this can be easily
+programs in the equalities by $\pi^i$. In order to define $\pi_\tau^i$
+we need a divergence at the level of expressions, this can be easily
 accomplished by adding fixed points or just adding a formal term
 $\bot$ so that $\step{\bot}{\bot}$.
 \begin{align*}
@@ -165,16 +161,16 @@ $\bot$ so that $\step{\bot}{\bot}$.
 This approach, while effective for recursive types, is not quite what
 is needed to handle state. After all, the issue in
 Section~\ref{sec:steps} was not the definition of
-$\den{\cmd{\tau}}_\eta(w)$, it was the construction of the set in which
-$w$ lives. On the other hand, the projections themselves are
-interesting, they provide a way to construct an indexing of semantic
-types without actually counting steps. This approach was explored in
-\citet{Birkedal:domain:10} and successfully used to construct a
-logical relation for a similar language. This work, however, made use
-of the normal domain theoretic projections rather than their syntactic
-counterparts. The question of producing a logical relation for our
-language is then reduced to the question of producing a syntactic
-account of \citet{Birkedal:domain:10}.
+$\den{\cmd{\tau}}_\eta(w)$. The issue was was the construction of the
+set in which $w$ lives. On the other hand, the projections themselves
+are interesting, they provide a way to construct an indexing of
+semantic types without actually counting steps. This approach was
+explored in \citet{Birkedal:domain:10} and successfully used to
+construct a logical relation for a similar language. This work,
+however, made use of the normal domain theoretic projections rather
+than their syntactic counterparts. The question of producing a logical
+relation for our language is then reduced to the question of producing
+a syntactic account of \citet{Birkedal:domain:10}.
 
 In this account, monadic computations are represented by
 store-passing.
@@ -183,30 +179,30 @@ store-passing.
   D &\cong (D \to D) \oplus (D \times D) \oplus ... \oplus \states \to (\states \times D)
 \end{align*}
 Projections, $\pi^i$, work by casing on which branch of the domain
-equation the argument is in and proceed accordingly. This is analogous
-to how with syntactic minimal invariance the projection function is
-split according the type of the argument. Most of the clauses are
-standard with the interesting one being the last one for
-commands. Denote a value in of the domain in the last branch as
-$\cmd{f}$ where $f : \states \to (\states \times D)$. Then
-$\pi^{i + 1}$ on this satisfies the following formula.
+equation the argument is in and proceeding accordingly. This is
+analogous to how with syntactic minimal invariance the projection
+function is split according the type of the argument. Most of the
+clauses are standard with the interesting one being the last one for
+commands. Denote the injection of $\states \to (\states \times D)$
+into $D$ by $\cmd{-}$. Then $\pi^{i + 1}$ on this satisfies the
+following formula.
 \begin{align*}
   \pi^{i + 1}(\cmd{f}) &=
   \cmd{\lambda s. (\trunc^i(\pi_1 f(s)), \pi^i(\pi_2 f(s)))}
   \trunc^i(s) = \pi^i \circ s
 \end{align*}
 In words: truncation on a command runs the command a point-wise
-truncated heap and then truncates the return value as well as the
+truncates the heap and then truncates the return value as well as the
 resulting heap.
 
 In order to implement this syntactically, there's an issue. How can it
 be possible to replicate in a setting where accessing the whole heap
-is forbidden. In fact, this cannot be implemented as is. This presents
+is forbidden? In fact, this cannot be implemented as is. This presents
 a serious issue in scaling up syntactic minimal invariance and there
 is no clear solution.
 
 If, for instance, a new command $\trunc_i \div \mathrm{unit}$ is
-added to the language it is possible to express the projections. With
+added to the language, it is possible to express the projections. With
 the other definition left unchanged the new case,
 $\pi_{\cmd{\tau}}^{i + 1}$, is as follows.
 \begin{align*}
@@ -225,8 +221,8 @@ following rule for evaluating $\trunc^i$.
     h(\alpha) = \ap{\pi_\tau^i}{\alpha}
   }{\stepsM{\trunc^{i + 1}}{h}{\ret{()}}{h'}}
 \end{mathpar}
-It is worth noting the strangeness of the last rule which is morally
-``truncating the full heap''. This strangeness is twofold. It bakes in
+It is worth noting the strangeness of the last rule which morally
+``truncates the full heap''. This strangeness is twofold. It bakes in
 the $\pi_\tau$ functions into the very operational semantics despite
 them just being chunks of user-defined code. It also requires that the
 heap be in some way typed so that when projecting at some particular
@@ -253,18 +249,12 @@ weakening is discussed more in subsequent work to
 \citet{Birkedal:adts:12}. In our case, however, this restriction is
 damaging. It makes it impossible to prove any information-hiding
 results using our logical relation and this makes it difficult to
-prove that certain effects are benevolent\footnote{So actually this is
-  a key motivation that I forgot about until now. TODO mention it
-  earlier.}.
+prove that certain effects are benign.
 
 This puts a stop to naively extending syntactic minimal invariance to
-our language with state. An idea with briefly considering is to build
-a logical relation on a language with $\trunc_i$ and then attempt to
-excise the terms that should not have been in there in the first place
-after the fact. This approach has proven to be too complicated to
-feasibly manage. Instead, a better approach seems to be to isolate a
-more type-theoretic characterization of the difficulty of a logical
-relation for state.
+our language with state. Instead, a better approach seems to be to
+isolate a more type-theoretic characterization of the difficulty of a
+logical relation for state.
 
 %%% Local Variables:
 %%% mode: latex

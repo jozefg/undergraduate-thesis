@@ -14,8 +14,8 @@ being present in the structure of types itself it is easier to handle
 with type-based methods.
 
 Recursive kinds require us to switch to a richer language where the
-types themselves support a form of computation. For our purposes, the
-language is given by the following grammar.
+types themselves support computation. For our purposes, the language
+is given by the following grammar.
 \[
   \begin{array}{lcl}
     e & ::= & x \mid \lam{x}{\tau}{e} \mid \ap{e}{e} \mid \Lam{\alpha}{\kappa}{e} \mid \Ap{e}{c}\\
@@ -57,9 +57,9 @@ following rules.
 \end{mathparpagebreakable}
 The calculus described so far is a version of F$\omega$ with recursive
 kinds. This language is quite expressive because recursive kinds allow
-for recursive constructor definitions of arbitrary sort through
+for recursive constructor definitions of arbitrary kind through
 encoding the Y-combinator at the constructor level. It is
-exceptionally poorly behaved, however, because recursive kinds allow
+exceptionally poorly behaved because recursive kinds allow
 for constructors which do not have a weak head normal form. This
 forces choices in the language that seem to have no good answers. For
 instance, what terms belong to a constructor of kind $\tp$ that has no
@@ -72,7 +72,7 @@ Section~\ref{sec:smi}. We define a pair of logical relations
 $\definitely{-}$ and $\possibly{-}$ as in Section~\ref{sec:smi}. This
 logical relation is defined on the \emph{normal forms} of
 constructors however. In order to handle the cases where a term has an
-infinite normal form or simply diverges, we actually work of finite
+infinite normal form or simply diverges, we actually work with finite
 fragments of the B\"ohm tree of a term~\citep{Barendregt:13}. Two terms
 are related at a type with an infinite normal form if and only if they
 are in all finite approximations of that type. In this case, there is
@@ -102,16 +102,16 @@ heart of the failure of the next attempt.
 Instead of considering full recursive kinds, we restrict our attention
 to a particular class of them: the class of guarded recursive
 kinds. Guarded recursion in general originates with
-\citet{Nakano:00}. The idea is to isolate which recursive
-definitions are \emph{productive}. Productivity is informally the idea
-that after a finite number of steps something must be produced by a
-program. The program need not compute to a normal form but it should
-produce some observable output. The classic example of productivity is
-a stream: an infinite stream should never evaluate to a normal form
-but we would like to be able to calculate the $n$th element of the
-stream in finite time. Productive programming is an extremely natural
-paradigm for many programs which are never expected to terminate but
-still expected to produce work as they go.
+\citet{Nakano:00}. The idea is to isolate which recursive definitions
+are \emph{productive}: productivity is informally the idea that after
+a finite number of steps something must be produced. The program need
+not compute to a normal form but it should produce some observable
+output. The classic example of productivity is a stream: an infinite
+stream should never evaluate to a normal form but we would like to be
+able to calculate the $n$th element of the stream in finite
+time. Productive programming is an extremely natural paradigm for many
+programs which are never expected to terminate but still expected to
+produce work as they go.
 
 The question is how to ensure that a definition is productive. One
 line of work is to consider a syntactic condition on programs. This is
@@ -131,26 +131,27 @@ A more robust solution is to follow the approach of
 indicating that something is only available to use ``at a later point
 in time''. Then, for instance, in a language with streams the
 constructor for a stream would have the type
-$\fn{\tau}{\later \mathrm{Stream}_\tau}{\mathrm{Stream}_\tau}$
+$\fn{\tau}{\fn{\later \mathrm{Stream}_\tau}{\mathrm{Stream}_\tau}}$
 indicating that it is sufficient to provide the tail of a list so that
 it is only available later. In order to make this modality useful,
 $\later$ comes equipped with a number of operations. Two of the basic
 ones ensure that $\later$ is an applicative functor:
-\begin{align*}
-  \delay{-} &: \fn{\tau}{\later \tau}\\
-  - \zap - &: \later (\fn{\tau_1}{\tau_2}) \to \fn{\later \tau_1}{\later \tau_2}
-\end{align*}
+\begin{align}
+  \delay{-} &: \fn{\tau}{\later \tau}\label{eqn:guarded:delay}\\
+  - \zap - &: \later (\fn{\tau_1}{\tau_2}) \to \fn{\later \tau_1}{\later \tau_2}\label{eqn:guarded:ap}
+\end{align}
 Finally, $\later$ can be used to construct fixed points.
-\begin{align*}
-  \fix{} : \fn{(\fn{\later \tau}{\tau})}{\tau}
-\end{align*}
+\begin{align}
+  \fix{} : \fn{(\fn{\later \tau}{\tau})}{\tau} \label{eqn:guarded:fix}
+\end{align}
 All of this is extremely similar to the operations available in
-$\presheaves{\omega}$. The first two operations were facts about the
-functor $\later$ and the last one is L\"ob induction. Nakano's work on
-guarded recursion provides a syntactic account of this modality. In
-the original presentation the operations written above were presented
-as subtyping relations in the calculus rendering them all silent. In
-more recent
+$\presheaves{\omega}$. The operations~\ref{eqn:guarded:delay}
+and~\ref{eqn:guarded:ap} were facts about the functor $\later$ and
+\ref{eqn:guarded:fix} is L\"ob induction. Nakano's work on guarded
+recursion provides a syntactic account of this modality. In the
+original presentation the operations written above were presented as
+subtyping relations in the calculus rendering them all silent. In more
+recent
 presentations~\citep{Birkedal:steps:11,Bizjak:16,Birkedal:16,Bahr:17}
 these operations are all made explicit again as they are mediated by
 nontrivial isomorphisms. For our purposes, we will continue the
@@ -171,7 +172,7 @@ and other type theories is that our type formers are all
 contractive. This means that they take arguments available only later
 and produce a result available now. In type theories with a universe,
 for instance, the operations on the universe are all nonexpansive:
-they preserve laters by taking arguments available later and producing
+they preserve $\later$s by taking arguments available later and producing
 a result later (the inverse of the $- \zap -$ operation would do this
 for instance). This extra strength provided by contractiveness is
 exactly what allows for the construction of divergent terms in our
@@ -179,7 +180,7 @@ language. This would present a soundness issue for a type theory but
 from our perspective it is a natural convenience of a programming
 language unconcerned with serving as a logic.
 
-To make this discussion formal, the (selected) rules of our language are the
+To make this discussion precise, the (selected) rules of our language are the
 following.
 \begin{mathparpagebreakable}
   \declareJudgement{\hasKJ{\Omega}{\kappa}}\\
@@ -253,10 +254,10 @@ following.
 Turning now to the question of how to construct a logical relation for
 this language there are two questions to be answered:
 \begin{enumerate}
-\item We want to interpret kinds as objects of a category, which
+\item We want to interpret kinds as objects of a category. Which
   category should be used?
-\item Pairs of related terms should then be points of this object,
-  what does it mean to be a point of $\den{\tp}$.
+\item Pairs of related terms should then be points of this object.
+  What does it mean to be a point of $\den{\tp}$.
 \end{enumerate}
 This two-layer approach is typical of a logical relation for languages
 with a rich kind structure. We need to interpret kinds as some sort of
@@ -268,7 +269,7 @@ kind~\citep{Hasegawa:94,Robinson:94,Dunphy:04,Vytiniotis:10,Atkey:12},
 which extends the object-relational interpretation of
 Reynolds~\citep{Reynolds:83} to include natural
 notions of candidates at higher kind. These candidates include more
-complex conditions that also necessitate the use semantic tools to
+complex conditions that also necessitate the use of semantic tools to
 handle but it is not the goal of our work. In particular,
 parametricity arguments will only be interesting for type variables of
 kind $\tp$. At all other kinds the candidates are not relations
@@ -284,12 +285,9 @@ their impact on the definition. The technical complications introduced
 by studying reflexive graphs would be wasted when we plan to move to a
 setting with only $\tp$ and Kripke worlds. It is not clear what it
 would mean to consider a model where Kripke worlds were subject to a
-relational interpretation as well. To my knowledge this has not been
-studied explicitly but it is perhaps latent in work like
+relational interpretation as well. Such work is latent in work like
 \citet{Dreyer:10} where the Kripke world is more relational to allow
-for relations between heaps that are not merely point-wise. This,
-however, is a much loftier goal than merely constructing any logical
-relation for state which is what we are after.
+for relations between heaps that are not merely point-wise.
 
 Now the answer to these questions is given by the earlier remark that
 our language is the guarded simply-typed lambda calculus with guarded
@@ -299,9 +297,9 @@ make use of these.
 
 Specifically, we interpret kinds as follows as maps a functor from
 environments to presheaves. These environments are mixed-variance.
-They send a kind variable to two distinct presheaves, one of which is
+They send a kind variable to two distinct presheaves, one
 used covariantly and one contravariantly. Let us signify these
-environments by $\theta$ (to distinguish them with from the
+environments by $\theta$ (to distinguish them from the
 environment used by the interpretation of constructors) and write
 $\op{\theta}$ for the operation exchanging all the components of
 $\theta$. Finally, by convention let $\theta(\alpha)$ project out the
@@ -315,7 +313,7 @@ presheaf being used covariantly.
 \end{align*}
 It is a straightforward proof to show that this defines a functor. The
 only exceptional fact is that it is necessary to show that taking a
-fixed point some arguments of a mixed-variance functor results in a
+fixed point of some arguments of a mixed-variance functor results in a
 functor in the remaining arguments. This is proven in Section 7 of
 \citet{Birkedal:steps:11} for instance.
 
@@ -323,7 +321,7 @@ The interesting part of this definition is the interpretation of
 $\tp$, $\den{\semtypes}$. The other clauses are simply induced by the
 logical meaning of the connectives. Interpreting $\to$ as the
 exponential, for instance, induces a canonical interpretation of
-$\lam{\alpha}{\kappa}{c}$ and $ap{c_1}{c_2}$.
+$\lam{\alpha}{\kappa}{c}$ and $\ap{c_1}{c_2}$.
 
 The space of semantic types is where we make crucial use of syntactic
 minimal invariance. First we need to define a class of relations
@@ -346,16 +344,16 @@ the assumptions imposed on them are quite natural for anything to be
 called a semantic type. Items 1 and 3 require that we respect
 observation in and item 2 is a technically necessary and quite
 reasonable assumption. The definition of projection in this language
-is identical to what is was for the System F-like language considered
+is identical to what it is was for the System F-like language considered
 previously with the slight proviso that instead of
 $\pi_{\alpha}^{n + 1} = \lam{x}{\alpha}{x}$ we must generalize it to
 $\pi_{K[\alpha]}^{n + 1} = \lam{x}{\alpha}{x}$ so that any
 \emph{neutral type} is impossible to truncate. This definition is
-forced, there are no other reasonable moves to make at higher-type
+forced; there are no other reasonable moves to make at higher kind
 since without knowing anything about $\alpha$ no information can be
 deduced about $K[\alpha]$
 
-The presheaf structure on uniform relations is instance of a more
+The presheaf structure on uniform relations is an instance of a more
 general and well-known embedding of complete 1-bounded ultrametric
 spaces into $\presheaves{\omega}$ described for instance in \citet{Birkedal:steps:11}:
 \[
@@ -372,11 +370,11 @@ follows.
 Restriction maps simply send equivalence classes of uniform relations
 to even coarser equivalence classes of uniform relations.
 
-This definition implies that a global point: $h : 1 \to \semtypes$
+This definition implies that a global point, $h : 1 \to \semtypes$,
 precisely in correspondence to a particular uniform relation. It picks
-out a family of equivalences classes so that each is increasingly fine
-$h(0)(\star) \supseteq h(1)(\star) \supseteq ... \supseteq h(n)(\star)$
-Syntactic minimal invariance and admissiblity of uniform relation
+out a family of equivalence classes so that each is increasingly fine
+$h(0)(\star) \supseteq h(1)(\star) \supseteq ... \supseteq h(n)(\star)$.
+Syntactic minimal invariance and closure of uniform relation under $\pi$-chains
 tells us that if two uniform relations are equated by $\equiv_n$ for
 all $n$ then they are equal on the nose. This means that there can be
 at most one uniform relation in all the equivalence classes selected
@@ -386,7 +384,8 @@ embedding preserves finite limits.
 
 Now the logical relation (the constructor interpretation) is really a
 standard interpretation of the simply-typed lambda calculus with a
-base type who's occupants are relations. It is defined as follows.
+base type of relations. It is defined as follows.
+{\allowdisplaybreaks
 \begin{align*}
   \den{\alpha}_\eta(n) &= \eta(\alpha)(n)\\
   \den{\lam{\alpha}{\kappa}{c}}_\eta(n) &= (\star, S) \mapsto \den{c}_{\eta[\alpha \mapsto S]}(n)\\
@@ -401,13 +400,14 @@ base type who's occupants are relations. It is defined as follows.
   &\forall c_1, c_2 : \kappa,\ S \in \den{\kappa}.
     \ (\Ap{e_1}{c_1}, \Ap{e_2}{c_2}) \in \den{\tau}_{\eta[\alpha \mapsto S]}\}
 \end{align*}
+}
 In this definition we are using $\mathsf{out}$ and $\mathsf{in}$ as
 the isomorphisms mediating a recursive type and its unfolding. There
 is a technical issue with this presentation: it properly should be
 done on \emph{derivations} of terms and a coherence theorem must be
-proven. This is because the while it is the case that if
-$\kappa_1 \le kappa_2$ then there is a canonical
-$i : \den{\kappa_1} \mono \den{kappa_2}$, it is not the case that $i$
+proven. This is because while it is the case that if
+$\kappa_1 \le \kappa_2$ then there is a canonical
+$i : \den{\kappa_1} \mono \den{\kappa_2}$, it is not the case that $i$
 is an identity. This means that when the subtyping rule is applied in
 a derivation the resulting semantic object must be adjusted
 explicitly. This issue is obliviated when working in ultrametric
@@ -417,10 +417,10 @@ approach and thus we have suppressed it.
 
 The extra applications of $n$ and $\star$ are results of the fact that
 the interpretation is a natural transformation from $\den{\Delta}$,
-here written $\eta \in \den{\Delta}$ to $\den{\kappa}$. This is
-defined by an indexed family of functions which is what has been done
-here. Additionally, since constructor functions are exponentials in
-the category at stage $n$ they are natural transformations
+here written $\eta$, to $\den{\kappa}$. This is defined by an indexed
+family of functions which is what has been done here. Additionally,
+since constructor functions are exponentials in the category at stage
+$n$ they are natural transformations
 $\yoneda(n) \times \den{\kappa_1}_\eta \to \den{\kappa_2}_\eta$ so we
 must apply them to an element of $\yoneda(n)(n) = \{\star\}$ in
 addition to the actual argument.
@@ -435,27 +435,26 @@ implies that for at $n$, for every pair $\eta$, $\eta'$ which are
 equal at stage $n$ it must be that
 $\den{\all{\alpha}{\kappa}{\tau}}_\eta \equiv_n \den{\all{\alpha}{\kappa}{\tau}}_{\eta'}$.
 Importantly, equality at stage $n$ is \emph{not} necessarily just
-point-wise equality because two semantic types are equal at stage $n$
+pointwise equality because two semantic types are equal at stage $n$
 if they are related by $\equiv_n$. This essentially is a statement
 that $\den{\all{\alpha}{\kappa}{\tau}}$ is functional with respect to
 $\equiv_n$ and this is simply false.
 
-As a counter example, consider the following instance of $\tau$.
+As a counterexample, consider the following instance of $\tau$.
 \[
   \tau = \fn{\ap{\alpha}{\beta}}{\ap{\alpha}{\gamma}}
 \]
 For convenience, let us denote
 $\all{\alpha}{\fn{\tp}{\tp}}{\fn{\ap{\alpha}{\beta}}\ap{\alpha}{\gamma}}$
-as $\tau'$ In this case we must show that show that
+as $\tau'$. In this case we must show that show that
 $\den{\tau'}_\eta \equiv_n \den{\tau'}_{\eta'}$ provided that
 $\eta(\beta) \equiv_n \eta'(\beta)$ and
 $\eta(\gamma) \equiv_n \eta'(\gamma)$. Let us suppose that
 $\eta(\beta)$ is a uniform relation $R \subseteq \tau_a \times \tau_a$
 and $\eta'(\beta)$ is $S \subseteq \tau_a \times \tau_a$ and both
-$\eta(\gamma)$ and $\eta'(\gamma)$ are $R$. All that is needed to
-cause a problem is to assume that $R \neq S$. If such an $R$ and $S$
-cannot be constructed then $\urel$ is trivial and our logical relation
-is degenerate.
+$\eta(\gamma)$ and $\eta'(\gamma)$ are $R$. Assume that $R \neq S$. If
+such $R$ and $S$ cannot be constructed then $\urel$ is trivial and
+our logical relation is degenerate.
 
 We are required to show that $\pi^n$ transports from
 $\den{\tau'}_\eta(n)$ to $\den{\tau'}_{\eta'}(n)$ and back again. Proving
@@ -507,7 +506,7 @@ for instance allows us to define a correct projection for instance but
 it destroys the parametricity of the system. One could consider a
 system like LX~\citep{Crary:99} and define projection with respect to
 the reification of a type. This solves the issue for all the
-types that we have reifications of but there is a diagonalization
+types that we have reifications of, but there is a diagonalization
 issue here: codes are needed for every single constructor but the
 codes themselves are constructors.
 
@@ -515,7 +514,7 @@ Finally, as mentioned previously $\urel$ is inadequate for
 representation independence results. Since we have required that
 uniform relations are closed under truncations any uniform relation
 between different types will relate divergent terms on one side to
-nondivergent terms on the other. This puts a dent in using this
+nondivergent terms on the other. This puts a complicates using
 technique to construct a logical relation for state. Essentially, we
 have removed the explicitly need for $\trunc_i$ but all proofs must
 act as though $\trunc_i$ is still in the language. All together, this

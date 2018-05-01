@@ -41,15 +41,28 @@ functions upon it.
   write this join as $\join D$.
 \end{defn}
 Intuitively, elements of a domain represent a (partial) piece of
-knowledge. Moving to a larger element means moving to a piece of
-compatible knowledge that extends what was already known. The ability
-to construct joins of directed sets fits into this intuition as the
+knowledge. Moving to a larger element represents moving to a piece of
+knowledge that extends what was already known. The ability to
+construct joins of directed sets fits into this intuition as the
 ability to take a great many fragments of compatible knowledge and
-glue them together. This intuition primarily comes from the example
-domain of a partial function. The function is not everywhere defined
-so it is not a complete piece of knowledge, but given a collection of
-partial functions which agree on the intersection, they can be glued
-together.
+glue them together.
+
+This intuition primarily comes from the example domain of a partial
+function. The function is not everywhere defined so it is not a
+complete piece of knowledge, but given a collection of partial
+functions which agree on the intersection, they can be glued
+together. More precisely, fix our underlying set of $S \pto D$ to be
+partial functions from some set $S$ to a domain $D$. The ordering on
+these functions is given by the following:
+\[
+  f_1 \reach f_2 \defs \forall s \in S.\ f_1(s) \Downarrow \implies f_1(s) = f_2(s)
+\]
+Then, joins are constructed on directed sets as follows:
+\[
+  (\join_i f_i)(s) = \join \{d \mid \exists i.\ f_i(s) = d\}
+\]
+Showing that this is a partial function relies crucially on the
+directedness of $(f_i)_i$.
 
 The extra structure on domains gives rise to a new class of maps that
 preserve this structure. These maps are called (Scott) continuous in
@@ -65,7 +78,7 @@ Scott topology on domains, in which continuous functions are precisely
 those which preserve upper bounds. For a complete account of the
 theory of domains, see for instance \citet{Girez:03,Abramsky:94}.
 \begin{thm}
-  Domains form an a category where morphisms are continuous
+  Domains form an a category, $\DCPO$, where morphisms are continuous
   functions. This category is bicartesian closed, in particular the
   set of continuous maps between two domains is a domain.
 \end{thm}
@@ -90,9 +103,9 @@ The domains involved in expression the desired equation are quite
 straightforward. Power sets are always a complete lattice and
 therefore a domain. Scott continuous functions are always monotone so
 instead of considering monotone functions it's more natural to pick
-Scott continuous functions to get a domain. Finally, partial maps are
-another classic example of domains, with the small complication that
-they cannot be limited to finite partial maps.
+Scott continuous functions to get a domain. Finally, partial maps form
+a domain as shown above with the small complication that they cannot
+be limited to finite partial maps.
 
 This gives us a proper functor $F : \op{\DCPO} \to \DCPO$ defined by
 \begin{align*}
@@ -110,16 +123,16 @@ explicitly, is then defined by the following formula.
 \[
   w_1 \reach w_2 \iff \forall \alpha \in \dom(w_1).\ w_1(\alpha) \simeq w_2(\alpha)
 \]
-This ordering though, however natural, means that $F$ is not locally
+This ordering, however natural, means that $F$ is not locally
 continuous and therefore there is no way to construct a solution to
 it.
 
-There is only one insight worth mentioning from supposing that a
-solution to $F$ did exist. There would still seemingly be a problem
-because one of these worlds could have full support, making modeling
-allocation impossible. The trick to avoiding this it to define the
-logical relation on compact elements~\citep{Girez:03} of the
-world, precisely those worlds enjoying only finite support.
+Supposing for a moment that a solution to $F$ did exist. There would
+still seemingly be a problem because one of these worlds could have
+full support, making modeling allocation impossible. This can be
+avoided by defining the logical relation on compact
+elements~\citep{Girez:03} of the world domain, precisely those worlds
+enjoying only finite support.
 
 By defining the logical relation on these worlds, it is trivial to
 extend it to an arbitrary world by taking $\den{\tau}(w)$ on such a
