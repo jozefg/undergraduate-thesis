@@ -186,25 +186,28 @@
   A central difficulty with logical relations is their fragility; it
   has proven to be a challenge to scale logical relations to more
   realistic languages. A common technique for accomplishing this is
-  \emph{step-indexing}. It has proven to be an effective tool for
-  defining logical relations but it generates logical relations
-  inconvenient to work with. Replacing it with more traditional
-  logical relations is desirable but so far has only been achieved for
-  recursive types. In this work we consider extending traditional
-  logical relations to higher-order references, a common feature in
-  most languages.
+  \emph{step-indexing}. Step-indexing may be an effective tool for
+  defining logical relations but it results in often frustrating
+  technical details and limitations. Replacing it with more
+  traditional logical relations is desirable but so far has only been
+  achieved for recursive types. In this work we consider extending
+  traditional logical relations to higher-order references, a common
+  feature in modern languages.
 
   The central challenge with constructing a logical relation for
-  higher-order reference is construction of the Kripke worlds. The
+  higher-order references is that it must be a Kripke logical
+  relation. The construction of the Kripke worlds has been a
+  persistent challenge because they do not exist as mere sets. The
   semantic types must be indexed by a Kripke world and the Kripke
-  world must mention those semantic types. This can be solved by using
+  world must mention those semantic types, a recursive equation
+  which has no solutions naively. This can be solved by using
   step-indexing to navigate the recursive equation but other
   techniques may be possible.
 
   Three methods are explored in this thesis: a domain theoretic
   approach, a naive application syntactic minimal invariance, and an
-  application of syntactic minimal invariance to step-indexing. None,
-  however, are sufficient to solve the problem. This demonstrates the
+  application of syntactic minimal invariance to step-indexing. None
+  are sufficient to solve the problem. This demonstrates the
   difficulty of expressing the recursive structure of higher-order
   references.
 \end{abstract}

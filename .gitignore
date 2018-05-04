@@ -13,3 +13,4 @@ _region_.tex
 *.blg
 *.fls
 *.fdb_latexmk
+*.ps

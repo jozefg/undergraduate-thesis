@@ -1,0 +1,485 @@
+\documentclass[a0,landscape]{a0poster}
+
+\usepackage{multicol}
+\columnsep=100pt
+\columnseprule=3pt
+
+\usepackage[svgnames]{xcolor}
+
+\usepackage[hyperfootnotes=false]{hyperref}
+\usepackage[sort&compress,square,comma,numbers]{natbib}
+\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{mathpartir}
+\usepackage{stmaryrd}
+\usepackage{xifthen}
+\usepackage{tikz-cd}
+
+\usepackage{palatino}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage[font=small,labelfont=bf]{caption}
+\usepackage{wrapfig}
+
+
+% Formatting tools
+\newcommand{\declareJudgement}[1]{\framebox{$\displaystyle{}{#1}$}}
+\newcommand{\different}[1]{{\color{red} #1}}
+% Theorems
+\newtheorem{thm}{Theorem}
+\newtheorem{cor}[thm]{Corollary}
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{remark}[thm]{Remark}
+\newtheorem{example}[thm]{Example}
+\newtheorem{defn}[thm]{Definition}
+
+% Categories stuff
+\newcommand{\Ccat}{\ensuremath{\mathbb{C}}}
+\newcommand{\Dcat}{\ensuremath{\mathbb{D}}}
+\newcommand{\op}[1]{\ensuremath{#1^{\mathsf{op}}}}
+\newcommand{\SET}{\ensuremath{\mathbf{Set}}}
+\newcommand{\DCPO}{\ensuremath{\mathbf{Dcpo}}}
+\newcommand{\presheaves}[1]{\ensuremath{\widehat{#1}}}
+\newcommand{\transpose}[1]{\ensuremath{\widehat{#1}}}
+\newcommand{\pair}[2]{\ensuremath{\left\langle #1, #2 \right\rangle}}
+\newcommand{\univ}{\ensuremath{\mathcal{U}}}
+\newcommand{\mono}{\ensuremath{\rightarrowtail}}
+\newcommand{\yoneda}{\ensuremath{\mathsf{y}}}
+
+% Math stuffs
+\newcommand{\upred}[1]{\ensuremath{\mathsf{UPred}(#1)}}
+\newcommand{\reach}{\ensuremath{\mathrel{\sqsubseteq}}}
+\newcommand{\breach}{\ensuremath{\mathrel{\sqsupseteq}}}
+\newcommand{\mto}{\ensuremath{\xrightarrow{\mathsf{mon}}}}
+\newcommand{\pto}{\ensuremath{\rightharpoonup}}
+\newcommand{\ptofin}{\ensuremath{\overset{\mathsf{mon}}{\rightharpoonup}}}
+\newcommand{\pow}[1]{\ensuremath{\mathcal{P}(#1)}}
+\newcommand{\powfin}[1]{\ensuremath{\mathcal{P_{\mathrm{fin}}}(#1)}}
+\newcommand{\card}[1]{\ensuremath{\left\vert #1 \right\vert}}
+\newcommand{\real}{\ensuremath{\mathbb{R}}}
+\newcommand{\nat}{\ensuremath{\mathbb{N}}}
+\newcommand{\cbult}{\ensuremath{\mathrm{CBUlt}}}
+\newcommand{\cle}{\ensuremath{\lesssim}}
+\newcommand{\ceq}{\ensuremath{\cong}}
+\newcommand{\relR}{\ensuremath{\mathrel{\mathcal{R}}}}
+\newcommand{\relS}{\ensuremath{\mathrel{\mathcal{S}}}}
+\newcommand{\AND}{\ensuremath{\mathrel{\wedge}}}
+\newcommand{\OR}{\ensuremath{\mathrel{\vee}}}
+\newcommand{\den}[1]{\ensuremath{\llbracket #1 \rrbracket}}
+\newcommand{\definitely}[1]{\ensuremath{\lceil #1 \rceil}}
+\newcommand{\possibly}[1]{\ensuremath{\lfloor #1 \rfloor}}
+\newcommand{\defs}{\ensuremath{\mathrel{\triangleq}}}
+\newcommand{\bifix}{\ensuremath{\mathsf{bifix}}}
+\newcommand{\disjoint}{\ensuremath{\mathop{\#}}}
+\newcommand{\hole}{\ensuremath{\square}}
+\newcommand{\sincl}[1]{\ensuremath{\mathsf{succ}(#1)}}
+\newcommand{\join}{\ensuremath{\bigvee}}
+\newcommand{\cless}{\ensuremath{\lessapprox}}
+\newcommand{\aless}{\ensuremath{\lesssim}}
+
+\DeclareMathOperator{\dom}{Dom}
+
+% Sets
+\newcommand{\states}{\ensuremath{\mathrm{State}}}
+\newcommand{\worlds}{\ensuremath{\mathrm{World}}}
+\newcommand{\assignables}{\ensuremath{\mathrm{Assignable}}}
+\newcommand{\nrel}[1]{\ensuremath{\mathbb{R}_{#1}}}
+\newcommand{\semtypes}{\ensuremath{\mathbb{T}}}
+\newcommand{\types}{\ensuremath{\mathrm{Type}}}
+\newcommand{\typesEnv}{\ensuremath{\mathrm{TypeEnv}}}
+\newcommand{\term}{\ensuremath{\mathrm{Term}}}
+\newcommand{\urel}{\ensuremath{\mathrm{URel}}}
+
+% judgments
+\newcommand{\guardJ}[2]{\ensuremath{\text{$#1.\,#2$\ \textsf{guarded}}}}
+\newcommand{\hasE}[2]{\ensuremath{#1 \mathrel{:} #2}}
+\newcommand{\hasM}[2]{\ensuremath{#1 \mathrel{\div} #2}}
+\newcommand{\hasKJ}[2]{\ensuremath{#1 \vdash \hasE{#2}{\mathrm{\kind}}}}
+\newcommand{\hasTJ}[4]{\ifthenelse{\isempty{#1}}%
+  {\ensuremath{#2 \vdash \hasE{#3}{#4}}}%
+  {\ensuremath{#1;#2 \vdash \hasE{#3}{#4}}}}
+\newcommand{\hasEJ}[5]{\ifthenelse{\isempty{#1}}%
+  {\ensuremath{#2; #3 \vdash \hasE{#4}{#5}}}%
+  {\ensuremath{#1; #2; #3 \vdash \hasE{#4}{#5}}}}
+\newcommand{\hasESigJ}[5]{\ensuremath{#1; #2 \vdash_{#3} \hasE{#4}{#5}}}
+\newcommand{\hasMJ}[5]{\ensuremath{#1; #2 \vdash_{#3} \hasM{#4}{#5}}}
+\newcommand{\hasCEJ}[9]{\ensuremath{#5 : (#1; #2 \vdash_{#3} #4) \rightsquigarrow (#6; #7 \vdash_{#8} #9)}}
+
+\newcommand{\subKJ}[3]{\ifthenelse{\isempty{#1}}%
+{\ensuremath{{#2} \leq {#3}}}%
+{\ensuremath{{#1} \vdash {#2} \leq {#3}}}}
+
+\newcommand{\equivESigJ}[6]{\ensuremath{#1; #2 \vdash_{#3} \hasE{#4 \cong #5}{#6}}}
+\newcommand{\approxESigJ}[6]{\ensuremath{#1; #2 \vdash_{#3} \hasE{#4 \aless #5}{#6}}}
+\newcommand{\equivMJ}[6]{\ensuremath{#1; #2 \vdash_{#3} \hasM{#4 \cong #5}{#6}}}
+
+\newcommand{\step}[2]{\ensuremath{#1 \mapsto #2}}
+\newcommand{\steps}[2]{\ensuremath{#1 \mapsto^* #2}}
+\newcommand{\stepM}[4]{\ensuremath{(#1, #2) \mapsto (#3, #4)}}
+\newcommand{\stepsM}[5][*]{\ensuremath{(#2, #3) \mapsto^{#1} (#4, #5)}}
+
+\newcommand{\dec}[4][i]{\ensuremath{#2 \rhd^{#1} #3 : #4}}
+\newcommand{\valueJ}[1]{\ensuremath{#1\ \mathsf{value}}}
+\newcommand{\finalJ}[2]{\ensuremath{(#1, #2)\ \mathsf{final}}}
+
+% language
+\newcommand{\kind}{\ensuremath{\mathsf{kind}}}
+\newcommand{\later}{\ensuremath{{\blacktriangleright}}}
+\newcommand{\ilater}{\ensuremath{{\triangleright}}}
+\newcommand{\rec}[2]{\ensuremath{\mu #1.\, #2}}
+\newcommand{\fn}[2]{\ensuremath{#1 \to #2}}
+\newcommand{\tp}{\ensuremath{\mathsf{T}}}
+\newcommand{\unit}{\ensuremath{\mathsf{unit}}}
+\newcommand{\cmd}[1]{\ensuremath{\mathsf{cmd}(#1)}}
+
+\newcommand{\ap}[2]{\ensuremath{#1\ #2}}
+\newcommand{\lam}[3]{\ensuremath{\lambda #1 {:} #2.\, #3}}
+\newcommand{\into}[1]{\ifthenelse{\isempty{#1}}%
+  {\ensuremath{\mathsf{in}}}%
+  {\ensuremath{\mathsf{in}\,#1}}}
+\newcommand{\out}[1]{\ifthenelse{\isempty{#1}}%
+  {\ensuremath{\mathsf{out}}}%
+  {\ensuremath{\mathsf{out}\,#1}}}
+\newcommand{\delay}{\mathsf{next}}
+\newcommand{\fix}{\mathsf{fix}}
+\newcommand{\letdelay}[3]{\ensuremath{\mathsf{let\ next\ } #1 = #2 \mathsf{\ in\ } #3}}
+\newcommand{\all}[3]{\ensuremath{\forall #1 {:} #2.\, #3}}
+\newcommand{\allNoKind}[2]{\ensuremath{\forall #1.\, #2}}
+
+\newcommand{\Ap}[2]{\ensuremath{#1[#2]}}
+\newcommand{\Lam}[3]{\ensuremath{\Lambda #1 {:} #2.\, #3}}
+
+\newcommand{\LamNoKind}[2]{\ensuremath{\Lambda #1.\, #2}}
+\newcommand{\ret}[1]{\ensuremath{\mathsf{ret}(#1)}}
+\newcommand{\get}[1]{\ensuremath{\mathsf{get}[#1]}}
+\newcommand{\set}[2]{\ensuremath{\mathsf{set}[#1](#2)}}
+\newcommand{\dcl}[3]{\ensuremath{\mathsf{dcl}\ #1 := #2\ \mathsf{in}\ #3}}
+\newcommand{\bnd}[3]{\ensuremath{\mathsf{bnd}\ #1 \gets #2;\ #3}}
+
+\newcommand{\trunc}{\ensuremath{\mathsf{trunc}}}
+
+\newcommand{\littrue}{\ensuremath{\mathsf{true}}}
+\newcommand{\litfalse}{\ensuremath{\mathsf{false}}}
+
+\newcommand{\zap}{\ensuremath{\circledast}}
+
+\begin{document}
+
+\begin{minipage}[b]{0.75\linewidth}
+  \veryHuge \color{NavyBlue} \textbf{The Next 700 Failed Step-Index-Free Logical Relations}\\ \color{Black}
+  \Huge\textit{Approaches to Designing Logical Relations for General References}\\[1cm]
+  \huge \textbf{Daniel Gratzer \& Karl Crary}\\
+  \huge Carnegie Mellon University\\
+\end{minipage}
+\begin{minipage}[b]{0.15\linewidth}
+  \color{DarkSlateGray}\Large \textbf{Contact Information:}\\
+  GitHub: \texttt{https://www.github.com/jozefg}\\
+  Email: \texttt{danny.gratzer@gmail.com}\\
+\end{minipage}
+
+\vspace{1cm}
+
+\begin{multicols}{4}
+  \begin{abstract}
+    \color{Navy}
+
+    An important topic in programming languages is the study of
+    program equivalence. This is done typically with the construction of
+    a relational denotational model or a syntactic analogue, called a
+    logical relation. Logical relations have proven to be an effective
+    tool for analyzing programs and lending formal weight to ideas like
+    data abstraction and information hiding.
+
+    A central difficulty with logical relations is their fragility; it
+    has proven to be a challenge to scale logical relations to more
+    realistic languages. A common technique for accomplishing this is
+    \emph{step-indexing}. Step-indexing may be an effective tool for
+    defining logical relations but it results in often frustrating
+    technical details and limitations~\citep{Svendsen:16}. Replacing
+    it with more traditional logical relations is desirable but so far
+    has only been achieved for recursive types. In this work we
+    consider extending traditional logical relations to higher-order
+    references, a common feature in modern languages.
+
+    The central challenge with constructing a logical relation for
+    higher-order references is that it must be a Kripke logical
+    relation. The construction of the Kripke worlds has been a
+    persistent challenge because they do not exist as mere sets. The
+    semantic types must be indexed by a Kripke world and the Kripke
+    world must mention those semantic types, a recursive equation
+    which has no solutions naively. This can be solved by using
+    step-indexing to navigate the recursive equation but other
+    techniques may be possible.
+
+    Three methods are explored in this thesis: a domain theoretic
+    approach, a naive application syntactic minimal invariance, and an
+    application of syntactic minimal invariance to step-indexing. None
+    are sufficient to solve the problem. This demonstrates the
+    difficulty of expressing the recursive structure of higher-order
+    references.
+  \end{abstract}
+
+  \color{SaddleBrown}
+  \section*{Introduction}
+
+  Logical relations originated with~\citet{Tait:67}. They were a
+  generalization of many different ideas but fundamentally are a
+  lifting of \emph{structure preserving functions} or
+  \emph{homomorphisms} to \emph{structure preserving relations}.  The
+  earliest results in programming languages which used logical
+  relations include normalization and termination results for System
+  T~\citep{Tait:67} and System F~\citep{Girard:72} as well as a theory
+  of abstraction~\citep{Reynolds:83}.
+
+  This last result has been of particular importance. The theory of
+  abstractions, called \emph{parametricity}, has given formal weight
+  to proofs about data abstraction. Attempts have been made to
+  reconstruct it in a more general denotational
+  settings~\citep{Bainbridge:90,Abadi:90,Ma:91,Birkedal:05,Dunphy:04}
+  but this program is still incomplete.
+
+  This means that in the 50 years since they have been introduced
+  logical relations have become a tool of choice for capturing
+  properties of programs, especially program equivalence. This work is
+  concerned with extending orthodox logical relations to \emph{general
+    references}: the ability to store arbitrary data (numbers,
+  strings, functions, objects, etc) in mutable cells.
+
+  \subsection*{Program Equivalence is Vital for Program Verification}
+  \begin{enumerate}
+  \item Simplify an existing, efficient program to an equivalent
+    simpler program.
+  \item Verify that this simpler program matches the desired
+    specification for the program
+  \item Use the aforementioned equivalence to conclude that the
+    original program satisfies the desired specification.
+  \end{enumerate}
+  As software verification becomes more and more critical it therefore
+  becomes increasingly important to have a well understood theory of
+  program equivalence. This theory has proven elusive for more
+  realistic languages. Logical relations are one technique to describe
+  it but scaling it to these languages currently requires
+  \emph{step-indexing}. While useful, step-indexing introduces
+  complications and bureaucracy into the use and construction of
+  logical relations.
+
+  \subsection*{Our Approaches}
+  Our research attempts to extend syntactic logical relations in the
+  style of Tait and Reynolds~\citep{Tait:67, Reynolds:83} to a more
+  modern language general references. Our approaches are as follows:
+  \begin{itemize}
+  \item Use domains to solve the recursive equation for Kripke Worlds.
+  \item Construct a logical relation for a more standard type theory
+    which is powerful enough to encode state~\citep{Pottier:11} using
+    Syntactic Minimal Invariance.
+  \item Constructing a logical relation for guarded recursive kinds
+    in $\presheaves{\omega}$.
+  \end{itemize}
+  The failure of these approaches demonstrates the difficulties in
+  constructing a logical relation for general references.
+
+  \color{DarkSlateGray}
+  \section*{A Language with General References}
+
+  In order to clarify the language that we will be working with, we will
+  start by defining the rules for this language. The language is
+  divided into three sorts: types, commands, and expressions. This
+  division is inspired by Harper's Modernized
+  Algol~\citep{Harper:16}. The judgment ensuring types are well-formed
+  is standard from System F.
+  \begin{mathpar}
+    \declareJudgement{\hasTJ{}{\Delta}{\tau}{\tp}}\\
+    \inferrule{
+      \alpha \in \Delta
+    }{\hasTJ{}{\Delta}{\alpha}{\tp}}\and
+    \inferrule{
+      \hasTJ{}{\Delta}{\tau_1}{\tp}\\
+      \hasTJ{}{\Delta}{\tau_2}{\tp}
+    }{\hasTJ{}{\Delta}{\fn{\tau_1}{\tau_2}}{\tp}}\and
+    \inferrule{
+      \hasTJ{}{\Delta, \alpha}{\tau}{\tp}
+    }{\hasTJ{}{\Delta}{\allNoKind{\alpha}{\tau}}{\tp}}\and
+    \inferrule{
+      \hasTJ{}{\Delta}{\tau}{\tp}
+    }{\hasTJ{}{\Delta}{\cmd{\tau}}{\tp}}
+  \end{mathpar}
+  In order to explain the statics of expressions and commands two
+  judgments are necessary and they must depend on each other. This
+  dependence stems from $\cmd{-}$ which internalizes the command
+  judgment. First the expression judgment is given, it is completely
+  standard except that it must also be fibered over a specification of
+  the available assignables. This extra context is necessary in order to
+  make sense of the binding done in $\mathsf{dcl}$.
+  \begin{mathpar}
+    \declareJudgement{\hasESigJ{\Delta}{\Gamma}{\Sigma}{e}{\tau}}\\
+    \inferrule{
+      x : \tau \in \Gamma
+    }{\hasESigJ{\Delta}{\Gamma}{\Sigma}{x}{\tau}}\and
+    \inferrule{
+      \hasESigJ{\Delta}{\Gamma, x : \tau_1}{\Sigma}{e}{\tau_2}
+    }{\hasESigJ{\Delta}{\Gamma}{\Sigma}{\lam{x}{\tau_1}{e}}{\fn{\tau_1}{\tau_2}}}\and
+    \inferrule{
+      \hasESigJ{\Delta}{\Gamma}{\Sigma}{e_1}{\fn{\tau_1}{\tau_2}}\\
+      \hasESigJ{\Delta}{\Gamma}{\Sigma}{e_2}{\tau_1}\\
+    }{\hasESigJ{\Delta}{\Gamma}{\Sigma}{\ap{e_1}{e_2}}{\tau_2}}\and
+    \inferrule{
+      \hasESigJ{\Delta, \alpha}{\Gamma}{\Sigma}{e}{\tau}
+    }{\hasESigJ{\Delta}{\Gamma}{\Sigma}{\LamNoKind{\alpha}{e}}{\allNoKind{\alpha}{\tau}}}\and
+    \inferrule{
+      \hasESigJ{\Delta}{\Gamma}{\Sigma}{e}{\allNoKind{\alpha}{\tau_1}}\\
+      \hasTJ{}{\Delta}{\tau_2}{\tp}
+    }{\hasESigJ{\Delta}{\Gamma}{\Sigma}{\Ap{e}{\tau_2}}{[\tau_2/\alpha]\tau_1}}\and
+    \inferrule{
+      \hasMJ{\Delta}{\Gamma}{\Sigma}{m}{\tau}
+    }{\hasESigJ{\Delta}{\Gamma}{\Sigma}{e}{\tau}}
+  \end{mathpar}
+  \begin{mathpar}
+    \declareJudgement{\hasMJ{\Delta}{\Gamma}{\Sigma}{m}{\tau}}\\
+    \inferrule{
+      \hasESigJ{\Delta}{\Gamma}{\Sigma}{e}{\tau}
+    }{\hasMJ{\Delta}{\Gamma}{\Sigma}{\ret{e}}{\tau}}\and
+    \inferrule{
+      \alpha \div \tau \in \Sigma
+    }{\hasMJ{\Delta}{\Gamma}{\Sigma}{\get{\alpha}}{\tau}}\and
+    \inferrule{
+      \alpha \div \tau \in \Sigma\\
+      \hasESigJ{\Delta}{\Gamma}{\Sigma}{e}{\tau}
+    }{\hasMJ{\Delta}{\Gamma}{\Sigma}{\set{\alpha}{e}}{\tau}}\and
+    \inferrule{
+      \hasESigJ{\Delta}{\Gamma}{\Sigma}{e}{\tau_2}\\
+      \hasMJ{\Delta}{\Gamma}{\Sigma, \alpha : \tau_2}{m}{\tau_1}
+    }{\hasMJ{\Delta}{\Gamma}{\Sigma}{\dcl{\alpha}{e}{m}}{\tau_1}}\and
+    \inferrule{
+      \hasESigJ{\Delta}{\Gamma}{\Sigma}{e}{\cmd{\tau_1}}\\
+      \hasMJ{\Delta}{\Gamma, x : \tau_1}{\Sigma}{m}{\tau_2}
+    }{\hasMJ{\Delta}{\Gamma}{\Sigma}{\bnd{x}{e}{m}}{\tau_2}}\and
+  \end{mathpar}
+
+
+  \vfill\null \columnbreak
+
+  \section*{The Mathematical Tools}
+
+  The main way approach to constructing a logical relation for this
+  language is to interpret types as objects in presheaves over
+  $\omega$. In order to illustrate the idea we present a step-indexed
+  version which illustrates the problems involved.
+
+  A presheaf over $\omega$ is an indexed family of sets
+  $(X_n)_{n \in \nat}$ with a family of maps $X_{n + 1} \to X_n$. A
+  map between two indexed families, $X$ and $Y$ is an indexed family
+  $(f_n)_{n \in \nat}$
+  \[
+    \begin{tikzcd}
+      X_n \ar[d] \ar[r, "f_n"]    & Y_n \ar[d]\\
+      X_{n - 1} \ar[d] \ar[r, "f_{n - 1}"] & Y_{n - 1} \ar[d]\\
+      X_{n - 2} \ar[d] \ar[r, "f_{n - 2}"] & Y_{n - 2} \ar[d]\\
+      .... \ar[d] & .... \ar[d]\\
+      X_0 \ar[r, "f_0"] & Y_0
+    \end{tikzcd}
+  \]
+  \begin{thm}
+    Presheaves over $\omega$, written $\presheaves{\omega}$, have all
+    small (co)limits as well as exponentials.
+  \end{thm}
+  What distinguishes $\presheaves{\omega}$ as a useful category beyond
+  the category of sets is its support for guarded
+  recursion~\citep{Birkedal:steps:11}.
+  \begin{thm}\label{thm:fix}
+    There exists an product-preserving functor $\later$ and a natural
+    transformation $\delay{} : 1 \to \later$.
+
+    Furthermore, for any functor
+    $F : \op{\presheaves{\omega}} \times \presheaves{\omega} \to \presheaves{\omega}$
+    with a strength respecting composition and identity which factors
+    through $\delay$ has a unique invariant object. That is, there is
+    an $I$ so that $F(I, I) \cong I$.
+  \end{thm}
+  Using this, we can construct an object of Kripke worlds in
+  $\presheaves{\omega}$. It is built up from a few presheaves,
+  all easily definable in the internal logic. First, finite maps and
+  an ordering on them.
+  \begin{align*}
+    X \ptofin Y &\defs \{f \in \Omega^{X \times Y} \mid\\
+    &\qquad (\forall x \in X.\ \forall y_1, y_2 \in Y.\ f(x, y_1) \land f(x, y_2) \implies y_1 = y_2) \land {}\\
+    &\qquad (\exists n \in \nat.\ \{x \in X \mid \exists y \in Y. f(x, y)\} \cong [n])\}\\
+    f_1 \le f_2 &\defs \forall x \in X, y \in Y.\ f_1(x, y) \implies f_2(x, y)
+  \end{align*}
+  Then monotone functions.
+  \[
+    P_1 \mto P_2 \defs \{f \in P_2^{P_1} \mid
+    \forall x_1, x_2 \in P_1.\ x_1 \le x_2 \implies f(x_1) \le f(x_2)\}\\
+  \]
+  Finally, and this is the part specific to step-indexing, we provide
+  a uniform way construction of predicates on a set.
+  \begin{align*}
+    \urel(S) &\defs \Omega^{\Delta(S)}
+  \end{align*}
+  Then, worlds are defined by constructing a solution to the following
+  equation with Theorem~\ref{thm:fix}:
+  \[
+    \worlds \cong \nat \ptofin \worlds \mto \urel(\term \times \term)
+  \]
+  We say that two heaps are related at $w$ when the following formula
+  holds.
+  \[
+    h_1 \sim_w h_2 \defs \forall \alpha \in \dom(w).
+    \ \sincl{\iota(w) \zap \delay(w) \zap (h_1, h_2)}
+  \]
+  In this, $\sincl$ and $\ilater$ are the internalization of the
+  action of $\delay$ and $\later$ on $\Omega$ and $\zap$ is the
+  monoidal action of $\ilater$.
+
+  \vfill\null
+
+  \section*{The Logical Relation}
+  Once the presheaf of worlds is fixed and correct it is relatively
+  easy to define the logical relation. In its definition we again make
+  judicious use of the internal logic. The parameter $\eta$ is a type
+  enviroment sending type variables to candidates: elements of
+  $\worlds \mto \urel(\term \times \term)$.
+  \begin{align*}
+    \den{-}_{-} &: \types \to \typesEnv \to \worlds \mto \urel(\term \times \term)\\
+    \den{\alpha}_\eta(w) &= \eta(\alpha)(w)\\
+    \den{\fn{\tau_1}{\tau_2}}_\eta(w_1) &=
+     \{(e_1, e_2) \mid \forall w_2 \ge w_1.\ \forall (a_1, a_2) \in \den{\tau_1}_\eta(w_2).\\
+     &\qquad (\ap{e_1}{a_1}, \ap{e_2}{a_2}) \in \den{\tau_2}_\eta(w_2)\}\\
+    \den{\allNoKind{\alpha}{\tau}}_\eta(w_1) &=
+     \{(e_1, e_2) \mid \forall w_2 \ge w_1.\ \forall c_1, c_2 : \kappa,\ S.\\
+     &\qquad (\Ap{e_1}{c_1}, \Ap{e_2}{c_2}) \in \den{\tau}_{\eta[\alpha \mapsto S]}\}\\
+    \den{\cmd{\tau}}_\eta(w_1) &= \{(e_1, e_2) \mid \forall w_2 \ge w_1.\ \exists m_1, m_2\\
+    & \qquad \steps{e_i}{\cmd{m_i}} \land{} \\
+    & \qquad \forall h_1 \sim_{w_2} h_2 \implies (m_1, h_1) \simeq (m_2, h_2) \land {}\\
+    & \qquad \forall k_1, k_2, v_1', v_2', h_1', h_2'.\ \stepsM[k_i]{m_i}{h_i}{\ret{v_i}}{h_i'} \implies\\
+    & \qquad\qquad \exists w_3 \ge w_2.\ \ilater^{k_1} (h_1' \sim_{w_3} h_2' \land (v_1', v_2') \in \den{\tau}_{w_3})
+  \end{align*}
+  The real challenge is adapting this logical relation to use an
+  alternative presheaf of semantic types. Ideally, it would be the
+  case that allowed us to avoid entangling the definition of the
+  logical relation with the concrete number of steps a program
+  takes. In particular, this would mean avoiding $\ilater^k$.
+
+  This work consisted of various attempts to explore alternative
+  semantic universes to do this. None proved sufficient.
+
+  \color{SaddleBrown}
+  \section*{Conclusions}
+
+  \begin{itemize}
+  \item Step-indexed logical relations are here to stay without the
+    invention of a fundamentally new technique.
+  \item Syntactic minimal invariance does not appear to scale to any
+    system richer than System F with recursive types.
+  \item By exploring richer semantic universes many of the pain-points
+    and issues with step-indexing can be
+    alleviated~\citep{Svendsen:16}.
+  \end{itemize}
+
+  \color{DarkSlateGray}
+  \tiny
+  \bibliographystyle{plainnat}
+  \bibliography{../citations}{}
+\end{multicols}
+\end{document}
