@@ -3,8 +3,8 @@
 This thesis has illustrated the difficulty of constructing a logical
 relation for a language with higher-order state. The current set of
 techniques which work are complex and despite this they only provide
-sound but not complete reasoning principles. Even with this complexity
-logical relations are among the best known techniques for handling
+sound but incomplete reasoning principles. Even with this logical
+relations are among the best known techniques for handling
 effects. They strike a combination between using simpler mathematics
 and providing useful reasoning principles.
 
@@ -26,20 +26,22 @@ to traditional set-theoretic relations. Already with Kripke logical
 relations there is the same indexing structure. Rather than viewing
 relations as holding or not holding it is quite natural to replace
 them with a more internsional, local notion of truth as is done in
-both step-indexing and Kripke logical relations. If we make use of
-more sophisticated tools for working with these relations, either by
-working internally to a type theory, a higher-order logic, or a topos
-much of the day-to-day issues of step-indexing can be resolved.
+both step-indexing and Kripke logical relations. Mathematically, this
+is just a switch from relations in sets to relations in an appropriate
+presheaf category. If we make use of more sophisticated tools for
+working with these relations, either by working internally to a type
+theory, a higher-order logic, or a topos much of the day-to-day issues
+of step-indexing can be resolved.
 
-The last issue is the real problem. The nature of step-indexing is
+The last issue is a real problem. The nature of step-indexing is
 inherently limiting because it is only is suited for properties that
 are sound with respect to finite prefixes. Consider for instance, the
 set of programs producing a stream of natural numbers. The program
-outputting $1$, $2$, $3$, .. for any finite step $n$ produces a
-maximum but it is not the case that it ever actually outputs a number
-globally! This is a classic issue in mathematics: global truth is not
-truth in every localization and step-indexing only allows us to
-discuss local truth.
+outputting $1$, $2$, $3$, etc. At any finite step this program
+produces a maximal number but it is not the case that it ever actually
+outputs a maximum globally. This is a classic issue in mathematics:
+global truth is not truth in every localization and step-indexing only
+allows us to discuss local truth.
 
 In order to fix this, one can either remove the indexing structure and
 never work with local truth or add enough locales so that local truth
@@ -49,13 +51,13 @@ satisfy the program at $(\omega, 0)$. A fuller theory of logical
 relation in this setting is given by \citet{Svendsen:16}.
 
 Further investigation is needed in both directions. There are many
-unstudied generalizations of relations beyond merely considering sets
-of truth values. On the other hand, there is an undeniable appeal to
+unstudied generalizations of relations beyond merely a set-theoretic
+subset of a product. On the other hand, there is an undeniable appeal to
 just being able to work with sets and to find some new clever
 technique to avoid the indexing all together. At the moment though,
 there seems to be far more unexplored and accessible space in the
 first direction than the second; constructing a step-index-free
-logical relation seems to require some new approach beyond
+logical relation appears to require some new approach beyond
 applications of classic tools as was done in this thesis.
 
 %%% Local Variables:
