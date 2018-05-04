@@ -1,0 +1,125 @@
+\documentclass{beamer}
+\usepackage{mathpartir, stmaryrd}
+\usepackage{wasysym}
+\usepackage[normalem]{ulem}
+\usepackage{listings}
+\usepackage{multicol}
+\usepackage{microtype}
+\usepackage{color}
+
+\usefonttheme[onlymath]{serif}
+\definecolor{JadeGreen}{RGB}{0,168,107}
+\definecolor{MunsellPurple}{RGB}{159,0,197}
+
+\definecolor{CobaltBlue}{RGB}{0,71,171}
+\definecolor{FireBrick}{RGB}{228,34,23}
+\definecolor{Alabaster}{RGB}{250,250,250}
+
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{headline}{}
+\setbeamercolor{example text}{fg=CobaltBlue}
+\setbeamertemplate{itemize items}{$\bullet$}
+\setbeamercolor{alert text}{fg=FireBrick}
+
+\lstset{language=ML,
+        columns=fullflexible,
+        keepspaces=true,
+        deletekeywords={let,in},
+        basicstyle=\ttfamily,
+        tabsize=4,
+        escapeinside={"*}{*"},
+        moredelim=*[is][\color{FireBrick}]{`}{'},
+        literate={->}{{$\shortrightarrow$}}1
+                 {->}{{$\gets$}}1
+                 {\\}{{$\lambda$}}1
+                 {decl}{{$\decl$}}1
+                 {set}{{$\set$}}1
+                 {get}{{$\get$}}1
+                 {cmd}{{$\cmd$}}1
+                 {ret}{{$\ret$}}1
+                 {times}{{$\times$}}1
+                 {alpha}{{$\alpha$}}1
+                 {beta}{{$\beta$}}1
+                 {gamma}{{$\gamma$}}1
+                 {vdots}{{\vdots}}1}
+
+\title{The Next 700 Failed \\Step-Index-Free Logical Relations}
+\author{Daniel Gratzer}
+\date{\today}
+
+\begin{document}
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}
+  \begin{center}
+    \bf When are two programs \alert<5>{equal}?
+  \end{center}
+  \begin{enumerate}
+  \item<2-> Checking compiler optimizations
+  \item<3-> Formalize data abstraction
+  \item<4-> Compositional verification proofs
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}
+  \begin{center}
+    \bf What should equality mean?
+  \end{center}
+  \pause
+  \begin{itemize}
+  \item Should equality be decidable?
+    \pause
+  \item Should equality consider computational time?
+    \pause
+  \item Should free variables be treated as \emph{indeterminates}?
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \begin{center}
+    Two programs are equal if you can replace one with another in a
+    bigger program without causing the bigger program to diverge.
+  \end{center}
+\end{frame}
+
+\begin{frame}
+  \centering
+  To prove that two programs, $e_1$ and $e_2$ are equal...
+  \begin{enumerate}
+  \item Pick a program with a hole in it, $C$
+  \item Test whether $C[e_1]$ terminates
+  \item Test whether $C[e_2]$ terminates
+  \item If the results disagree, they're not equal
+    \pause
+  \item Rinse and repeat for every possible $C$
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}
+  Contextual equivalence has some advantages:
+  \begin{itemize}
+  \item Easily scales to different languages
+  \item \emph{Extensional}
+  \item Allows us to replace equals by equals
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \begin{center}
+    \it Rinse and repeat for every possible $C$
+  \end{center}
+  \pause
+  There are a lot of $C$s.
+  \pause
+  It's not obvious how to write a proof which handles all of them.
+\end{frame}
+
+\begin{frame}
+  \centering
+  Key idea: use the structure of the types to classify what contexts
+  are worth considering.
+\end{frame}
+
+\end{document}
