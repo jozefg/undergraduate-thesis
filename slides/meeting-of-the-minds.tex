@@ -89,7 +89,8 @@
 \newcommand{\cless}{\ensuremath{\lessapprox}}
 \newcommand{\aless}{\ensuremath{\lesssim}}
 
-\DeclareMathOperator{\dom}{Dom}
+\DeclareMathOperator{\dom}{dom}
+\DeclareMathOperator{\cod}{cod}
 
 % Sets
 \newcommand{\states}{\ensuremath{\mathrm{State}}}
@@ -393,7 +394,7 @@ cmd(cmd(return 1))
   \end{itemize}
   \bigskip
   \[
-    h_1 \sim h_2 : w \defs \forall \alpha \in \Dom(w).\ (h_1(\alpha), h_2(\alpha)) \in w(\alpha)
+    h_1 \sim h_2 : w \defs \forall \alpha \in \dom(w).\ (h_1(\alpha), h_2(\alpha)) \in w(\alpha)
   \]
 \end{frame}
 
@@ -427,5 +428,31 @@ cmd(cmd(return 1))
   \bigskip
 
   No.
+\end{frame}
+
+\begin{frame}
+  Many theories for solving recursive equations outside of $\SET$
+  \begin{itemize}
+  \item All about finding restrictions on $\to$ to avoid cardinality
+    issues
+  \item None of them simultaneously satisfy all the requirements for a
+    logical relation
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \centering
+  Going forward
+  \begin{itemize}
+  \item Adopt more modern approaches to step-indexing (internal
+    logics, etc)
+  \item Explore richer settings for indexing which alleviate liveness
+    issues
+  \item Develop a more complete theory of logical relations to explain
+    why this issue is so persistent
+  \end{itemize}
+  \pause
+  \bigskip
+  Thank you.
 \end{frame}
 \end{document}
