@@ -1,5 +1,7 @@
 \documentclass{beamer}
-\usepackage{mathpartir, stmaryrd}
+\usepackage{mathtools}
+\usepackage{mathpartir}
+\usepackage{stmaryrd}
 \usepackage{wasysym}
 \usepackage[normalem]{ulem}
 \usepackage{listings}
@@ -64,7 +66,7 @@
 \newcommand{\reach}{\ensuremath{\mathrel{\sqsubseteq}}}
 \newcommand{\breach}{\ensuremath{\mathrel{\sqsupseteq}}}
 \newcommand{\mto}{\ensuremath{\xrightarrow{\mathsf{mon}}}}
-\newcommand{\pto}{\ensuremath{\rightharpoonup}}
+\newcommand{\pto}{\ensuremath{\xrightharpoonup{\mathsf{fin}}}}
 \newcommand{\pow}[1]{\ensuremath{\mathcal{P}(#1)}}
 \newcommand{\powfin}[1]{\ensuremath{\mathcal{P_{\mathrm{fin}}}(#1)}}
 \newcommand{\card}[1]{\ensuremath{\left\vert #1 \right\vert}}
@@ -189,40 +191,27 @@
   \centering
   Goals for today's talk:
   \begin{itemize}
-  \item Explain the title.
-  \item Maybe answer questions.
+  \item Sketch what logical relations are.
+  \item Sketch what step-indexing is.
   \end{itemize}
 \end{frame}
 
 \begin{frame}
   \begin{center}
-    \bf When are two programs \alert<5>{equal}?
+    \bf When are two programs equal?
   \end{center}
   \begin{enumerate}
-  \item<2-> Checking compiler optimizations
-  \item<3-> Formalize data abstraction
+  \item<2-> Compiler optimizations
+  \item<3-> Data abstraction
   \item<4-> Compositional verification proofs
   \end{enumerate}
 \end{frame}
 
 \begin{frame}
   \begin{center}
-    \bf What should equality mean?
-  \end{center}
-  \pause
-  \begin{itemize}
-  \item Should equality be decidable?
-    \pause
-  \item Should equality consider computational time?
-    \pause
-  \item Should free variables be treated as \emph{indeterminates}?
-  \end{itemize}
-\end{frame}
-
-\begin{frame}
-  \begin{center}
-    Two programs are equal if you can replace one with another in a
-    bigger program without causing the bigger program to diverge.
+    Two programs are equal \textbf{if} you can replace one with
+    another in a bigger program without causing a change in termination
+    behavior.
   \end{center}
 \end{frame}
 
@@ -234,28 +223,16 @@
   \item Test whether $C[e_1]$ terminates
   \item Test whether $C[e_2]$ terminates
   \item If the results disagree, they're not equal
-    \pause
-  \item Rinse and repeat for every possible $C$
+  \item Repeat for every possible $C$
   \end{enumerate}
 \end{frame}
 
 \begin{frame}
-  Contextual equivalence has some advantages:
-  \begin{itemize}
-  \item Easily scales to different languages
-  \item \emph{Extensional}
-  \item Allows us to replace equals by equals
-  \end{itemize}
-\end{frame}
-
-\begin{frame}
-  \begin{center}
-    \it Rinse and repeat for every possible $C$
-  \end{center}
-  \pause
+  \centering
+  \begin{quote}
+    \centering\it Repeat for every possible $C$
+  \end{quote}
   There are a lot of $C$s.
-  \pause
-  It's not obvious how to write a proof which handles all of them.
 \end{frame}
 
 \begin{frame}
@@ -272,20 +249,15 @@
 
 \begin{frame}
   \centering
-  An example: functions
-  \pause
-  \bigskip
-  \begin{align*}
-    f_1 \sim f_2 &: \fn{\tau_1}{\tau_2} \triangleq \forall a_1, a_2.\\
-    &a_1 \sim a_2 : \tau_1 \implies \ap{f_1}{a_1} \sim \ap{f_2}{a_2} : \tau_2
-  \end{align*}
-\end{frame}
-
-\begin{frame}
   This works well for ``logical'' connectives: $\to$, $\times$, $+$,
   $\exists$, $\forall$...
+  \[
+    f_1 \sim f_2 : \fn{\tau_1}{\tau_2} \triangleq
+    \forall a_1 \sim a_2 : \tau_1.\ \ap{f_1}{a_1} \sim \ap{f_2}{a_2} : \tau_2
+  \]
   \pause
   \bigskip
+
   What about types that are not so obviously logical?
 \end{frame}
 
@@ -299,96 +271,47 @@
   computation: $\cmd{\tau}$.
 \end{frame}
 
-\begin{frame}[fragile]
-  \centering
-  \begin{minipage}{0.5\textwidth}
-    \centering
-\begin{lstlisting}
-cmd(
-  dcl alpha := 1 in
-  return cmd(get alpha)
-)
-\end{lstlisting}
-  \end{minipage}%
-  \begin{minipage}{0.5\textwidth}
-    \centering
-\begin{lstlisting}
-cmd(cmd(return 1))
-\end{lstlisting}
-  \end{minipage}
-\end{frame}
+% \begin{frame}[fragile]
+%   \centering
+%   \begin{minipage}{0.5\textwidth}
+%     \centering
+% \begin{lstlisting}
+% cmd(
+%   dcl alpha := 1 in
+%   return cmd(get alpha)
+% )
+% \end{lstlisting}
+%   \end{minipage}%
+%   \begin{minipage}{0.5\textwidth}
+%     \centering
+% \begin{lstlisting}
+% cmd(cmd(return 1))
+% \end{lstlisting}
+%   \end{minipage}
+% \end{frame}
 
 \begin{frame}
   \centering
-  How do we define $\cmd{m_1} \sim \cmd{m_2} : \cmd{\tau}$?
+  How do we define $\cmd{m_1}$ is equal to $\cmd{m_2}$?
   \pause
   \bigskip
   \begin{itemize}
   \item Commands are functions: heap to heap and a result
-  \item $\sim$ for commands should be like $\sim$ for functions
-  \item When are two heaps related?
+  \item How do we compare heaps for equality?
+  \item Which heaps do we need to consider?
   \end{itemize}
 \end{frame}
 
 \begin{frame}
-  \begin{quote}\centering
-    \bf\it When are two heaps related?
-  \end{quote}
+  \centering
+  \textbf{Kripke Logical Relations}
 
   \begin{itemize}
-  \item Simplest answer is that they're related pointwise\\
-    \[
-      h_1 \sim h_2 : \Sigma \defs
-      \forall \alpha : \tau \in \Sigma.\ h_1(\alpha) \relR h_2(\alpha) : \tau
-    \]
-  \item What equality should be used at each point? (What is $\relR$)
+  \item Equip the logical relations by $\worlds$ to describe the
+    possible heaps
+  \item Evolve the world to represent new allocations and other
+    changes
   \end{itemize}
-\end{frame}
-
-\begin{frame}
-  \centering
-  There are 3 reasonable choices for $\relR$:
-  \begin{enumerate}
-  \item $\relR$ could be stricter than $\sim$
-  \item $\relR$ could be exactly $\sim$
-  \item $\relR$ could be weaker than $\sim$
-  \end{enumerate}
-  \pause
-  \bigskip
-
-  All of these are bad ideas.
-  \pause
-  \bigskip
-  \begin{enumerate}
-  \item $\sim$ will not be reflexive
-  \item $\sim$ will not be well-defined
-  \item $\sim$ will not be reflexive
-  \end{enumerate}
-\end{frame}
-
-\begin{frame}
-  \centering
-  \begin{quote}
-    \bf\it $\relR$ could be exactly $\sim$: $\sim$ will not be well-defined
-  \end{quote}
-  Alternative idea: parameterize $\sim$ by a \emph{world} telling us
-  how to compare.
-\end{frame}
-
-\begin{frame}
-  \centering
-  Kripke Logical relations
-  \begin{itemize}
-  \item Parameterize $\sim$ by a partial order $\worlds$
-  \item $w \in \worlds$ is a relation on heaps
-  \item $w_1 \le w_2$ if $w_2$ relates extensions of heaps related by
-    $w_1$
-  \item $\sim$ is monotone
-  \end{itemize}
-  \bigskip
-  \[
-    h_1 \sim h_2 : w \defs \forall \alpha \in \dom(w).\ (h_1(\alpha), h_2(\alpha)) \in w(\alpha)
-  \]
 \end{frame}
 
 \begin{frame}
@@ -409,6 +332,7 @@ cmd(cmd(return 1))
   \item $\sim$ can now means that two programs are equal for at least
     $n$ steps
   \item Can't get rid of these steps
+  \item Lose ability to talk about any ``global truth''
   \end{itemize}
 \end{frame}
 
@@ -419,8 +343,11 @@ cmd(cmd(return 1))
 
   \pause
   \bigskip
+  No
 
-  No.
+  \pause
+  \bigskip
+  We couldn't figure out how.
 \end{frame}
 
 \begin{frame}
@@ -428,8 +355,7 @@ cmd(cmd(return 1))
   \begin{itemize}
   \item All about finding restrictions on $\to$ to avoid cardinality
     issues
-  \item None of them simultaneously satisfy all the requirements for a
-    logical relation
+  \item None of them are sufficient
   \end{itemize}
 \end{frame}
 
@@ -439,8 +365,7 @@ cmd(cmd(return 1))
   \begin{itemize}
   \item Adopt more modern approaches to step-indexing (internal
     logics, etc)
-  \item Explore richer settings for indexing which alleviate liveness
-    issues
+  \item Explore richer settings for indexing structures
   \item Develop a more complete theory of logical relations to explain
     why this issue is so persistent
   \end{itemize}
